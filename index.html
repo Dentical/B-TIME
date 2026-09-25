@@ -1,0 +1,789 @@
+<!DOCTYPE html>
+<html lang="ru" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BTIME — Мануфактура Высокого Часового Искусства</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        gold: {
+                            400: '#FACC15',
+                            500: '#EAB308',
+                            600: '#CA8A04',
+                            accent: '#D4AF37',
+                            light: '#F3E5AB'
+                        },
+                        obsidian: '#0a0a0a',
+                        surface: '#121212',
+                        cardbg: '#18181b'
+                    },
+                    fontFamily: {
+                        serif: ['Playfair Display', 'serif'],
+                        sans: ['Montserrat', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        body { font-family: 'Montserrat', sans-serif; background-color: #050505; color: #f3f4f6; overflow-x: hidden; }
+        .font-serif { font-family: 'Playfair Display', serif; }
+        
+        /* Стеклянный эффект (Glassmorphism) */
+        .glass-panel {
+            background: rgba(18, 18, 20, 0.75);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(212, 175, 55, 0.15);
+        }
+        .glass-card {
+            background: rgba(24, 24, 27, 0.6);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .glass-card:hover {
+            border-color: rgba(212, 175, 55, 0.4);
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px -15px rgba(212, 175, 55, 0.15);
+        }
+        
+        /* Золотой градиент текст */
+        .gold-gradient-text {
+            background: linear-gradient(135deg, #BF953F 0%, #FCF6BA 25%, #B38728 50%, #FBF5B7 75%, #AA771C 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .gold-border {
+            border-image: linear-gradient(to right, #BF953F, #FCF6BA, #AA771C) 1;
+        }
+
+        /* Лупа (Zoom) контейнер */
+        .zoom-container {
+            position: relative;
+            overflow: hidden;
+            cursor: zoom-in;
+        }
+        .zoom-container img {
+            transition: transform 0.3s ease;
+        }
+        .zoom-lens {
+            position: absolute;
+            border: 2px solid #D4AF37;
+            border-radius: 50%;
+            cursor: none;
+            width: 120px;
+            height: 120px;
+            display: none;
+            pointer-events: none;
+            box-shadow: 0 0 15px rgba(212, 175, 55, 0.5);
+            background-repeat: no-repeat;
+        }
+
+        /* Анимация пульсации */
+        @keyframes pulse-gold {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(212, 175, 55, 0.4); }
+            50% { box-shadow: 0 0 0 15px rgba(212, 175, 55, 0); }
+        }
+        .pulse-gold {
+            animation: pulse-gold 2.5s infinite;
+        }
+    </style>
+</head>
+<body class="bg-[#050505] text-gray-100 selection:bg-yellow-500 selection:text-black">
+
+    <!-- Верхняя панель уведомлений и тикера -->
+    <div class="bg-black border-b border-yellow-500/20 text-xs py-2 px-4 text-center tracking-widest uppercase text-yellow-500/80 flex justify-between items-center max-w-7xl mx-auto">
+        <span class="hidden md:inline"><i class="fa-solid fa-gem mr-1"></i> Официальная швейцарская мануфактура</span>
+        <span>Бесплатная экспресс-доставка по всему миру в фирменном сейфе</span>
+        <div class="flex items-center space-x-4">
+            <select id="currencySelector" class="bg-transparent text-yellow-400 font-semibold focus:outline-none cursor-pointer">
+                <option value="USD" class="bg-black">$ USD</option>
+                <option value="EUR" class="bg-black">€ EUR</option>
+                <option value="RUB" class="bg-black">₽ RUB</option>
+            </select>
+            <button id="soundToggleBtn" class="text-gray-400 hover:text-yellow-400 transition" title="Включить тиканье механизма">
+                <i class="fa-solid fa-volume-xmark text-sm" id="soundIcon"></i> <span class="hidden sm:inline">Звук тиканья</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Навигация -->
+    <header class="sticky top-0 z-40 glass-panel border-b border-yellow-500/10">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <a href="#" class="text-2xl md:text-3xl font-serif font-bold tracking-widest gold-gradient-text">BTIME</a>
+                <span class="hidden lg:inline-block text-[10px] uppercase tracking-widest border border-yellow-500/30 px-2 py-0.5 rounded text-yellow-500">Geneve</span>
+            </div>
+            
+            <nav class="hidden md:flex items-center space-x-8 text-sm tracking-wider font-medium">
+                <a href="#catalog" class="hover:text-yellow-400 transition">Коллекции</a>
+                <a href="#configurator" class="hover:text-yellow-400 transition">Конфигуратор</a>
+                <a href="#investment" class="hover:text-yellow-400 transition">Инвестиции</a>
+                <a href="#craft" class="hover:text-yellow-400 transition">Мастерство</a>
+                <a href="#certificate" class="hover:text-yellow-400 transition">Паспорт</a>
+            </nav>
+
+            <div class="flex items-center space-x-5">
+                <button onclick="openCart()" class="relative text-gray-300 hover:text-yellow-400 transition p-2">
+                    <i class="fa-solid fa-bag-shopping text-xl"></i>
+                    <span id="cartBadge" class="absolute top-0 right-0 bg-yellow-500 text-black text-[10px] font-bold w-5 h-5 rounded-full flex items-center justify-center scale-0 transition-transform">0</span>
+                </button>
+                <button onclick="openConciergeModal()" class="hidden sm:inline-flex items-center space-x-2 bg-gradient-to-r from-yellow-600 to-yellow-500 text-black font-semibold text-xs tracking-wider uppercase px-5 py-2.5 rounded-full hover:brightness-110 transition shadow-lg shadow-yellow-600/20">
+                    <i class="fa-solid fa-headset"></i>
+                    <span>Консьерж</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Скрытый аудиоплеер для тиканья часов (ASMR) -->
+    <audio id="tickAudio" loop>
+        <source src="https://assets.mixkit.co/active_storage/sfx/2571/2571-preview.mp3" type="audio/mpeg">
+    </audio>
+
+    <!-- Hero Секция -->
+    <section class="relative min-h-[85vh] flex items-center justify-center overflow-hidden px-4 py-16">
+        <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-yellow-900/10 via-black to-black z-0"></div>
+        <div class="max-w-7xl mx-auto w-full grid grid-cols-1 lg:grid-cols-2 gap-12 items-center relative z-10">
+            <div class="space-y-6 text-center lg:text-left">
+                <div class="inline-flex items-center space-x-2 bg-yellow-500/10 border border-yellow-500/30 px-3 py-1 rounded-full text-xs text-yellow-400 tracking-widest uppercase">
+                    <i class="fa-solid fa-star text-[10px]"></i>
+                    <span>Новинка флагманской серии 2026</span>
+                </div>
+                <h1 class="text-4xl sm:text-6xl font-serif font-bold leading-tight">
+                    Время, неподвластное <span class="gold-gradient-text">эпохам.</span>
+                </h1>
+                <p class="text-gray-400 text-base sm:text-lg max-w-xl mx-auto lg:mx-0 font-light">
+                    Совершенный синтез швейцарских традиций микромеханики и авангардного дизайна BTIME. Создано для тех, кто определяет правила.
+                </p>
+                <div class="flex flex-col sm:flex-row items-center justify-center lg:justify-start space-y-4 sm:space-y-0 sm:space-x-4 pt-4">
+                    <a href="#catalog" class="w-full sm:w-auto bg-gradient-to-r from-yellow-500 to-yellow-600 text-black font-bold uppercase tracking-widest text-xs px-8 py-4 rounded-full hover:brightness-110 transition text-center shadow-xl shadow-yellow-500/20">
+                        Выбрать модель
+                    </a>
+                    <a href="#configurator" class="w-full sm:w-auto glass-panel text-white font-semibold uppercase tracking-widest text-xs px-8 py-4 rounded-full hover:border-yellow-400 transition text-center">
+                        Собрать свой стиль
+                    </a>
+                </div>
+            </div>
+
+            <!-- Главный интерактивный блок с лупой -->
+            <div class="relative flex justify-center">
+                <div class="absolute -inset-4 bg-gradient-to-r from-yellow-600/20 to-yellow-400/10 rounded-full blur-3xl opacity-70"></div>
+                <div class="glass-panel p-6 rounded-3xl relative border border-yellow-500/30 max-w-md w-full text-center">
+                    <div class="absolute top-4 right-4 bg-black/60 backdrop-blur border border-yellow-500/30 px-3 py-1 rounded-full text-[10px] text-yellow-400 uppercase tracking-widest">
+                        Macro Zoom Active
+                    </div>
+                    <!-- Блок с лупой -->
+                    <div class="zoom-container my-6 rounded-2xl overflow-hidden inline-block" id="heroZoomContainer" onmousemove="zoomMove(event)" onmouseleave="zoomLeave()">
+                        <img id="heroZoomImg" src="https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=800&q=80" alt="BTIME Masterpiece" class="w-full h-80 object-cover rounded-2xl">
+                        <div id="heroZoomLens" class="zoom-lens"></div>
+                    </div>
+                    <h3 class="text-xl font-serif font-bold text-white">BTIME Royal Tourbillon</h3>
+                    <p class="text-xs text-yellow-500 tracking-widest uppercase mt-1">Ручной завод • Запас хода 72 часа</p>
+                    <div class="mt-4 flex items-center justify-between border-t border-white/10 pt-4">
+                        <span class="text-gray-400 text-sm">Стоимость:</span>
+                        <span class="text-xl font-bold gold-gradient-text price-tag" data-usd="24500">24,500 $</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Каталог часов (7 уникальных моделей с фото) -->
+    <section id="catalog" class="py-24 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center max-w-2xl mx-auto mb-16">
+            <span class="text-yellow-500 uppercase tracking-widest text-xs font-semibold">Коллекция мануфактуры</span>
+            <h2 class="text-3xl sm:text-5xl font-serif font-bold mt-2">Шедевры часового искусства</h2>
+            <div class="w-16 h-0.5 bg-yellow-500 mx-auto mt-4"></div>
+        </div>
+
+        <div id="productsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <!-- Динамически заполняется скриптом -->
+        </div>
+    </section>
+
+    <!-- ⏳ НОВАЯ ФИШКА №2: Калькулятор инвестиционного роста -->
+    <section id="investment" class="py-20 bg-[#0c0c0e] border-y border-yellow-500/10">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+                <div class="space-y-6">
+                    <span class="text-yellow-500 uppercase tracking-widest text-xs font-semibold">Ликвидность и актив</span>
+                    <h2 class="text-3xl sm:text-4xl font-serif font-bold">Инвестиционный трекер BTIME</h2>
+                    <p class="text-gray-400 text-sm leading-relaxed">
+                        В отличие от обычных аксессуаров, часы мануфактуры BTIME с ограниченным тиражом (не более 500 экземпляров в серии) ежегодно растят свою коллекционную стоимость. Оцените прогноз роста выбранной модели.
+                    </p>
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-xs uppercase tracking-wider text-gray-400 mb-2">Выберите модель для расчета:</label>
+                            <select id="investModelSelect" onchange="updateInvestment()" class="w-full glass-panel px-4 py-3 rounded-xl text-white focus:outline-none border border-yellow-500/30">
+                                <option value="24500" class="bg-black">BTIME Royal Tourbillon ($24,500)</option>
+                                <option value="18900" class="bg-black">BTIME Obsidian Skeleton ($18,900)</option>
+                                <option value="12400" class="bg-black">BTIME Chrono Platinum ($12,400)</option>
+                                <option value="9800" class="bg-black">BTIME Vanguard Gold ($9,800)</option>
+                            </select>
+                        </div>
+                        <div class="grid grid-cols-3 gap-4 pt-2">
+                            <div class="glass-card p-4 rounded-xl text-center">
+                                <div class="text-[10px] text-gray-400 uppercase">Через 1 год</div>
+                                <div id="inv1yr" class="text-lg font-bold text-yellow-400 mt-1">--</div>
+                            </div>
+                            <div class="glass-card p-4 rounded-xl text-center">
+                                <div class="text-[10px] text-gray-400 uppercase">Через 3 года</div>
+                                <div id="inv3yr" class="text-lg font-bold text-yellow-400 mt-1">--</div>
+                            </div>
+                            <div class="glass-card p-4 rounded-xl text-center">
+                                <div class="text-[10px] text-gray-400 uppercase">Через 5 лет</div>
+                                <div id="inv5yr" class="text-lg font-bold text-yellow-400 mt-1">--</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="glass-panel p-8 rounded-3xl border border-yellow-500/30 relative">
+                    <div class="absolute -top-3 -right-3 bg-yellow-500 text-black text-[10px] font-bold px-3 py-1 rounded-full uppercase">Index +14.8% Годовых</div>
+                    <h3 class="text-lg font-serif font-bold text-white mb-4"><i class="fa-solid fa-chart-line text-yellow-500 mr-2"></i> График роста стоимости актива</h3>
+                    <div class="h-64 flex items-end justify-between space-x-3 pt-8 border-b border-white/10 px-2" id="investChartBars">
+                        <!-- Столбики графика создаются через JS -->
+                    </div>
+                    <div class="flex justify-between text-xs text-gray-400 mt-3">
+                        <span>Год запуска (2023)</span>
+                        <span>Текущий (2026)</span>
+                        <span>Прогноз (2031)</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Интерактивный Конфигуратор -->
+    <section id="configurator" class="py-24 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center max-w-2xl mx-auto mb-16">
+            <span class="text-yellow-500 uppercase tracking-widest text-xs font-semibold">Мастерская кастомизации</span>
+            <h2 class="text-3xl sm:text-5xl font-serif font-bold mt-2">Создайте свой BTIME</h2>
+            <p class="text-gray-400 text-sm mt-2">Соберите уникальную комбинацию материалов и циферблата</p>
+        </div>
+
+        <div class="glass-panel p-8 md:p-12 rounded-3xl grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+            <div class="text-center relative">
+                <div class="w-64 h-64 sm:w-80 sm:h-80 mx-auto rounded-full border-4 border-yellow-500/40 p-4 flex items-center justify-center relative shadow-2xl pulse-gold" id="configPreviewCircle">
+                    <img id="configImg" src="https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?auto=format&fit=crop&w=600&q=80" alt="Custom Watch" class="w-full h-full object-cover rounded-full">
+                    <div class="absolute inset-0 rounded-full border border-yellow-400/20 pointer-events-none"></div>
+                </div>
+                <div class="mt-6 text-xs text-yellow-500 uppercase tracking-widest" id="configName">Корпус: Розовое золото • Циферблат: Обсидиан</div>
+            </div>
+
+            <div class="space-y-6">
+                <!-- Выбор корпуса -->
+                <div>
+                    <label class="block text-xs uppercase tracking-widest text-gray-400 mb-3 font-semibold">1. Материал корпуса</label>
+                    <div class="grid grid-cols-3 gap-3">
+                        <button onclick="setConfig('case', 'gold', 1500, 'https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?auto=format&fit=crop&w=600&q=80', 'Розовое золото 18К')" class="config-btn-case glass-card p-3 rounded-xl text-xs text-center border-yellow-500 border text-yellow-400 font-medium">Розовое золото</button>
+                        <button onclick="setConfig('case', 'platinum', 2500, 'https://images.unsplash.com/photo-1547996160-81dfa63595aa?auto=format&fit=crop&w=600&q=80', 'Швейцарская платина')" class="config-btn-case glass-card p-3 rounded-xl text-xs text-center hover:border-yellow-500 text-gray-300">Платина</button>
+                        <button onclick="setConfig('case', 'titanium', 800, 'https://images.unsplash.com/photo-1524592094714-0f0654e20314?auto=format&fit=crop&w=600&q=80', 'Титан Aerospace')" class="config-btn-case glass-card p-3 rounded-xl text-xs text-center hover:border-yellow-500 text-gray-300">Титан</button>
+                    </div>
+                </div>
+
+                <!-- Выбор циферблата -->
+                <div>
+                    <label class="block text-xs uppercase tracking-widest text-gray-400 mb-3 font-semibold">2. Цвет циферблата</label>
+                    <div class="grid grid-cols-3 gap-3">
+                        <button onclick="setConfig('dial', 'obsidian', 0, null, 'Обсидиан Черный')" class="config-btn-dial glass-card p-3 rounded-xl text-xs text-center border-yellow-500 border text-yellow-400">Обсидиан</button>
+                        <button onclick="setConfig('dial', 'emerald', 400, null, 'Изумрудный Глубокий')" class="config-btn-dial glass-card p-3 rounded-xl text-xs text-center hover:border-yellow-500 text-gray-300">Изумруд</button>
+                        <button onclick="setConfig('dial', 'champagne', 600, null, 'Шампань Золотой')" class="config-btn-dial glass-card p-3 rounded-xl text-xs text-center hover:border-yellow-500 text-gray-300">Шампань</button>
+                    </div>
+                </div>
+
+                <!-- Выбор ремешка -->
+                <div>
+                    <label class="block text-xs uppercase tracking-widest text-gray-400 mb-3 font-semibold">3. Ремешок</label>
+                    <div class="grid grid-cols-2 gap-3">
+                        <button onclick="setConfig('strap', 'leather', 0, null, 'Кожа Аллигатора')" class="config-btn-strap glass-card p-3 rounded-xl text-xs text-center border-yellow-500 border text-yellow-400">Кожа аллигатора</button>
+                        <button onclick="setConfig('strap', 'bracelet', 800, null, 'Стальной браслет Milanese')" class="config-btn-strap glass-card p-3 rounded-xl text-xs text-center hover:border-yellow-500 text-gray-300">Стальной браслет</button>
+                    </div>
+                </div>
+
+                <div class="flex items-center justify-between pt-6 border-t border-white/10">
+                    <div>
+                        <span class="text-xs text-gray-400 block">Итоговая стоимость:</span>
+                        <span id="configTotalPrice" class="text-2xl font-bold gold-gradient-text">$16,400</span>
+                    </div>
+                    <button onclick="addConfiguredToCart()" class="bg-gradient-to-r from-yellow-500 to-yellow-600 text-black font-bold uppercase tracking-widest text-xs px-6 py-3.5 rounded-full hover:brightness-110 transition shadow-lg shadow-yellow-500/20">
+                        Добавить в корзину
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Секция Мастерства -->
+    <section id="craft" class="py-24 bg-surface border-t border-yellow-500/10">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <span class="text-yellow-500 uppercase tracking-widest text-xs font-semibold">Швейцарские стандарты</span>
+            <h2 class="text-3xl sm:text-4xl font-serif font-bold mt-2 mb-12">Анатомия безупречности</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 text-left">
+                <div class="glass-card p-8 rounded-2xl">
+                    <div class="text-yellow-500 text-2xl mb-4"><i class="fa-solid fa-microscope"></i></div>
+                    <h3 class="text-lg font-serif font-bold text-white mb-2">Микрометрическая точность</h3>
+                    <p class="text-gray-400 text-xs leading-relaxed">Каждая деталь калибра BTIME проходит ручную полировку с допуском не более 1 микрона, гарантируя вековую надежность.</p>
+                </div>
+                <div class="glass-card p-8 rounded-2xl">
+                    <div class="text-yellow-500 text-2xl mb-4"><i class="fa-solid fa-shield-halved"></i></div>
+                    <h3 class="text-lg font-serif font-bold text-white mb-2">Сапфировое стекло</h3>
+                    <p class="text-gray-400 text-xs leading-relaxed">Двойное антибликовое покрытие на синтетическом сапфире высокой прочности (9 по шкале Мооса) защищает от любых царапин.</p>
+                </div>
+                <div class="glass-card p-8 rounded-2xl">
+                    <div class="text-yellow-500 text-2xl mb-4"><i class="fa-solid fa-water"></i></div>
+                    <h3 class="text-lg font-serif font-bold text-white mb-2">Герметичность до 300м</h3>
+                    <p class="text-gray-400 text-xs leading-relaxed">Инновационная система двойных прокладок Screw-lock позволяет часам выдерживать экстремальное давление под водой.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 📜 НОВАЯ ФИШКА №3: Генератор цифрового паспорта (сертификата подлинности) -->
+    <section id="certificate" class="py-24 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <div class="glass-panel p-8 sm:p-12 rounded-3xl border border-yellow-500/40 relative overflow-hidden">
+            <div class="absolute -right-20 -bottom-20 w-64 h-64 bg-yellow-500/10 rounded-full blur-3xl"></div>
+            <span class="text-yellow-500 uppercase tracking-widest text-xs font-semibold">Блокчейн-паспорт BTIME</span>
+            <h2 class="text-2xl sm:text-4xl font-serif font-bold mt-2">Генератор сертификата подлинности</h2>
+            <p class="text-gray-400 text-xs sm:text-sm mt-3 max-w-xl mx-auto">
+                Каждые часы BTIME регистрируются в международном реестре подлинности. Введите серийный номер ваших часов или сгенерируйте демонстрационный паспорт владельца.
+            </p>
+            <div class="mt-8 flex flex-col sm:flex-row items-center justify-center space-y-3 sm:space-y-0 sm:space-x-3">
+                <input type="text" id="certInputNumber" placeholder="Например: BTIME-8842-X" class="glass-panel px-5 py-3.5 rounded-full text-white text-sm focus:outline-none border border-yellow-500/30 w-full sm:w-80 text-center uppercase">
+                <button onclick="generateCertificate()" class="w-full sm:w-auto bg-gradient-to-r from-yellow-500 to-yellow-600 text-black font-bold uppercase tracking-widest text-xs px-8 py-3.5 rounded-full hover:brightness-110 transition shadow-lg shadow-yellow-500/25">
+                    Получить паспорт
+                </button>
+            </div>
+            <div id="certResultBox" class="hidden mt-8 p-6 bg-black/80 rounded-2xl border border-yellow-500/50 text-left relative">
+                <div class="flex justify-between items-start border-b border-white/10 pb-4 mb-4">
+                    <div>
+                        <div class="text-[10px] uppercase text-yellow-500 tracking-widest">Geneve Manufacture Certified</div>
+                        <div id="certModelTitle" class="text-lg font-serif font-bold text-white">BTIME Royal Tourbillon</div>
+                    </div>
+                    <div class="text-right">
+                        <div class="text-[10px] text-gray-400">Статус</div>
+                        <div class="text-xs font-bold text-green-400 uppercase"><i class="fa-solid fa-circle-check"></i> Подлинный актив</div>
+                    </div>
+                </div>
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 text-xs">
+                    <div>
+                        <span class="text-gray-400 block text-[10px]">Владелец:</span>
+                        <span id="certOwner" class="font-semibold text-white">VIP Клиент BTIME</span>
+                    </div>
+                    <div>
+                        <span class="text-gray-400 block text-[10px]">Серийный номер:</span>
+                        <span id="certSerial" class="font-semibold text-yellow-400">BT-9942-CH</span>
+                    </div>
+                    <div>
+                        <span class="text-gray-400 block text-[10px]">Дата выпуска:</span>
+                        <span class="font-semibold text-white">26 Марта 2026</span>
+                    </div>
+                    <div>
+                        <span class="text-gray-400 block text-[10px]">Гарантия:</span>
+                        <span class="font-semibold text-white">Пожизненная</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Корзина (Выдвижная панель) -->
+    <div id="cartDrawer" class="fixed inset-y-0 right-0 z-50 w-full max-w-md bg-[#0a0a0c] border-l border-yellow-500/20 shadow-2xl transform translate-x-full transition-transform duration-300 flex flex-col">
+        <div class="p-6 border-b border-white/10 flex items-center justify-between">
+            <h3 class="text-xl font-serif font-bold text-white flex items-center"><i class="fa-solid fa-bag-shopping text-yellow-500 mr-2"></i> Ваша корзина</h3>
+            <button onclick="closeCart()" class="text-gray-400 hover:text-white text-xl"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <div id="cartItemsList" class="flex-1 overflow-y-auto p-6 space-y-4">
+            <!-- Элементы корзины -->
+        </div>
+        <div class="p-6 border-t border-white/10 bg-black/50 space-y-4">
+            <div class="flex justify-between items-center text-sm">
+                <span class="text-gray-400">Сумма заказа:</span>
+                <span id="cartTotalPrice" class="text-xl font-bold gold-gradient-text">$0</span>
+            </div>
+            <button onclick="checkoutOrder()" class="w-full bg-gradient-to-r from-yellow-500 to-yellow-600 text-black font-bold uppercase tracking-widest text-xs py-4 rounded-full hover:brightness-110 transition shadow-lg text-center">
+                Оформить заказ в сейфе
+            </button>
+        </div>
+    </div>
+
+    <!-- Модальное окно Консьержа -->
+    <div id="conciergeModal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden flex items-center justify-center p-4">
+        <div class="glass-panel p-8 rounded-3xl max-w-lg w-full border border-yellow-500/40 relative">
+            <button onclick="closeConciergeModal()" class="absolute top-6 right-6 text-gray-400 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
+            <div class="text-center mb-6">
+                <span class="text-yellow-500 uppercase tracking-widest text-xs">Персональный сервис</span>
+                <h3 class="text-2xl font-serif font-bold mt-1">Связь с бутик-консьержем</h3>
+                <p class="text-xs text-gray-400 mt-2">Оставьте контакты. Главный часовщик BTIME свяжется с вами через WhatsApp или Telegram для приватной демонстрации.</p>
+            </div>
+            <form onsubmit="submitConcierge(event)" class="space-y-4">
+                <div>
+                    <label class="block text-xs uppercase tracking-wider text-gray-400 mb-1">Ваше имя</label>
+                    <input type="text" required placeholder="Александр" class="w-full glass-panel px-4 py-3 rounded-xl text-white text-sm focus:outline-none border border-yellow-500/30">
+                </div>
+                <div>
+                    <label class="block text-xs uppercase tracking-wider text-gray-400 mb-1">Номер телефона / Мессенджер</label>
+                    <input type="text" required placeholder="+7 (999) 000-00-00" class="w-full glass-panel px-4 py-3 rounded-xl text-white text-sm focus:outline-none border border-yellow-500/30">
+                </div>
+                <button type="submit" class="w-full bg-gradient-to-r from-yellow-500 to-yellow-600 text-black font-bold uppercase tracking-widest text-xs py-4 rounded-full hover:brightness-110 transition shadow-lg">
+                    Запросить звонок консьержа
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Футер -->
+    <footer class="bg-black border-t border-yellow-500/10 py-16 text-gray-400 text-xs">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-4 gap-8 mb-12">
+            <div class="space-y-4">
+                <span class="text-2xl font-serif font-bold tracking-widest gold-gradient-text">BTIME</span>
+                <p class="text-gray-500 leading-relaxed">Швейцарская часовая мануфактура высокого класса. Искусство создавать моменты.</p>
+            </div>
+            <div>
+                <h4 class="text-white font-semibold uppercase tracking-widest mb-4 text-xs">Коллекции</h4>
+                <ul class="space-y-2">
+                    <li><a href="#catalog" class="hover:text-yellow-400 transition">Tourbillon Series</a></li>
+                    <li><a href="#catalog" class="hover:text-yellow-400 transition">Obsidian Skeleton</a></li>
+                    <li><a href="#catalog" class="hover:text-yellow-400 transition">Vanguard Gold</a></li>
+                </ul>
+            </div>
+            <div>
+                <h4 class="text-white font-semibold uppercase tracking-widest mb-4 text-xs">Мануфактура</h4>
+                <ul class="space-y-2">
+                    <li><a href="#craft" class="hover:text-yellow-400 transition">Механизмы</a></li>
+                    <li><a href="#investment" class="hover:text-yellow-400 transition">Инвестиции</a></li>
+                    <li><a href="#certificate" class="hover:text-yellow-400 transition">Проверка подлинности</a></li>
+                </ul>
+            </div>
+            <div>
+                <h4 class="text-white font-semibold uppercase tracking-widest mb-4 text-xs">Бутик в Женеве</h4>
+                <p class="text-gray-500 mb-2">Rue du Rhône 42, 1204 Genève, Switzerland</p>
+                <p class="text-yellow-500 font-semibold">+41 22 819 ival</p>
+            </div>
+        </div>
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 border-t border-white/5 pt-8 text-center text-gray-600">
+            &copy; 2026 BTIME Manufacture. Все права защищены. Создано для презентации бренда.
+        </div>
+    </footer>
+
+    <!-- Скрипты логики -->
+    <script>
+        // Данные 7 моделей часов
+        const products = [
+            { id: 1, name: "BTIME Royal Tourbillon", category: "Tourbillon", priceUSD: 24500, img: "https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=600&q=80", desc: "Корпус: Розовое золото 18К, Механизм с парящим турбийоном." },
+            { id: 2, name: "BTIME Obsidian Skeleton", category: "Skeleton", priceUSD: 18900, img: "https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?auto=format&fit=crop&w=600&q=80", desc: "Сквозной скелетонизированный циферблат, ручной завод." },
+            { id: 3, name: "BTIME Chrono Platinum", category: "Chronograph", priceUSD: 12400, img: "https://images.unsplash.com/photo-1547996160-81dfa63595aa?auto=format&fit=crop&w=600&q=80", desc: "Платиновый корпус, хронограф с колонным колесом." },
+            { id: 4, name: "BTIME Vanguard Gold", category: "Classic", priceUSD: 9800, img: "https://images.unsplash.com/photo-1524592094714-0f0654e20314?auto=format&fit=crop&w=600&q=80", desc: "Элегантный золотой циферблат, ремешок из кожи аллигатора." },
+            { id: 5, name: "BTIME Titanium Diver", category: "Sport", priceUSD: 8500, img: "https://images.unsplash.com/photo-1533139502658-0198f920d8e8?auto=format&fit=crop&w=600&q=80", desc: "Спортивная модель из аэрокосмического титана, водозащита 300м." },
+            { id: 6, name: "BTIME MoonPhase Classic", category: "Complication", priceUSD: 15200, img: "https://images.unsplash.com/photo-1508685096489-7aacd43bd3b1?auto=format&fit=crop&w=600&q=80", desc: "Индикатор лунных фаз, стрелки из вороненой стали." },
+            { id: 7, name: "BTIME Diamond Imperial", category: "Exclusive", priceUSD: 35000, img: "https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?auto=format&fit=crop&w=600&q=80", desc: "Инкрустация бриллиантами классической огранки, эксклюзив." }
+        ];
+
+        let currentCurrency = 'USD';
+        let currencyRates = { USD: 1, EUR: 0.92, RUB: 92.5 };
+        let currencySymbols = { USD: '$', EUR: '€', RUB: '₽' };
+        let cart = [];
+
+        // Рендер каталога
+        function renderProducts() {
+            const grid = document.getElementById('productsGrid');
+            grid.innerHTML = '';
+            products.forEach(p => {
+                let convertedPrice = Math.round(p.priceUSD * currencyRates[currentCurrency]);
+                let priceFormatted = convertedPrice.toLocaleString() + ' ' + currencySymbols[currentCurrency];
+                
+                grid.innerHTML += `
+                    <div class="glass-card rounded-2xl overflow-hidden p-5 flex flex-col justify-between">
+                        <div>
+                            <div class="zoom-container rounded-xl overflow-hidden h-64 mb-4" onmousemove="zoomMoveGeneric(event, this)" onmouseleave="zoomLeaveGeneric(this)">
+                                <img src="${p.img}" alt="${p.name}" class="w-full h-full object-cover">
+                                <div class="zoom-lens"></div>
+                            </div>
+                            <span class="text-[10px] text-yellow-500 uppercase tracking-widest">${p.category}</span>
+                            <h3 class="text-lg font-serif font-bold text-white mt-1">${p.name}</h3>
+                            <p class="text-gray-400 text-xs mt-2 leading-relaxed">${p.desc}</p>
+                        </div>
+                        <div class="mt-6 pt-4 border-t border-white/10 flex items-center justify-between">
+                            <span class="text-xl font-bold gold-gradient-text">${priceFormatted}</span>
+                            <button onclick="addToCart(${p.id})" class="bg-yellow-500/10 border border-yellow-500/30 text-yellow-400 hover:bg-yellow-500 hover:text-black transition px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wider">
+                                В корзину
+                            </button>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        // Конвертация валют
+        document.getElementById('currencySelector').addEventListener('change', (e) => {
+            currentCurrency = e.target.value;
+            renderProducts();
+            updateConfigPrices();
+            updateGlobalPrices();
+        });
+
+        function updateGlobalPrices() {
+            document.querySelectorAll('.price-tag').forEach(el => {
+                let usdVal = parseInt(el.getAttribute('data-usd'));
+                let conv = Math.round(usdVal * currencyRates[currentCurrency]);
+                el.innerText = conv.toLocaleString() + ' ' + currencySymbols[currentCurrency];
+            });
+        }
+
+        // 🔍 Функция Лупы (Zoom) для Hero и карточек
+        function zoomMove(e) {
+            const container = document.getElementById('heroZoomContainer');
+            const img = document.getElementById('heroZoomImg');
+            const lens = document.getElementById('heroZoomLens');
+            
+            lens.style.display = 'block';
+            let rect = container.getBoundingClientRect();
+            let x = e.clientX - rect.left;
+            let y = e.clientY - rect.top;
+
+            if (x < 0 || x > container.offsetWidth || y < 0 || y > container.offsetHeight) {
+                lens.style.display = 'none';
+                return;
+            }
+
+            let lensWidth = lens.offsetWidth;
+            let lensHeight = lens.offsetHeight;
+
+            let posX = x - lensWidth / 2;
+            let posY = y - lensHeight / 2;
+
+            if (posX < 0) posX = 0;
+            if (posX > container.offsetWidth - lensWidth) posX = container.offsetWidth - lensWidth;
+            if (posY < 0) posY = 0;
+            if (posY > container.offsetHeight - lensHeight) posY = container.offsetHeight - lensHeight;
+
+            lens.style.left = posX + 'px';
+            lens.style.top = posY + 'px';
+
+            let fx = img.naturalWidth / container.offsetWidth;
+            let fy = img.naturalHeight / container.offsetHeight;
+
+            lens.style.backgroundImage = `url('${img.src}')`;
+            lens.style.backgroundSize = `${container.offsetWidth * 2.5}px ${container.offsetHeight * 2.5}px`;
+            lens.style.backgroundPosition = `-${x * 2.5 - lensWidth / 2}px -${y * 2.5 - lensHeight / 2}px`;
+        }
+
+        function zoomLeave() {
+            document.getElementById('heroZoomLens').style.display = 'none';
+        }
+
+        function zoomMoveGeneric(e, container) {
+            const img = container.querySelector('img');
+            const lens = container.querySelector('.zoom-lens');
+            lens.style.display = 'block';
+            let rect = container.getBoundingClientRect();
+            let x = e.clientX - rect.left;
+            let y = e.clientY - rect.top;
+
+            let lensWidth = lens.offsetWidth;
+            let lensHeight = lens.offsetHeight;
+
+            let posX = x - lensWidth / 2;
+            let posY = y - lensHeight / 2;
+
+            if (posX < 0) posX = 0;
+            if (posX > container.offsetWidth - lensWidth) posX = container.offsetWidth - lensWidth;
+            if (posY < 0) posY = 0;
+            if (posY > container.offsetHeight - lensHeight) posY = container.offsetHeight - lensHeight;
+
+            lens.style.left = posX + 'px';
+            lens.style.top = posY + 'px';
+
+            lens.style.backgroundImage = `url('${img.src}')`;
+            lens.style.backgroundSize = `${container.offsetWidth * 2.5}px ${container.offsetHeight * 2.5}px`;
+            lens.style.backgroundPosition = `-${x * 2.5 - lensWidth / 2}px -${y * 2.5 - lensHeight / 2}px`;
+        }
+
+        function zoomLeaveGeneric(container) {
+            container.querySelector('.zoom-lens').style.display = 'none';
+        }
+
+        // ⏳ Логика Калькулятора Инвестиций
+        function updateInvestment() {
+            let val = parseInt(document.getElementById('investModelSelect').value);
+            let y1 = Math.round(val * 1.12);
+            let y3 = Math.round(val * 1.45);
+            let y5 = Math.round(val * 1.95);
+
+            document.getElementById('inv1yr').innerText = '$' + y1.toLocaleString();
+            document.getElementById('inv3yr').innerText = '$' + y3.toLocaleString();
+            document.getElementById('inv5yr').innerText = '$' + y5.toLocaleString();
+
+            // Генерация столбиков графика
+            let barsContainer = document.getElementById('investChartBars');
+            barsContainer.innerHTML = `
+                <div class="w-1/4 bg-yellow-600/30 rounded-t-lg flex items-end justify-center pb-2 text-[10px] text-yellow-400 font-bold" style="height: 40%">$${val.toLocaleString()}</div>
+                <div class="w-1/4 bg-yellow-600/60 rounded-t-lg flex items-end justify-center pb-2 text-[10px] text-yellow-400 font-bold" style="height: 65%">$${y1.toLocaleString()}</div>
+                <div class="w-1/4 bg-yellow-500 rounded-t-lg flex items-end justify-center pb-2 text-[10px] text-black font-bold shadow-lg shadow-yellow-500/50" style="height: 100%">$${y5.toLocaleString()}</div>
+            `;
+        }
+
+        // Конфигуратор часов
+        let configState = { caseName: 'Розовое золото 18К', casePrice: 1500, dialName: 'Обсидиан Черный', dialPrice: 0, strapName: 'Кожа аллигатора', strapPrice: 0, basePrice: 12000, img: 'https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?auto=format&fit=crop&w=600&q=80' };
+
+        function setConfig(type, name, price, img, title) {
+            if (type === 'case') {
+                configState.caseName = title;
+                configState.casePrice = price;
+                if(img) configState.img = img;
+                document.querySelectorAll('.config-btn-case').forEach(b => { b.classList.remove('border-yellow-500', 'text-yellow-400'); b.classList.add('text-gray-300'); });
+            } else if (type === 'dial') {
+                configState.dialName = title;
+                configState.dialPrice = price;
+                document.querySelectorAll('.config-btn-dial').forEach(b => { b.classList.remove('border-yellow-500', 'text-yellow-400'); b.classList.add('text-gray-300'); });
+            } else if (type === 'strap') {
+                configState.strapName = title;
+                configState.strapPrice = price;
+                document.querySelectorAll('.config-btn-strap').forEach(b => { b.classList.remove('border-yellow-500', 'text-yellow-400'); b.classList.add('text-gray-300'); });
+            }
+            event.currentTarget.classList.add('border-yellow-500', 'text-yellow-400');
+            event.currentTarget.classList.remove('text-gray-300');
+
+            document.getElementById('configImg').src = configState.img;
+            document.getElementById('configName').innerText = `Корпус: ${configState.caseName} • Циферблат: ${configState.dialName}`;
+            updateConfigPrices();
+        }
+
+        function updateConfigPrices() {
+            let totalUSD = configState.basePrice + configState.casePrice + configState.dialPrice + configState.strapPrice;
+            let conv = Math.round(totalUSD * currencyRates[currentCurrency]);
+            document.getElementById('configTotalPrice').innerText = conv.toLocaleString() + ' ' + currencySymbols[currentCurrency];
+        }
+
+        function addConfiguredToCart() {
+            let totalUSD = configState.basePrice + configState.casePrice + configState.dialPrice + configState.strapPrice;
+            cart.push({
+                name: `Custom BTIME (${configState.caseName})`,
+                priceUSD: totalUSD,
+                img: configState.img
+            });
+            updateCartUI();
+            openCart();
+        }
+
+        function addToCart(id) {
+            let p = products.find(x => x.id === id);
+            cart.push(p);
+            updateCartUI();
+            openCart();
+        }
+
+        function updateCartUI() {
+            const list = document.getElementById('cartItemsList');
+            const badge = document.getElementById('cartBadge');
+            badge.innerText = cart.length;
+            if (cart.length > 0) {
+                badge.classList.remove('scale-0');
+            } else {
+                badge.classList.add('scale-0');
+            }
+
+            list.innerHTML = '';
+            let totalUSD = 0;
+            cart.forEach((item, index) => {
+                totalUSD += item.priceUSD;
+                let conv = Math.round(item.priceUSD * currencyRates[currentCurrency]);
+                list.innerHTML += `
+                    <div class="glass-panel p-4 rounded-xl flex items-center justify-between">
+                        <div class="flex items-center space-x-3">
+                            <img src="${item.img}" class="w-12 h-12 object-cover rounded-lg">
+                            <div>
+                                <h4 class="text-sm font-bold text-white">${item.name}</h4>
+                                <span class="text-xs gold-gradient-text">${conv.toLocaleString()} ${currencySymbols[currentCurrency]}</span>
+                            </div>
+                        </div>
+                        <button onclick="removeFromCart(${index})" class="text-gray-500 hover:text-red-400"><i class="fa-solid fa-trash text-xs"></i></button>
+                    </div>
+                `;
+            });
+            let totalConv = Math.round(totalUSD * currencyRates[currentCurrency]);
+            document.getElementById('cartTotalPrice').innerText = totalConv.toLocaleString() + ' ' + currencySymbols[currentCurrency];
+        }
+
+        function removeFromCart(index) {
+            cart.splice(index, 1);
+            updateCartUI();
+        }
+
+        function openCart() {
+            document.getElementById('cartDrawer').classList.remove('translate-x-full');
+        }
+        function closeCart() {
+            document.getElementById('cartDrawer').classList.add('translate-x-full');
+        }
+
+        function checkoutOrder() {
+            if(cart.length === 0) {
+                alert('Корзина пуста.');
+                return;
+            }
+            alert('Заказ успешно сформирован! Персональный консьерж BTIME свяжется с вами для отправки часов в бронированном сейфе.');
+            cart = [];
+            updateCartUI();
+            closeCart();
+        }
+
+        // 📜 Генератор сертификата
+        function generateCertificate() {
+            let inputVal = document.getElementById('certInputNumber').value.trim();
+            if(!inputVal) {
+                inputVal = "BTIME-" + Math.floor(1000 + Math.random() * 9000) + "-CH";
+            }
+            document.getElementById('certSerial').innerText = inputVal.toUpperCase();
+            document.getElementById('certResultBox').classList.remove('hidden');
+        }
+
+        // 🎧 Аудио тиканье (ASMR)
+        const soundBtn = document.getElementById('soundToggleBtn');
+        const tickAudio = document.getElementById('tickAudio');
+        const soundIcon = document.getElementById('soundIcon');
+        let isAudioPlaying = false;
+
+        soundBtn.addEventListener('click', () => {
+            if(!isAudioPlaying) {
+                tickAudio.play().catch(() => {});
+                isAudioPlaying = true;
+                soundIcon.className = "fa-solid fa-volume-high text-yellow-400 text-sm";
+                soundBtn.classList.add('text-yellow-400');
+            } else {
+                tickAudio.pause();
+                isAudioPlaying = false;
+                soundIcon.className = "fa-solid fa-volume-xmark text-sm";
+                soundBtn.classList.remove('text-yellow-400');
+            }
+        });
+
+        // Модальное окно консьержа
+        function openConciergeModal() { document.getElementById('conciergeModal').classList.remove('hidden'); }
+        function closeConciergeModal() { document.getElementById('conciergeModal').classList.add('hidden'); }
+        function submitConcierge(e) {
+            e.preventDefault();
+            alert('Спасибо! Заявка принята. Часовщик свяжется с вами в течение 15 минут.');
+            closeConciergeModal();
+        }
+
+        // Инициализация при загрузке
+        window.onload = () => {
+            renderProducts();
+            updateInvestment();
+        };
+    </script>
+</body>
+</html>
