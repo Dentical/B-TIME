@@ -1,10 +1,13 @@
 <!DOCTYPE html>
-<html lang="ru" class="dark">
+<html lang="ru" class="dark scroll-smooth">
 <head>
-    <link rel="icon" type="image/jpeg" href="https://instagram.fdyu6-1.fna.fbcdn.net/v/t51.82787-15/827507947_18121809400746492_1545434988448523099_n.jpg?stp=dst-jpg_e35_tt6&_nc_cat=104&_nc_map=urlgen_bucketless&ig_cache_key=Mzk5ODQ0MzY3MjEyNzI2Mzc4NA%3D%3D.3-ccb7-5&ccb=7-5&_nc_sid=58cdad&efg=eyJ2ZW5jb2RlX3RhZyI6IkZFRUQueHBpZHMuMTAyNC5zZHIucmVndWxhcl9waG90by5DMyJ9&_nc_ohc=g_62CNLUxa0Q7kNvwGGLBfy&_nc_oc=Adp4cc9VDBC7fI4V2y0cQjxG002bZKd7ap7tc4iUwP2xPVFzeqjeJowdO5cPXDI05TM&_nc_ad=z-m&_nc_cid=1495&_nc_zt=23&_nc_ht=instagram.fdyu6-1.fna&_nc_gid=amzBtz-hCrnzrp-IZp4j5Q&_nc_ss=7a22e&oh=00_AQNP-WlN1UXyXcI9sTw1cZHOMJiPsGAYwNWgEyOJmRg-7g&oe=6AC468DA">
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BTIME — Бутик Высокого Часового Искусства | Душанбе, City Mall</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title id="siteTitle">BTIME — Бутик Высокого Часового Искусства | Душанбе, City Mall</title>
+    
+    <!-- Иконка сайта (Favicon) -->
+    <link rel="icon" type="image/jpeg" href="https://instagram.fdyu6-1.fna.fbcdn.net/v/t51.82787-15/827507947_18121809400746492_1545434988448523099_n.jpg?stp=dst-jpg_e35_tt6&_nc_cat=104&_nc_map=urlgen_bucketless&ig_cache_key=Mzk5ODQ0MzY3MjEyNzI2Mzc4NA%3D%3D.3-ccb7-5&ccb=7-5&_nc_sid=58cdad&efg=eyJ2ZW5jb2RlX3RhZyI6IkZFRUQueHBpZHMuMTAyNC5zZHIucmVndWxhcl9waG90by5DMyJ9&_nc_ohc=g_62CNLUxa0Q7kNvwGGLBfy&_nc_oc=Adp4cc9VDBC7fI4V2y0cQjxG002bZKd7ap7tc4iUwP2xPVFzeqjeJowdO5cPXDI05TM&_nc_ad=z-m&_nc_cid=1495&_nc_zt=23&_nc_ht=instagram.fdyu6-1.fna&_nc_gid=amzBtz-hCrnzrp-IZp4j5Q&_nc_ss=7a22e&oh=00_AQNP-WlN1UXyXcI9sTw1cZHOMJiPsGAYwNWgEyOJmRg-7g&oe=6AC468DA">
+
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -13,13 +16,7 @@
             theme: {
                 extend: {
                     colors: {
-                        gold: {
-                            400: '#FACC15',
-                            500: '#EAB308',
-                            600: '#CA8A04',
-                            accent: '#D4AF37',
-                            light: '#F3E5AB'
-                        },
+                        gold: { 400: '#FACC15', 500: '#EAB308', 600: '#CA8A04', accent: '#D4AF37', light: '#F3E5AB' },
                         obsidian: '#0a0a0a',
                         surface: '#121212',
                         cardbg: '#18181b'
@@ -32,15 +29,20 @@
             }
         }
     </script>
-    <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
-    <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
-        body { font-family: 'Montserrat', sans-serif; background-color: #050505; color: #f3f4f6; overflow-x: hidden; }
+        html, body {
+            max-width: 100vw;
+            overflow-x: hidden;
+            font-family: 'Montserrat', sans-serif;
+            background-color: #050505;
+            color: #f3f4f6;
+            -webkit-text-size-adjust: 100%;
+            -webkit-tap-highlight-color: transparent;
+        }
         .font-serif { font-family: 'Playfair Display', serif; }
-        
         .glass-panel {
             background: rgba(18, 18, 20, 0.75);
             backdrop-filter: blur(16px);
@@ -68,9 +70,6 @@
             overflow: hidden;
             cursor: zoom-in;
         }
-        .zoom-container img {
-            transition: transform 0.3s ease;
-        }
         .zoom-lens {
             position: absolute;
             border: 2px solid #D4AF37;
@@ -87,27 +86,29 @@
             0%, 100% { box-shadow: 0 0 0 0 rgba(212, 175, 55, 0.4); }
             50% { box-shadow: 0 0 0 15px rgba(212, 175, 55, 0); }
         }
-        .pulse-gold {
-            animation: pulse-gold 2.5s infinite;
-        }
+        .pulse-gold { animation: pulse-gold 2.5s infinite; }
     </style>
 </head>
-<body class="bg-[#050505] text-gray-100 selection:bg-yellow-500 selection:text-black">
+<body class="selection:bg-yellow-500 selection:text-black">
 
     <!-- Верхняя панель -->
-    <div class="bg-black border-b border-yellow-500/20 text-xs py-2 px-4 text-center tracking-widest uppercase text-yellow-500/80 flex justify-between items-center max-w-7xl mx-auto">
-        <span class="hidden md:inline"><i class="fa-solid fa-location-dot mr-1"></i> Душанбе, City Mall, 1 этаж</span>
-        <span>Официальная гарантия • Доставка по всему Таджикистану</span>
+    <div class="bg-black border-b border-yellow-500/20 text-[11px] sm:text-xs py-2 px-4 text-center tracking-widest uppercase text-yellow-500/80 flex flex-col sm:flex-row justify-between items-center max-w-7xl mx-auto gap-2">
+        <span><i class="fa-solid fa-location-dot mr-1"></i> <span data-i18n="top_address">Душанбе, City Mall, 1 этаж</span></span>
         <div class="flex items-center space-x-4">
+            <div class="flex items-center space-x-1">
+                <i class="fa-solid fa-globe text-yellow-500"></i>
+                <select id="langSelector" onchange="changeLanguage()" class="bg-transparent text-yellow-400 font-semibold focus:outline-none cursor-pointer">
+                    <option value="ru" class="bg-black" selected>Русский</option>
+                    <option value="en" class="bg-black">English</option>
+                    <option value="tj" class="bg-black">Тоҷикӣ</option>
+                </select>
+            </div>
             <select id="currencySelector" onchange="changeCurrency()" class="bg-transparent text-yellow-400 font-semibold focus:outline-none cursor-pointer">
                 <option value="TJS" class="bg-black" selected>ЅМ Сомони (TJS)</option>
                 <option value="USD" class="bg-black">$ USD</option>
                 <option value="EUR" class="bg-black">€ EUR</option>
                 <option value="RUB" class="bg-black">₽ RUB</option>
             </select>
-            <button onclick="toggleSound()" class="text-gray-400 hover:text-yellow-400 transition" title="Включить тиканье механизма">
-                <i class="fa-solid fa-volume-xmark text-sm" id="soundIcon"></i> <span class="hidden sm:inline">Звук</span>
-            </button>
         </div>
     </div>
 
@@ -120,51 +121,46 @@
             </div>
             
             <nav class="hidden md:flex items-center space-x-8 text-sm tracking-wider font-medium">
-                <a href="#catalog" onclick="switchView('home')" class="hover:text-yellow-400 transition">Коллекции</a>
-                <a href="#configurator" onclick="switchView('home')" class="hover:text-yellow-400 transition">Конфигуратор</a>
-                <a href="#investment" onclick="switchView('home')" class="hover:text-yellow-400 transition">Инвестиции</a>
-                <a href="#certificate" onclick="switchView('home')" class="hover:text-yellow-400 transition">Паспорт</a>
+                <a href="#catalog" onclick="switchView('home')" class="hover:text-yellow-400 transition" data-i18n="nav_collections">Коллекции</a>
+                <a href="#configurator" onclick="switchView('home')" class="hover:text-yellow-400 transition" data-i18n="nav_config">Конфигуратор</a>
+                <a href="#investment" onclick="switchView('home')" class="hover:text-yellow-400 transition" data-i18n="nav_invest">Инвестиции</a>
+                <a href="#certificate" onclick="switchView('home')" class="hover:text-yellow-400 transition" data-i18n="nav_passport">Паспорт</a>
             </nav>
 
-            <div class="flex items-center space-x-5">
+            <div class="flex items-center space-x-4">
                 <button onclick="openCart()" class="relative text-gray-300 hover:text-yellow-400 transition p-2">
                     <i class="fa-solid fa-bag-shopping text-xl"></i>
                     <span id="cartBadge" class="absolute top-0 right-0 bg-yellow-500 text-black text-[10px] font-bold w-5 h-5 rounded-full flex items-center justify-center scale-0 transition-transform">0</span>
                 </button>
-                <button onclick="openConciergeModal()" class="hidden sm:inline-flex items-center space-x-2 bg-gradient-to-r from-yellow-600 to-yellow-500 text-black font-semibold text-xs tracking-wider uppercase px-5 py-2.5 rounded-full hover:brightness-110 transition shadow-lg shadow-yellow-600/20">
+                <button onclick="openConciergeModal()" class="hidden sm:inline-flex items-center space-x-2 bg-gradient-to-r from-yellow-600 to-yellow-500 text-black font-semibold text-xs tracking-wider uppercase px-4 py-2.5 rounded-full hover:brightness-110 transition shadow-lg shadow-yellow-600/20">
                     <i class="fa-solid fa-headset"></i>
-                    <span>Консьерж</span>
+                    <span data-i18n="nav_concierge">Консьерж</span>
                 </button>
             </div>
         </div>
     </header>
 
-    <audio id="tickAudio" loop>
-        <source src="https://assets.mixkit.co/active_storage/sfx/2571/2571-preview.mp3" type="audio/mpeg">
-    </audio>
-
-    <!-- КОНТЕЙНЕР ГЛАВНОЙ СТРАНИЦЫ -->
+    <!-- ГЛАВНАЯ СТРАНИЦА -->
     <div id="homeView">
-        <!-- Hero Секция -->
         <section class="relative min-h-[85vh] flex items-center justify-center overflow-hidden px-4 py-16">
             <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-yellow-900/10 via-black to-black z-0"></div>
             <div class="max-w-7xl mx-auto w-full grid grid-cols-1 lg:grid-cols-2 gap-12 items-center relative z-10">
                 <div class="space-y-6 text-center lg:text-left">
                     <div class="inline-flex items-center space-x-2 bg-yellow-500/10 border border-yellow-500/30 px-3 py-1 rounded-full text-xs text-yellow-400 tracking-widest uppercase">
                         <i class="fa-solid fa-star text-[10px]"></i>
-                        <span>Флагманский бутик в Душанбе</span>
+                        <span data-i18n="hero_badge">Флагманский бутик в Душанбе</span>
                     </div>
                     <h1 class="text-4xl sm:text-6xl font-serif font-bold leading-tight">
-                        Время, неподвластное <span class="gold-gradient-text">эпохам.</span>
+                        <span data-i18n="hero_title_1">Время, неподвластное</span> <span class="gold-gradient-text" data-i18n="hero_title_2">эпохам.</span>
                     </h1>
-                    <p class="text-gray-400 text-base sm:text-lg max-w-xl mx-auto lg:mx-0 font-light">
+                    <p class="text-gray-400 text-base sm:text-lg max-w-xl mx-auto lg:mx-0 font-light" data-i18n="hero_desc">
                         Эксклюзивный представитель швейцарской микромеханики в Таджикистане. Ждем вас в City Mall.
                     </p>
                     <div class="flex flex-col sm:flex-row items-center justify-center lg:justify-start space-y-4 sm:space-y-0 sm:space-x-4 pt-4">
-                        <a href="#catalog" class="w-full sm:w-auto bg-gradient-to-r from-yellow-500 to-yellow-600 text-black font-bold uppercase tracking-widest text-xs px-8 py-4 rounded-full hover:brightness-110 transition text-center shadow-xl shadow-yellow-500/20">
+                        <a href="#catalog" class="w-full sm:w-auto bg-gradient-to-r from-yellow-500 to-yellow-600 text-black font-bold uppercase tracking-widest text-xs px-8 py-4 rounded-full hover:brightness-110 transition text-center shadow-xl shadow-yellow-500/20" data-i18n="hero_btn_catalog">
                             Выбрать модель
                         </a>
-                        <a href="#configurator" class="w-full sm:w-auto glass-panel text-white font-semibold uppercase tracking-widest text-xs px-8 py-4 rounded-full hover:border-yellow-400 transition text-center">
+                        <a href="#configurator" class="w-full sm:w-auto glass-panel text-white font-semibold uppercase tracking-widest text-xs px-8 py-4 rounded-full hover:border-yellow-400 transition text-center" data-i18n="hero_btn_config">
                             Собрать свой стиль
                         </a>
                     </div>
@@ -173,17 +169,17 @@
                 <div class="relative flex justify-center">
                     <div class="absolute -inset-4 bg-gradient-to-r from-yellow-600/20 to-yellow-400/10 rounded-full blur-3xl opacity-70"></div>
                     <div class="glass-panel p-6 rounded-3xl relative border border-yellow-500/30 max-w-md w-full text-center cursor-pointer" onclick="openProductDetail(1)">
-                        <div class="absolute top-4 right-4 bg-black/60 backdrop-blur border border-yellow-500/30 px-3 py-1 rounded-full text-[10px] text-yellow-400 uppercase tracking-widest">
+                        <div class="absolute top-4 right-4 bg-black/60 backdrop-blur border border-yellow-500/30 px-3 py-1 rounded-full text-[10px] text-yellow-400 uppercase tracking-widest" data-i18n="hit_badge">
                             Хит продаж
                         </div>
-                        <div class="zoom-container my-6 rounded-2xl overflow-hidden inline-block" id="heroZoomContainer" onmousemove="zoomMove(event)" onmouseleave="zoomLeave()">
-                            <img id="heroZoomImg" src="https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=800&q=80" alt="BTIME Masterpiece" class="w-full h-80 object-cover rounded-2xl">
-                            <div id="heroZoomLens" class="zoom-lens"></div>
+                        <div class="zoom-container my-6 rounded-2xl overflow-hidden inline-block" onmousemove="zoomMove(event)" onmouseleave="zoomLeave()">
+                            <img src="https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=800&q=80" alt="BTIME Masterpiece" class="w-full h-72 sm:h-80 object-cover rounded-2xl">
+                            <div class="zoom-lens"></div>
                         </div>
                         <h3 class="text-xl font-serif font-bold text-white">BTIME Royal Tourbillon</h3>
-                        <p class="text-xs text-yellow-500 tracking-widest uppercase mt-1">Ручной завод • Запас хода 72 часа</p>
+                        <p class="text-xs text-yellow-500 tracking-widest uppercase mt-1" data-i18n="m1_sub">Ручной завод • Запас хода 72 часа</p>
                         <div class="mt-4 flex items-center justify-between border-t border-white/10 pt-4">
-                            <span class="text-gray-400 text-sm">Стоимость:</span>
+                            <span class="text-gray-400 text-sm" data-i18n="price_label">Стоимость:</span>
                             <span class="text-xl font-bold gold-gradient-text price-tag" data-usd="24500">269,500 ЅМ</span>
                         </div>
                     </div>
@@ -191,31 +187,28 @@
             </div>
         </section>
 
-        <!-- Каталог часов -->
+        <!-- Каталог -->
         <section id="catalog" class="py-24 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="text-center max-w-2xl mx-auto mb-16">
-                <span class="text-yellow-500 uppercase tracking-widest text-xs font-semibold">Коллекция мануфактуры</span>
-                <h2 class="text-3xl sm:text-5xl font-serif font-bold mt-2">Шедевры часового искусства</h2>
+                <span class="text-yellow-500 uppercase tracking-widest text-xs font-semibold" data-i18n="cat_subtitle">Коллекция мануфактуры</span>
+                <h2 class="text-3xl sm:text-5xl font-serif font-bold mt-2" data-i18n="cat_title">Шедевры часового искусства</h2>
                 <div class="w-16 h-0.5 bg-yellow-500 mx-auto mt-4"></div>
-                <p class="text-gray-400 text-xs mt-3">Нажмите на любую модель, чтобы открыть её эксклюзивный паспорт и детальный обзор</p>
+                <p class="text-gray-400 text-xs mt-3" data-i18n="cat_hint">Нажмите на любую модель, чтобы открыть её эксклюзивный паспорт и детальный обзор</p>
             </div>
-
             <div id="productsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"></div>
         </section>
 
-        <!-- Инвестиционный трекер -->
+        <!-- Инвестиции -->
         <section id="investment" class="py-20 bg-[#0c0c0e] border-y border-yellow-500/10">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
                     <div class="space-y-6">
-                        <span class="text-yellow-500 uppercase tracking-widest text-xs font-semibold">Ликвидность и актив</span>
-                        <h2 class="text-3xl sm:text-4xl font-serif font-bold">Инвестиционный трекер BTIME</h2>
-                        <p class="text-gray-400 text-sm leading-relaxed">
-                            Ограниченный тираж (не более 500 экземпляров в серии) ежегодно увеличивает коллекционную стоимость часов.
-                        </p>
+                        <span class="text-yellow-500 uppercase tracking-widest text-xs font-semibold" data-i18n="inv_subtitle">Ликвидность и актив</span>
+                        <h2 class="text-3xl sm:text-4xl font-serif font-bold" data-i18n="inv_title">Инвестиционный трекер BTIME</h2>
+                        <p class="text-gray-400 text-sm leading-relaxed" data-i18n="inv_desc">Ограниченный тираж (не более 500 экземпляров в серии) ежегодно увеличивает коллекционную стоимость часов.</p>
                         <div class="space-y-4">
                             <div>
-                                <label class="block text-xs uppercase tracking-wider text-gray-400 mb-2">Выберите модель:</label>
+                                <label class="block text-xs uppercase tracking-wider text-gray-400 mb-2" data-i18n="inv_select">Выберите модель:</label>
                                 <select id="investModelSelect" onchange="updateInvestment()" class="w-full glass-panel px-4 py-3 rounded-xl text-white focus:outline-none border border-yellow-500/30">
                                     <option value="24500" class="bg-black">BTIME Royal Tourbillon ($24,500)</option>
                                     <option value="18900" class="bg-black">BTIME Obsidian Skeleton ($18,900)</option>
@@ -225,28 +218,28 @@
                             </div>
                             <div class="grid grid-cols-3 gap-4 pt-2">
                                 <div class="glass-card p-4 rounded-xl text-center">
-                                    <div class="text-[10px] text-gray-400 uppercase">Через 1 год</div>
-                                    <div id="inv1yr" class="text-lg font-bold text-yellow-400 mt-1">--</div>
+                                    <div class="text-[10px] text-gray-400 uppercase" data-i18n="inv_y1">Через 1 год</div>
+                                    <div id="inv1yr" class="text-sm sm:text-lg font-bold text-yellow-400 mt-1">--</div>
                                 </div>
                                 <div class="glass-card p-4 rounded-xl text-center">
-                                    <div class="text-[10px] text-gray-400 uppercase">Через 3 года</div>
-                                    <div id="inv3yr" class="text-lg font-bold text-yellow-400 mt-1">--</div>
+                                    <div class="text-[10px] text-gray-400 uppercase" data-i18n="inv_y3">Через 3 года</div>
+                                    <div id="inv3yr" class="text-sm sm:text-lg font-bold text-yellow-400 mt-1">--</div>
                                 </div>
                                 <div class="glass-card p-4 rounded-xl text-center">
-                                    <div class="text-[10px] text-gray-400 uppercase">Через 5 лет</div>
-                                    <div id="inv5yr" class="text-lg font-bold text-yellow-400 mt-1">--</div>
+                                    <div class="text-[10px] text-gray-400 uppercase" data-i18n="inv_y5">Через 5 лет</div>
+                                    <div id="inv5yr" class="text-sm sm:text-lg font-bold text-yellow-400 mt-1">--</div>
                                 </div>
                             </div>
                         </div>
                     </div>
                     <div class="glass-panel p-8 rounded-3xl border border-yellow-500/30 relative">
-                        <div class="absolute -top-3 -right-3 bg-yellow-500 text-black text-[10px] font-bold px-3 py-1 rounded-full uppercase">Index +14.8% Годовых</div>
-                        <h3 class="text-lg font-serif font-bold text-white mb-4"><i class="fa-solid fa-chart-line text-yellow-500 mr-2"></i> График роста стоимости</h3>
-                        <div class="h-64 flex items-end justify-between space-x-3 pt-8 border-b border-white/10 px-2" id="investChartBars"></div>
-                        <div class="flex justify-between text-xs text-gray-400 mt-3">
+                        <div class="absolute -top-3 -right-3 bg-yellow-500 text-black text-[10px] font-bold px-3 py-1 rounded-full uppercase" data-i18n="inv_badge">Index +14.8% Годовых</div>
+                        <h3 class="text-lg font-serif font-bold text-white mb-4"><i class="fa-solid fa-chart-line text-yellow-500 mr-2"></i> <span data-i18n="inv_chart">График роста стоимости</span></h3>
+                        <div class="h-64 flex items-end justify-between space-x-2 sm:space-x-3 pt-8 border-b border-white/10 px-2" id="investChartBars"></div>
+                        <div class="flex justify-between text-[10px] sm:text-xs text-gray-400 mt-3">
                             <span>2023</span>
-                            <span>2026 (Текущий)</span>
-                            <span>2031 (Прогноз)</span>
+                            <span data-i18n="inv_cur">2026 (Текущий)</span>
+                            <span data-i18n="inv_fore">2031 (Прогноз)</span>
                         </div>
                     </div>
                 </div>
@@ -256,52 +249,47 @@
         <!-- Конфигуратор -->
         <section id="configurator" class="py-24 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="text-center max-w-2xl mx-auto mb-16">
-                <span class="text-yellow-500 uppercase tracking-widest text-xs font-semibold">Мастерская кастомизации</span>
-                <h2 class="text-3xl sm:text-5xl font-serif font-bold mt-2">Создайте свой BTIME</h2>
-                <p class="text-gray-400 text-sm mt-2">Соберите уникальную комбинацию материалов и циферблата</p>
+                <span class="text-yellow-500 uppercase tracking-widest text-xs font-semibold" data-i18n="conf_sub">Мастерская кастомизации</span>
+                <h2 class="text-3xl sm:text-5xl font-serif font-bold mt-2" data-i18n="conf_title">Создайте свой BTIME</h2>
+                <p class="text-gray-400 text-sm mt-2" data-i18n="conf_desc">Соберите уникальную комбинацию материалов и циферблата</p>
             </div>
-
-            <div class="glass-panel p-8 md:p-12 rounded-3xl grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+            <div class="glass-panel p-6 md:p-12 rounded-3xl grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
                 <div class="text-center relative">
-                    <div class="w-64 h-64 sm:w-80 sm:h-80 mx-auto rounded-full border-4 border-yellow-500/40 p-4 flex items-center justify-center relative shadow-2xl pulse-gold" id="configPreviewCircle">
+                    <div class="w-64 h-64 sm:w-80 sm:h-80 mx-auto rounded-full border-4 border-yellow-500/40 p-4 flex items-center justify-center relative shadow-2xl pulse-gold">
                         <img id="configImg" src="https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?auto=format&fit=crop&w=600&q=80" alt="Custom Watch" class="w-full h-full object-cover rounded-full">
                     </div>
-                    <div class="mt-6 text-xs text-yellow-500 uppercase tracking-widest" id="configName">Корпус: Розовое золото • Циферблат: Обсидиан</div>
+                    <div class="mt-6 text-xs text-yellow-500 uppercase tracking-widest px-2" id="configName">Корпус: Розовое золото • Циферблат: Обсидиан</div>
                 </div>
-
                 <div class="space-y-6">
                     <div>
-                        <label class="block text-xs uppercase tracking-widest text-gray-400 mb-3 font-semibold">1. Материал корпуса</label>
-                        <div class="grid grid-cols-3 gap-3">
-                            <button onclick="setConfig('case', 'gold', 1500, 'https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?auto=format&fit=crop&w=600&q=80', 'Розовое золото 18К')" class="config-btn-case glass-card p-3 rounded-xl text-xs text-center border-yellow-500 border text-yellow-400 font-medium">Золото</button>
-                            <button onclick="setConfig('case', 'platinum', 2500, 'https://images.unsplash.com/photo-1547996160-81dfa63595aa?auto=format&fit=crop&w=600&q=80', 'Швейцарская платина')" class="config-btn-case glass-card p-3 rounded-xl text-xs text-center hover:border-yellow-500 text-gray-300">Платина</button>
-                            <button onclick="setConfig('case', 'titanium', 800, 'https://images.unsplash.com/photo-1524592094714-0f0654e20314?auto=format&fit=crop&w=600&q=80', 'Титан Aerospace')" class="config-btn-case glass-card p-3 rounded-xl text-xs text-center hover:border-yellow-500 text-gray-300">Титан</button>
+                        <label class="block text-xs uppercase tracking-widest text-gray-400 mb-3 font-semibold" data-i18n="conf_s1">1. Материал корпуса</label>
+                        <div class="grid grid-cols-3 gap-2 sm:gap-3">
+                            <button onclick="setConfig('case', 'gold', 1500, 'https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?auto=format&fit=crop&w=600&q=80', 'Розовое золото 18К')" class="config-btn-case glass-card p-3 rounded-xl text-[11px] sm:text-xs text-center border-yellow-500 border text-yellow-400 font-medium" data-i18n="c_gold">Золото</button>
+                            <button onclick="setConfig('case', 'platinum', 2500, 'https://images.unsplash.com/photo-1547996160-81dfa63595aa?auto=format&fit=crop&w=600&q=80', 'Швейцарская платина')" class="config-btn-case glass-card p-3 rounded-xl text-[11px] sm:text-xs text-center hover:border-yellow-500 text-gray-300" data-i18n="c_plat">Платина</button>
+                            <button onclick="setConfig('case', 'titanium', 800, 'https://images.unsplash.com/photo-1524592094714-0f0654e20314?auto=format&fit=crop&w=600&q=80', 'Титан Aerospace')" class="config-btn-case glass-card p-3 rounded-xl text-[11px] sm:text-xs text-center hover:border-yellow-500 text-gray-300" data-i18n="c_tit">Титан</button>
                         </div>
                     </div>
-
                     <div>
-                        <label class="block text-xs uppercase tracking-widest text-gray-400 mb-3 font-semibold">2. Циферблат</label>
-                        <div class="grid grid-cols-3 gap-3">
-                            <button onclick="setConfig('dial', 'obsidian', 0, null, 'Обсидиан Черный')" class="config-btn-dial glass-card p-3 rounded-xl text-xs text-center border-yellow-500 border text-yellow-400">Обсидиан</button>
-                            <button onclick="setConfig('dial', 'emerald', 400, null, 'Изумрудный Глубокий')" class="config-btn-dial glass-card p-3 rounded-xl text-xs text-center hover:border-yellow-500 text-gray-300">Изумруд</button>
-                            <button onclick="setConfig('dial', 'champagne', 600, null, 'Шампань Золотой')" class="config-btn-dial glass-card p-3 rounded-xl text-xs text-center hover:border-yellow-500 text-gray-300">Шампань</button>
+                        <label class="block text-xs uppercase tracking-widest text-gray-400 mb-3 font-semibold" data-i18n="conf_s2">2. Циферблат</label>
+                        <div class="grid grid-cols-3 gap-2 sm:gap-3">
+                            <button onclick="setConfig('dial', 'obsidian', 0, null, 'Обсидиан Черный')" class="config-btn-dial glass-card p-3 rounded-xl text-[11px] sm:text-xs text-center border-yellow-500 border text-yellow-400" data-i18n="d_obs">Обсидиан</button>
+                            <button onclick="setConfig('dial', 'emerald', 400, null, 'Изумрудный Глубокий')" class="config-btn-dial glass-card p-3 rounded-xl text-[11px] sm:text-xs text-center hover:border-yellow-500 text-gray-300" data-i18n="d_em">Изумруд</button>
+                            <button onclick="setConfig('dial', 'champagne', 600, null, 'Шампань Золотой')" class="config-btn-dial glass-card p-3 rounded-xl text-[11px] sm:text-xs text-center hover:border-yellow-500 text-gray-300" data-i18n="d_champ">Шампань</button>
                         </div>
                     </div>
-
                     <div>
-                        <label class="block text-xs uppercase tracking-widest text-gray-400 mb-3 font-semibold">3. Ремешок</label>
-                        <div class="grid grid-cols-2 gap-3">
-                            <button onclick="setConfig('strap', 'leather', 0, null, 'Кожа Аллигатора')" class="config-btn-strap glass-card p-3 rounded-xl text-xs text-center border-yellow-500 border text-yellow-400">Кожа аллигатора</button>
-                            <button onclick="setConfig('strap', 'bracelet', 800, null, 'Стальной браслет Milanese')" class="config-btn-strap glass-card p-3 rounded-xl text-xs text-center hover:border-yellow-500 text-gray-300">Браслет</button>
+                        <label class="block text-xs uppercase tracking-widest text-gray-400 mb-3 font-semibold" data-i18n="conf_s3">3. Ремешок</label>
+                        <div class="grid grid-cols-2 gap-2 sm:gap-3">
+                            <button onclick="setConfig('strap', 'leather', 0, null, 'Кожа Аллигатора')" class="config-btn-strap glass-card p-3 rounded-xl text-[11px] sm:text-xs text-center border-yellow-500 border text-yellow-400" data-i18n="s_leat">Кожа аллигатора</button>
+                            <button onclick="setConfig('strap', 'bracelet', 800, null, 'Стальной браслет Milanese')" class="config-btn-strap glass-card p-3 rounded-xl text-[11px] sm:text-xs text-center hover:border-yellow-500 text-gray-300" data-i18n="s_brac">Браслет</button>
                         </div>
                     </div>
-
-                    <div class="flex items-center justify-between pt-6 border-t border-white/10">
+                    <div class="flex flex-col sm:flex-row items-center justify-between pt-6 border-t border-white/10 gap-4">
                         <div>
-                            <span class="text-xs text-gray-400 block">Итоговая стоимость:</span>
+                            <span class="text-xs text-gray-400 block" data-i18n="total_label">Итоговая стоимость:</span>
                             <span id="configTotalPrice" class="text-2xl font-bold gold-gradient-text">180,400 ЅМ</span>
                         </div>
-                        <button onclick="addConfiguredToCart()" class="bg-gradient-to-r from-yellow-500 to-yellow-600 text-black font-bold uppercase tracking-widest text-xs px-6 py-3.5 rounded-full hover:brightness-110 transition shadow-lg shadow-yellow-500/20">
+                        <button onclick="addConfiguredToCart()" class="w-full sm:w-auto bg-gradient-to-r from-yellow-500 to-yellow-600 text-black font-bold uppercase tracking-widest text-xs px-6 py-3.5 rounded-full hover:brightness-110 transition shadow-lg shadow-yellow-500/25" data-i18n="btn_cart">
                             В корзину
                         </button>
                     </div>
@@ -309,168 +297,125 @@
             </div>
         </section>
 
-        <!-- Генератор сертификата -->
+        <!-- Сертификат -->
         <section id="certificate" class="py-24 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <div class="glass-panel p-8 sm:p-12 rounded-3xl border border-yellow-500/40 relative overflow-hidden">
+            <div class="glass-panel p-6 sm:p-12 rounded-3xl border border-yellow-500/40 relative overflow-hidden">
                 <div class="absolute -right-20 -bottom-20 w-64 h-64 bg-yellow-500/10 rounded-full blur-3xl"></div>
-                <span class="text-yellow-500 uppercase tracking-widest text-xs font-semibold">Блокчейн-паспорт BTIME</span>
-                <h2 class="text-2xl sm:text-4xl font-serif font-bold mt-2">Генератор сертификата подлинности</h2>
-                <p class="text-gray-400 text-xs sm:text-sm mt-3 max-w-xl mx-auto">
-                    Введите серийный номер ваших часов или сгенерируйте демонстрационный паспорт владельца.
-                </p>
+                <span class="text-yellow-500 uppercase tracking-widest text-xs font-semibold" data-i18n="cert_sub">Блокчейн-паспорт BTIME</span>
+                <h2 class="text-2xl sm:text-4xl font-serif font-bold mt-2" data-i18n="cert_title">Генератор сертификата подлинности</h2>
+                <p class="text-gray-400 text-xs sm:text-sm mt-3 max-w-xl mx-auto" data-i18n="cert_desc">Введите серийный номер ваших часов или сгенерируйте демонстрационный паспорт владельца.</p>
                 <div class="mt-8 flex flex-col sm:flex-row items-center justify-center space-y-3 sm:space-y-0 sm:space-x-3">
                     <input type="text" id="certInputNumber" placeholder="Например: BTIME-8842-X" class="glass-panel px-5 py-3.5 rounded-full text-white text-sm focus:outline-none border border-yellow-500/30 w-full sm:w-80 text-center uppercase">
-                    <button onclick="generateCertificate()" class="w-full sm:w-auto bg-gradient-to-r from-yellow-500 to-yellow-600 text-black font-bold uppercase tracking-widest text-xs px-8 py-3.5 rounded-full hover:brightness-110 transition shadow-lg shadow-yellow-500/25">
+                    <button onclick="generateCertificate()" class="w-full sm:w-auto bg-gradient-to-r from-yellow-500 to-yellow-600 text-black font-bold uppercase tracking-widest text-xs px-8 py-3.5 rounded-full hover:brightness-110 transition shadow-lg shadow-yellow-500/25" data-i18n="cert_btn">
                         Получить паспорт
                     </button>
                 </div>
                 <div id="certResultBox" class="hidden mt-8 p-6 bg-black/80 rounded-2xl border border-yellow-500/50 text-left relative">
-                    <div class="flex justify-between items-start border-b border-white/10 pb-4 mb-4">
+                    <div class="flex flex-col sm:flex-row justify-between items-start border-b border-white/10 pb-4 mb-4 gap-2">
                         <div>
                             <div class="text-[10px] uppercase text-yellow-500 tracking-widest">Dushanbe Boutique Certified</div>
-                            <div id="certModelTitle" class="text-lg font-serif font-bold text-white">BTIME Royal Tourbillon</div>
+                            <div id="certModelTitle" class="text-base sm:text-lg font-serif font-bold text-white">BTIME Royal Tourbillon</div>
                         </div>
-                        <div class="text-right">
-                            <div class="text-[10px] text-gray-400">Статус</div>
-                            <div class="text-xs font-bold text-green-400 uppercase"><i class="fa-solid fa-circle-check"></i> Подлинный актив</div>
+                        <div class="text-left sm:text-right">
+                            <div class="text-[10px] text-gray-400" data-i18n="cert_stat">Статус</div>
+                            <div class="text-xs font-bold text-green-400 uppercase"><i class="fa-solid fa-circle-check"></i> <span data-i18n="cert_val">Подлинный актив</span></div>
                         </div>
                     </div>
-                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 text-xs">
-                        <div>
-                            <span class="text-gray-400 block text-[10px]">Владелец:</span>
-                            <span id="certOwner" class="font-semibold text-white">VIP Клиент BTIME</span>
-                        </div>
-                        <div>
-                            <span class="text-gray-400 block text-[10px]">Серийный номер:</span>
-                            <span id="certSerial" class="font-semibold text-yellow-400">BT-9942-CH</span>
-                        </div>
-                        <div>
-                            <span class="text-gray-400 block text-[10px]">Дата выпуска:</span>
-                            <span class="font-semibold text-white">02 Октября 2026</span>
-                        </div>
-                        <div>
-                            <span class="text-gray-400 block text-[10px]">Гарантия:</span>
-                            <span class="font-semibold text-white">Пожизненная</span>
-                        </div>
+                    <div class="grid grid-cols-2 gap-4 text-xs">
+                        <div><span class="text-gray-400 block text-[10px]" data-i18n="cert_own">Владелец:</span><span id="certOwner" class="font-semibold text-white">VIP Клиент BTIME</span></div>
+                        <div><span class="text-gray-400 block text-[10px]" data-i18n="cert_ser">Серийный номер:</span><span id="certSerial" class="font-semibold text-yellow-400">BT-9942-CH</span></div>
+                        <div><span class="text-gray-400 block text-[10px]" data-i18n="cert_dat">Дата выпуска:</span><span class="font-semibold text-white">02 Октября 2026</span></div>
+                        <div><span class="text-gray-400 block text-[10px]" data-i18n="cert_gar">Гарантия:</span><span class="font-semibold text-white" data-i18n="cert_life">Пожизненная</span></div>
                     </div>
                 </div>
             </div>
         </section>
     </div>
 
-    <!-- КОНТЕЙНЕР ОТДЕЛЬНОЙ СТРАНИЦЫ МОДЕЛИ -->
+    <!-- ДЕТАЛЬНАЯ СТРАНИЦА МОДЕЛИ -->
     <div id="productDetailView" class="hidden py-12 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <button onclick="switchView('home')" class="inline-flex items-center space-x-2 text-yellow-400 hover:text-yellow-300 text-xs tracking-wider uppercase mb-8">
             <i class="fa-solid fa-arrow-left"></i>
-            <span>Вернуться к каталогу</span>
+            <span data-i18n="back_cat">Вернуться к каталогу</span>
         </button>
-
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
-            <!-- Фото и галерея модели -->
             <div class="space-y-4">
                 <div class="glass-panel p-4 rounded-3xl border border-yellow-500/30 overflow-hidden relative">
-                    <div class="absolute top-6 left-6 z-10 bg-black/70 backdrop-blur border border-yellow-500/30 px-3 py-1 rounded-full text-[10px] text-yellow-400 uppercase tracking-widest">
-                        В наличии в City Mall
-                    </div>
-                    <div class="zoom-container rounded-2xl overflow-hidden h-[450px]" onmousemove="zoomMove(event)" onmouseleave="zoomLeave()">
+                    <div class="absolute top-6 left-6 z-10 bg-black/70 backdrop-blur border border-yellow-500/30 px-3 py-1 rounded-full text-[10px] text-yellow-400 uppercase tracking-widest" data-i18n="in_stock">В наличии в City Mall</div>
+                    <div class="zoom-container rounded-2xl overflow-hidden h-[350px] sm:h-[450px]" onmousemove="zoomMove(event)" onmouseleave="zoomLeave()">
                         <img id="detailImg" src="" alt="Watch Detail" class="w-full h-full object-cover rounded-2xl">
                         <div class="zoom-lens"></div>
                     </div>
                 </div>
-                <div class="grid grid-cols-3 gap-4">
-                    <div class="glass-card p-3 rounded-2xl text-center">
-                        <div class="text-[10px] text-gray-400 uppercase">Бутик</div>
-                        <div class="text-xs font-bold text-white mt-1">City Mall, 1 этаж</div>
-                    </div>
-                    <div class="glass-card p-3 rounded-2xl text-center">
-                        <div class="text-[10px] text-gray-400 uppercase">Механизм</div>
-                        <div class="text-xs font-bold text-white mt-1">Швейцарский Cal. 310</div>
-                    </div>
-                    <div class="glass-card p-3 rounded-2xl text-center">
-                        <div class="text-[10px] text-gray-400 uppercase">Водостойкость</div>
-                        <div class="text-xs font-bold text-white mt-1">300 метров</div>
-                    </div>
+                <div class="grid grid-cols-3 gap-2 sm:gap-4">
+                    <div class="glass-card p-3 rounded-2xl text-center"><div class="text-[10px] text-gray-400 uppercase" data-i18n="sp_bout">Бутик</div><div class="text-[11px] sm:text-xs font-bold text-white mt-1">City Mall, 1 этаж</div></div>
+                    <div class="glass-card p-3 rounded-2xl text-center"><div class="text-[10px] text-gray-400 uppercase" data-i18n="sp_mech">Механизм</div><div class="text-[11px] sm:text-xs font-bold text-white mt-1">Швейцарский Cal. 310</div></div>
+                    <div class="glass-card p-3 rounded-2xl text-center"><div class="text-[10px] text-gray-400 uppercase" data-i18n="sp_wat">Водостойкость</div><div class="text-[11px] sm:text-xs font-bold text-white mt-1">300 метров</div></div>
                 </div>
             </div>
-
-            <!-- Описание, характеристики и покупка -->
             <div class="space-y-6">
                 <div>
-                    <span id="detailBadge" class="text-yellow-500 uppercase tracking-widest text-xs font-semibold">Швейцарская мануфактура</span>
+                    <span id="detailBadge" class="text-yellow-500 uppercase tracking-widest text-xs font-semibold" data-i18n="det_badge">Швейцарская мануфактура</span>
                     <h1 id="detailTitle" class="text-3xl sm:text-5xl font-serif font-bold mt-2">Название модели</h1>
                     <p id="detailPrice" class="text-2xl sm:text-3xl font-bold gold-gradient-text mt-4">0 ЅМ</p>
                 </div>
-
-                <p id="detailDesc" class="text-gray-300 text-sm leading-relaxed border-y border-white/10 py-4">
-                    Полное описание модели...
-                </p>
-
+                <p id="detailDesc" class="text-gray-300 text-sm leading-relaxed border-y border-white/10 py-4">Описание модели...</p>
                 <div class="space-y-3">
-                    <h3 class="text-xs uppercase tracking-widest text-yellow-500 font-semibold">Технические особенности:</h3>
+                    <h3 class="text-xs uppercase tracking-widest text-yellow-500 font-semibold" data-i18n="feat_title">Технические особенности:</h3>
                     <ul class="space-y-2 text-xs text-gray-400">
-                        <li><i class="fa-solid fa-check text-yellow-500 mr-2"></i> Примерка и покупка в бутике City Mall (Душанбе)</li>
-                        <li><i class="fa-solid fa-check text-yellow-500 mr-2"></i> Двойное сапфировое стекло с защитой от царапин</li>
-                        <li><i class="fa-solid fa-check text-yellow-500 mr-2"></i> Официальная гарантия и сертификат подлинности</li>
-                        <li><i class="fa-solid fa-check text-yellow-500 mr-2"></i> Оплата картами Корти Милли, DC, Visa/Mastercard</li>
+                        <li><i class="fa-solid fa-check text-yellow-500 mr-2"></i> <span data-i18n="f1">Примерка и покупка в бутике City Mall (Душанбе)</span></li>
+                        <li><i class="fa-solid fa-check text-yellow-500 mr-2"></i> <span data-i18n="f2">Двойное сапфировое стекло с защитой от царапин</span></li>
+                        <li><i class="fa-solid fa-check text-yellow-500 mr-2"></i> <span data-i18n="f3">Официальная гарантия и сертификат подлинности</span></li>
+                        <li><i class="fa-solid fa-check text-yellow-500 mr-2"></i> <span data-i18n="f4">Оплата картами Корти Милли, DC, Visa/Mastercard</span></li>
                     </ul>
                 </div>
-
                 <div class="pt-6 flex flex-col sm:flex-row items-center space-y-3 sm:space-y-0 sm:space-x-4">
-                    <button id="detailBuyBtn" onclick="" class="w-full sm:flex-1 bg-gradient-to-r from-yellow-500 to-yellow-600 text-black font-bold uppercase tracking-widest text-xs py-4 rounded-full hover:brightness-110 transition shadow-xl text-center">
-                        Добавить в корзину
-                    </button>
-                    <button onclick="openPaymentModal()" class="w-full sm:flex-1 glass-panel text-white font-semibold uppercase tracking-widest text-xs py-4 rounded-full hover:border-yellow-400 transition text-center">
-                        Купить через Dushanbe City
-                    </button>
+                    <button id="detailBuyBtn" onclick="" class="w-full sm:flex-1 bg-gradient-to-r from-yellow-500 to-yellow-600 text-black font-bold uppercase tracking-widest text-xs py-4 rounded-full hover:brightness-110 transition shadow-xl text-center" data-i18n="btn_cart">Добавить в корзину</button>
+                    <button onclick="openPaymentModal()" class="w-full sm:flex-1 glass-panel text-white font-semibold uppercase tracking-widest text-xs py-4 rounded-full hover:border-yellow-400 transition text-center" data-i18n="btn_dc">Купить через Dushanbe City</button>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Выдвижная корзина -->
+    <!-- Корзина -->
     <div id="cartDrawer" class="fixed inset-y-0 right-0 z-50 w-full max-w-md bg-[#0a0a0c] border-l border-yellow-500/20 shadow-2xl transform translate-x-full transition-transform duration-300 flex flex-col">
         <div class="p-6 border-b border-white/10 flex items-center justify-between">
-            <h3 class="text-xl font-serif font-bold text-white flex items-center"><i class="fa-solid fa-bag-shopping text-yellow-500 mr-2"></i> Ваша корзина</h3>
+            <h3 class="text-xl font-serif font-bold text-white flex items-center"><i class="fa-solid fa-bag-shopping text-yellow-500 mr-2"></i> <span data-i18n="cart_title">Ваша корзина</span></h3>
             <button onclick="closeCart()" class="text-gray-400 hover:text-white text-xl"><i class="fa-solid fa-xmark"></i></button>
         </div>
         <div id="cartItemsList" class="flex-1 overflow-y-auto p-6 space-y-4"></div>
         <div class="p-6 border-t border-white/10 bg-black/50 space-y-4">
             <div class="flex justify-between items-center text-sm">
-                <span class="text-gray-400">Сумма заказа:</span>
+                <span class="text-gray-400" data-i18n="cart_sum">Сумма заказа:</span>
                 <span id="cartTotalPrice" class="text-xl font-bold gold-gradient-text">0 ЅМ</span>
             </div>
             <button onclick="openPaymentModal()" class="w-full bg-gradient-to-r from-yellow-500 to-yellow-600 text-black font-bold uppercase tracking-widest text-xs py-4 rounded-full hover:brightness-110 transition shadow-lg text-center flex items-center justify-center space-x-2">
                 <i class="fa-solid fa-lock"></i>
-                <span>Оплатить через Dushanbe City / Alif</span>
+                <span data-i18n="cart_pay">Оплатить через Dushanbe City / Alif</span>
             </button>
         </div>
     </div>
 
-    <!-- МОДАЛЬНОЕ ОКНО ОПЛАТЫ КАРТОЙ (ЭКВАЙРИНГ) -->
+    <!-- Модальное окно оплаты -->
     <div id="paymentModal" class="fixed inset-0 z-50 bg-black/85 backdrop-blur-md hidden flex items-center justify-center p-4">
-        <div class="glass-panel p-8 rounded-3xl max-w-md w-full border border-yellow-500/50 relative shadow-2xl">
+        <div class="glass-panel p-6 sm:p-8 rounded-3xl max-w-md w-full border border-yellow-500/50 relative shadow-2xl">
             <button onclick="closePaymentModal()" class="absolute top-6 right-6 text-gray-400 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
-            
             <div id="paymentFormStep">
                 <div class="text-center mb-6">
                     <div class="inline-flex items-center space-x-2 bg-yellow-500/10 border border-yellow-500/30 px-3 py-1 rounded-full text-[10px] text-yellow-400 uppercase tracking-widest mb-2">
-                        <i class="fa-solid fa-shield-halved"></i> Эквайринг Dushanbe City (Корти Милли)
+                        <i class="fa-solid fa-shield-halved"></i> <span data-i18n="pay_sec">Эквайринг Dushanbe City (Корти Милли)</span>
                     </div>
-                    <h3 class="text-2xl font-serif font-bold">Оплата банковской картой</h3>
-                    <p class="text-xs text-gray-400 mt-1">Сумма к списанию: <span id="paymentModalSum" class="text-yellow-400 font-bold">0 ЅМ</span></p>
+                    <h3 class="text-xl sm:text-2xl font-serif font-bold" data-i18n="pay_h">Оплата банковской картой</h3>
+                    <p class="text-xs text-gray-400 mt-1"><span data-i18n="pay_to_pay">Сумма к списанию:</span> <span id="paymentModalSum" class="text-yellow-400 font-bold">0 ЅМ</span></p>
                 </div>
-
                 <form onsubmit="processCardPayment(event)" class="space-y-4">
                     <div>
-                        <label class="block text-[10px] uppercase tracking-wider text-gray-400 mb-1">Номер карты (Корти Милли / Visa)</label>
-                        <div class="relative">
-                            <input type="text" required maxlength="19" placeholder="9800 0000 0000 0000" class="w-full glass-panel px-4 py-3 rounded-xl text-white text-sm focus:outline-none border border-yellow-500/30 tracking-widest font-mono">
-                            <i class="fa-regular fa-credit-card absolute right-4 top-3.5 text-yellow-500"></i>
-                        </div>
+                        <label class="block text-[10px] uppercase tracking-wider text-gray-400 mb-1" data-i18n="pay_cnum">Номер карты (Корти Милли / Visa)</label>
+                        <input type="text" required maxlength="19" placeholder="9800 0000 0000 0000" class="w-full glass-panel px-4 py-3 rounded-xl text-white text-sm focus:outline-none border border-yellow-500/30 tracking-widest font-mono">
                     </div>
                     <div class="grid grid-cols-2 gap-4">
                         <div>
-                            <label class="block text-[10px] uppercase tracking-wider text-gray-400 mb-1">Срок (MM/YY)</label>
+                            <label class="block text-[10px] uppercase tracking-wider text-gray-400 mb-1" data-i18n="pay_exp">Срок (MM/YY)</label>
                             <input type="text" required maxlength="5" placeholder="12/28" class="w-full glass-panel px-4 py-3 rounded-xl text-white text-sm focus:outline-none border border-yellow-500/30 font-mono text-center">
                         </div>
                         <div>
@@ -479,63 +424,37 @@
                         </div>
                     </div>
                     <div>
-                        <label class="block text-[10px] uppercase tracking-wider text-gray-400 mb-1">Имя владельца карты</label>
+                        <label class="block text-[10px] uppercase tracking-wider text-gray-400 mb-1" data-i18n="pay_hold">Имя владельца карты</label>
                         <input type="text" required placeholder="SHAVKAT RAHIMOV" class="w-full glass-panel px-4 py-3 rounded-xl text-white text-sm focus:outline-none border border-yellow-500/30 uppercase">
                     </div>
-                    <button type="submit" class="w-full bg-gradient-to-r from-yellow-500 to-yellow-600 text-black font-bold uppercase tracking-widest text-xs py-4 rounded-full hover:brightness-110 transition shadow-lg mt-2">
-                        Подтвердить списание
-                    </button>
+                    <button type="submit" class="w-full bg-gradient-to-r from-yellow-500 to-yellow-600 text-black font-bold uppercase tracking-widest text-xs py-4 rounded-full hover:brightness-110 transition shadow-lg mt-2" data-i18n="pay_conf">Подтвердить списание</button>
                 </form>
             </div>
-
-            <!-- Экран загрузки -->
             <div id="paymentLoadingStep" class="hidden text-center py-12 space-y-6">
                 <div class="w-16 h-16 border-4 border-yellow-500 border-t-transparent rounded-full animate-spin mx-auto"></div>
-                <h3 class="text-xl font-serif font-bold text-white">Авторизация платежа...</h3>
-                <p class="text-xs text-gray-400">Процессинговый центр Dushanbe City Bank</p>
+                <h3 class="text-xl font-serif font-bold text-white" data-i18n="pay_auth">Авторизация платежа...</h3>
             </div>
-
-            <!-- Экран успеха -->
             <div id="paymentSuccessStep" class="hidden text-center py-8 space-y-5">
-                <div class="w-20 h-20 bg-green-500/10 border border-green-500/40 text-green-400 text-3xl rounded-full flex items-center justify-center mx-auto shadow-lg shadow-green-500/10">
-                    <i class="fa-solid fa-check"></i>
-                </div>
-                <div>
-                    <h3 class="text-2xl font-serif font-bold text-white">Оплата успешно подтверждена!</h3>
-                    <p class="text-xs text-gray-400 mt-2">Чек отправлен. Ждем вас в City Mall для выдачи заказа.</p>
-                </div>
-                <div class="p-4 bg-black/60 rounded-2xl border border-white/10 text-xs text-left space-y-2">
-                    <div class="flex justify-between"><span class="text-gray-400">Транзакция:</span> <span class="text-yellow-400 font-mono">DC-PAY-9842-TJ</span></div>
-                    <div class="flex justify-between"><span class="text-gray-400">Статус:</span> <span class="text-green-400 font-semibold">Оплачено • Готово к выдаче в City Mall</span></div>
-                </div>
-                <button onclick="closeAllModalsCompletely()" class="w-full bg-gradient-to-r from-yellow-500 to-yellow-600 text-black font-bold uppercase tracking-widest text-xs py-3.5 rounded-full hover:brightness-110 transition">
-                    Готово
-                </button>
+                <div class="w-20 h-20 bg-green-500/10 border border-green-500/40 text-green-400 text-3xl rounded-full flex items-center justify-center mx-auto shadow-lg"><i class="fa-solid fa-check"></i></div>
+                <h3 class="text-2xl font-serif font-bold text-white" data-i18n="pay_ok">Оплата успешно подтверждена!</h3>
+                <button onclick="closeAllModalsCompletely()" class="w-full bg-gradient-to-r from-yellow-500 to-yellow-600 text-black font-bold uppercase tracking-widest text-xs py-3.5 rounded-full" data-i18n="pay_done">Готово</button>
             </div>
         </div>
     </div>
 
     <!-- Модальное окно Консьержа -->
     <div id="conciergeModal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden flex items-center justify-center p-4">
-        <div class="glass-panel p-8 rounded-3xl max-w-lg w-full border border-yellow-500/40 relative">
+        <div class="glass-panel p-6 sm:p-8 rounded-3xl max-w-lg w-full border border-yellow-500/40 relative">
             <button onclick="closeConciergeModal()" class="absolute top-6 right-6 text-gray-400 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
             <div class="text-center mb-6">
-                <span class="text-yellow-500 uppercase tracking-widest text-xs">Персональный бутик</span>
-                <h3 class="text-2xl font-serif font-bold mt-1">Запись на примерку в City Mall</h3>
-                <p class="text-xs text-gray-400 mt-2">Оставьте номер телефона, и наш эксперт подготовит для вас часы.</p>
+                <span class="text-yellow-500 uppercase tracking-widest text-xs" data-i18n="con_sub">Персональный бутик</span>
+                <h3 class="text-xl sm:text-2xl font-serif font-bold mt-1" data-i18n="con_h">Запись на примерку в City Mall</h3>
+                <p class="text-xs text-gray-400 mt-2" data-i18n="con_desc">Оставьте номер телефона, и наш эксперт подготовит для вас часы.</p>
             </div>
             <form onsubmit="submitConcierge(event)" class="space-y-4">
-                <div>
-                    <label class="block text-xs uppercase tracking-wider text-gray-400 mb-1">Ваше имя</label>
-                    <input type="text" required placeholder="Фарход" class="w-full glass-panel px-4 py-3 rounded-xl text-white text-sm focus:outline-none border border-yellow-500/30">
-                </div>
-                <div>
-                    <label class="block text-xs uppercase tracking-wider text-gray-400 mb-1">Номер телефона (+992)</label>
-                    <input type="text" required placeholder="+992 (918) 00-00-00" class="w-full glass-panel px-4 py-3 rounded-xl text-white text-sm focus:outline-none border border-yellow-500/30">
-                </div>
-                <button type="submit" class="w-full bg-gradient-to-r from-yellow-500 to-yellow-600 text-black font-bold uppercase tracking-widest text-xs py-4 rounded-full hover:brightness-110 transition shadow-lg">
-                    Забронировать время визита
-                </button>
+                <div><label class="block text-xs uppercase tracking-wider text-gray-400 mb-1" data-i18n="con_name">Ваше имя</label><input type="text" required placeholder="Фарход" class="w-full glass-panel px-4 py-3 rounded-xl text-white text-sm focus:outline-none border border-yellow-500/30"></div>
+                <div><label class="block text-xs uppercase tracking-wider text-gray-400 mb-1" data-i18n="con_ph">Номер телефона (+992)</label><input type="text" required placeholder="+992 (918) 00-00-00" class="w-full glass-panel px-4 py-3 rounded-xl text-white text-sm focus:outline-none border border-yellow-500/30"></div>
+                <button type="submit" class="w-full bg-gradient-to-r from-yellow-500 to-yellow-600 text-black font-bold uppercase tracking-widest text-xs py-4 rounded-full" data-i18n="con_btn">Забронировать время визита</button>
             </form>
         </div>
     </div>
@@ -545,100 +464,336 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-4 gap-8 mb-12">
             <div class="space-y-4">
                 <span class="text-2xl font-serif font-bold tracking-widest gold-gradient-text">BTIME</span>
-                <p class="text-gray-500 leading-relaxed">Официальный часовой салон в Душанбе.</p>
+                <p class="text-gray-500 leading-relaxed" data-i18n="ft_desc">Официальный часовой салон в Душанбе.</p>
             </div>
             <div>
-                <h4 class="text-white font-semibold uppercase tracking-widest mb-4 text-xs">Коллекции</h4>
-                <ul class="space-y-2">
-                    <li><a href="#catalog" onclick="switchView('home')" class="hover:text-yellow-400 transition">Tourbillon Series</a></li>
-                    <li><a href="#catalog" onclick="switchView('home')" class="hover:text-yellow-400 transition">Obsidian Skeleton</a></li>
-                </ul>
+                <h4 class="text-white font-semibold uppercase tracking-widest mb-4 text-xs" data-i18n="ft_col">Коллекции</h4>
+                <ul class="space-y-2"><li><a href="#catalog" onclick="switchView('home')" class="hover:text-yellow-400 transition">Tourbillon Series</a></li></ul>
             </div>
             <div>
-                <h4 class="text-white font-semibold uppercase tracking-widest mb-4 text-xs">Мануфактура</h4>
-                <ul class="space-y-2">
-                    <li><a href="#investment" onclick="switchView('home')" class="hover:text-yellow-400 transition">Инвестиции</a></li>
-                    <li><a href="#certificate" onclick="switchView('home')" class="hover:text-yellow-400 transition">Блокчейн-паспорт</a></li>
-                </ul>
+                <h4 class="text-white font-semibold uppercase tracking-widest mb-4 text-xs" data-i18n="ft_man">Мануфактура</h4>
+                <ul class="space-y-2"><li><a href="#investment" onclick="switchView('home')" class="hover:text-yellow-400 transition" data-i18n="nav_invest">Инвестиции</a></li></ul>
             </div>
             <div>
-                <h4 class="text-white font-semibold uppercase tracking-widest mb-4 text-xs">Бутик в Душанбе</h4>
-                <p class="text-gray-500 mb-1">City Mall, 1 этаж</p>
-                <p class="text-gray-500 mb-2">пр. Рудаки / центр города</p>
+                <h4 class="text-white font-semibold uppercase tracking-widest mb-4 text-xs" data-i18n="ft_bout">Бутик в Душанбе</h4>
+                <p class="text-gray-500 mb-1" data-i18n="ft_mall">City Mall, 1 этаж</p>
+                <p class="text-gray-500 mb-2" data-i18n="ft_str">пр. Рудаки / центр города</p>
                 <p class="text-yellow-500 font-semibold">+992 44 600 0000</p>
             </div>
         </div>
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 border-t border-white/5 pt-8 text-center text-gray-600">
-            © 2026 BTIME Dushanbe. Все права защищены.
+            © 2026 BTIME Dushanbe. <span data-i18n="ft_rights">Все права защищены.</span>
         </div>
     </footer>
 
-    <!-- Скрипты сайта -->
+    <!-- СКРИПТЫ И ПОЛНЫЙ СЛОВАРЬ ПЕРЕВОДОВ ВСЕХ 7 МОДЕЛЕЙ И ИНТЕРФЕЙСА -->
     <script>
-        const products = [
-            { 
-                id: 1, 
-                name: "BTIME Royal Tourbillon", 
-                priceUSD: 24500, 
-                image: "https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=800&q=80", 
-                desc: "Вершина часового мастерства BTIME. В сердце модели бьется сложнейший узел — парящий турбийон, компенсирующий погрешности хода от земного притяжения. Корпус из розового золота 18 карат полируется вручную в течение 120 часов.",
-                caseMat: "Розовое золото 18К"
+        const i18n = {
+            ru: {
+                siteTitle: "BTIME — Бутик Высокого Часового Искусства | Душанбе, City Mall",
+                top_address: "Душанбе, City Mall, 1 этаж",
+                nav_collections: "Коллекции",
+                nav_config: "Конфигуратор",
+                nav_invest: "Инвестиции",
+                nav_passport: "Паспорт",
+                nav_concierge: "Консьерж",
+                hero_badge: "Флагманский бутик в Душанбе",
+                hero_title_1: "Время, неподвластное",
+                hero_title_2: "эпохам.",
+                hero_desc: "Эксклюзивный представитель швейцарской микромеханики в Таджикистане. Ждем вас в City Mall.",
+                hero_btn_catalog: "Выбрать модель",
+                hero_btn_config: "Собрать свой стиль",
+                hit_badge: "Хит продаж",
+                m1_sub: "Ручной завод • Запас хода 72 часа",
+                price_label: "Стоимость:",
+                cat_subtitle: "Коллекция мануфактуры",
+                cat_title: "Шедевры часового искусства",
+                cat_hint: "Нажмите на любую модель, чтобы открыть её эксклюзивный паспорт и детальный обзор",
+                btn_rev: "Обзор",
+                btn_cart: "В корзину",
+                inv_subtitle: "Ликвидность и актив",
+                inv_title: "Инвестиционный трекер BTIME",
+                inv_desc: "Ограниченный тираж (не более 500 экземпляров в серии) ежегодно увеличивает коллекционную стоимость часов.",
+                inv_select: "Выберите модель:",
+                inv_y1: "Через 1 год",
+                inv_y3: "Через 3 года",
+                inv_y5: "Через 5 лет",
+                inv_badge: "Index +14.8% Годовых",
+                inv_chart: "График роста стоимости",
+                inv_cur: "2026 (Текущий)",
+                inv_fore: "2031 (Прогноз)",
+                conf_sub: "Мастерская кастомизации",
+                conf_title: "Создайте свой BTIME",
+                conf_desc: "Соберите уникальную комбинацию материалов и циферблата",
+                conf_s1: "1. Материал корпуса",
+                conf_s2: "2. Циферблат",
+                conf_s3: "3. Ремешок",
+                c_gold: "Золото", c_plat: "Платина", c_tit: "Титан",
+                d_obs: "Обсидиан", d_em: "Изумруд", d_champ: "Шампань",
+                s_leat: "Кожа аллигатора", s_brac: "Браслет",
+                total_label: "Итоговая стоимость:",
+                cert_sub: "Блокчейн-паспорт BTIME",
+                cert_title: "Генератор сертификата подлинности",
+                cert_desc: "Введите серийный номер ваших часов или сгенерируйте демонстрационный паспорт владельца.",
+                cert_btn: "Получить паспорт",
+                cert_stat: "Статус",
+                cert_val: "Подлинный актив",
+                cert_own: "Владелец:",
+                cert_ser: "Серийный номер:",
+                cert_dat: "Дата выпуска:",
+                cert_gar: "Гарантия:",
+                cert_life: "Пожизненная",
+                back_cat: "Вернуться к каталогу",
+                in_stock: "В наличии в City Mall",
+                sp_bout: "Бутик", sp_mech: "Механизм", sp_wat: "Водостойкость",
+                det_badge: "Швейцарская мануфактура",
+                feat_title: "Технические особенности:",
+                f1: "Примерка и покупка в бутике City Mall (Душанбе)",
+                f2: "Двойное сапфировое стекло с защитой от царапин",
+                f3: "Официальная гарантия и сертификат подлинности",
+                f4: "Оплата картами Корти Милли, DC, Visa/Mastercard",
+                btn_dc: "Купить через Dushanbe City",
+                cart_title: "Ваша корзина",
+                cart_empty: "Ваша корзина пуста",
+                cart_sum: "Сумма заказа:",
+                cart_pay: "Оплатить через Dushanbe City / Alif",
+                pay_sec: "Эквайринг Dushanbe City (Корти Милли)",
+                pay_h: "Оплата банковской картой",
+                pay_to_pay: "Сумма к списанию:",
+                pay_cnum: "Номер карты (Корти Милли / Visa)",
+                pay_exp: "Срок (MM/YY)",
+                pay_hold: "Имя владельца карты",
+                pay_conf: "Подтвердить списание",
+                pay_auth: "Авторизация платежа...",
+                pay_ok: "Оплата успешно подтверждена!",
+                pay_done: "Готово",
+                con_sub: "Персональный бутик",
+                con_h: "Запись на примерку в City Mall",
+                con_desc: "Оставьте номер телефона, и наш эксперт подготовит для вас часы.",
+                con_name: "Ваше имя",
+                con_ph: "Номер телефона (+992)",
+                con_btn: "Забронировать время визита",
+                ft_desc: "Официальный часовой салон в Душанбе.",
+                ft_col: "Коллекции", ft_man: "Мануфактура", ft_bout: "Бутик в Душанбе",
+                ft_mall: "City Mall, 1 этаж", ft_str: "пр. Рудаки / центр города",
+                ft_rights: "Все права защищены."
             },
-            { 
-                id: 2, 
-                name: "BTIME Obsidian Skeleton", 
-                priceUSD: 18900, 
-                image: "https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?auto=format&fit=crop&w=800&q=80", 
-                desc: "Полностью скелетонизированный циферблат открывает взору работу всех 248 микроскопических деталей механизма с ручным заводом. Каждая фаска мостов отполирована вручную до зеркального блеска.",
-                caseMat: "Черный карбон и сталь"
+            en: {
+                siteTitle: "BTIME — Haute Horlogerie Boutique | Dushanbe, City Mall",
+                top_address: "Dushanbe, City Mall, 1st Floor",
+                nav_collections: "Collections",
+                nav_config: "Configurator",
+                nav_invest: "Investment",
+                nav_passport: "Passport",
+                nav_concierge: "Concierge",
+                hero_badge: "Flagship Boutique in Dushanbe",
+                hero_title_1: "Time defying",
+                hero_title_2: "epochs.",
+                hero_desc: "Exclusive representative of Swiss micromechanics in Tajikistan. We await you at City Mall.",
+                hero_btn_catalog: "Choose Model",
+                hero_btn_config: "Build Your Style",
+                hit_badge: "Best Seller",
+                m1_sub: "Manual winding • 72h Power Reserve",
+                price_label: "Price:",
+                cat_subtitle: "Manufacture Collection",
+                cat_title: "Masterpieces of Horology",
+                cat_hint: "Click on any model to open its exclusive passport and detailed review",
+                btn_rev: "Review",
+                btn_cart: "Add to Cart",
+                inv_subtitle: "Liquidity & Asset",
+                inv_title: "BTIME Investment Tracker",
+                inv_desc: "Limited edition (no more than 500 pieces per series) annually increases the collection value of the watches.",
+                inv_select: "Select model:",
+                inv_y1: "In 1 year",
+                inv_y3: "In 3 years",
+                inv_y5: "In 5 years",
+                inv_badge: "Index +14.8% Annual",
+                inv_chart: "Asset Value Growth Chart",
+                inv_cur: "2026 (Current)",
+                inv_fore: "2031 (Forecast)",
+                conf_sub: "Customization Workshop",
+                conf_title: "Create Your BTIME",
+                conf_desc: "Assemble a unique combination of materials and dial",
+                conf_s1: "1. Case Material",
+                conf_s2: "2. Dial Color",
+                conf_s3: "3. Strap",
+                c_gold: "Gold", c_plat: "Platinum", c_tit: "Titanium",
+                d_obs: "Obsidian", d_em: "Emerald", d_champ: "Champagne",
+                s_leat: "Alligator Leather", s_brac: "Bracelet",
+                total_label: "Total Price:",
+                cert_sub: "BTIME Blockchain Passport",
+                cert_title: "Authenticity Certificate Generator",
+                cert_desc: "Enter the serial number of your watch or generate a demo owner passport.",
+                cert_btn: "Get Passport",
+                cert_stat: "Status",
+                cert_val: "Genuine Asset",
+                cert_own: "Owner:",
+                cert_ser: "Serial Number:",
+                cert_dat: "Release Date:",
+                cert_gar: "Warranty:",
+                cert_life: "Lifetime",
+                back_cat: "Back to Catalog",
+                in_stock: "In stock at City Mall",
+                sp_bout: "Boutique", sp_mech: "Movement", sp_wat: "Water Resistance",
+                det_badge: "Swiss Manufacture",
+                feat_title: "Technical Features:",
+                f1: "Fitting and purchase at City Mall boutique (Dushanbe)",
+                f2: "Double sapphire crystal with scratch protection",
+                f3: "Official warranty and certificate of authenticity",
+                f4: "Payment via Korti Milli, DC, Visa/Mastercard",
+                btn_dc: "Buy via Dushanbe City",
+                cart_title: "Your Cart",
+                cart_empty: "Your cart is empty",
+                cart_sum: "Order Total:",
+                cart_pay: "Checkout via Dushanbe City / Alif",
+                pay_sec: "Dushanbe City Acquiring (Korti Milli)",
+                pay_h: "Bank Card Payment",
+                pay_to_pay: "Amount to charge:",
+                pay_cnum: "Card Number (Korti Milli / Visa)",
+                pay_exp: "Expiry (MM/YY)",
+                pay_hold: "Cardholder Name",
+                pay_conf: "Confirm Payment",
+                pay_auth: "Authorizing payment...",
+                pay_ok: "Payment Successfully Confirmed!",
+                pay_done: "Done",
+                con_sub: "Personal Boutique",
+                con_h: "Book a Fitting at City Mall",
+                con_desc: "Leave your phone number and our expert will prepare the watch for you.",
+                con_name: "Your Name",
+                con_ph: "Phone Number (+992)",
+                con_btn: "Book Visit Time",
+                ft_desc: "Official watch boutique in Dushanbe.",
+                ft_col: "Collections", ft_man: "Manufacture", ft_bout: "Dushanbe Boutique",
+                ft_mall: "City Mall, 1st floor", ft_str: "Rudaki Ave / City Center",
+                ft_rights: "All rights reserved."
             },
-            { 
-                id: 3, 
-                name: "BTIME Chrono Platinum", 
-                priceUSD: 12400, 
-                image: "https://images.unsplash.com/photo-1547996160-81dfa63595aa?auto=format&fit=crop&w=800&q=80", 
-                desc: "Изысканный хронограф в благородном корпусе из швейцарской платины. Модель оснащена колонным колесом и функцией мгновенного сброса показаний секундомера.",
-                caseMat: "Швейцарская Платина"
-            },
-            { 
-                id: 4, 
-                name: "BTIME Vanguard Gold", 
-                priceUSD: 9800, 
-                image: "https://images.unsplash.com/photo-1524592094714-0f0654e20314?auto=format&fit=crop&w=800&q=80", 
-                desc: "Строгая классика для деловой элиты. Толщина корпуса составляет всего 7.2 мм. Позолота 10 микрон нанесена по инновационной гальванической технологии.",
-                caseMat: "Позолоченная сталь 316L"
-            },
-            { 
-                id: 5, 
-                name: "BTIME Deep Dive 300m", 
-                priceUSD: 11200, 
-                image: "https://images.unsplash.com/photo-1533139502658-0198f920d8e8?auto=format&fit=crop&w=800&q=80", 
-                desc: "Профессиональные дайверские часы с гелиевым клапаном и керамическим безелем. Выдерживают колоссальное давление на глубине до 300 метров.",
-                caseMat: "Матовый титан"
-            },
-            { 
-                id: 6, 
-                name: "BTIME Minimalist Slate", 
-                priceUSD: 7500, 
-                image: "https://images.unsplash.com/photo-1509042239860-f550ce710b93?auto=format&fit=crop&w=800&q=80", 
-                desc: "Воплощение минимализма и чистоты линий. Матовый грифельный циферблат без лишних деталей в обрамлении титанового браслета Milanese.",
-                caseMat: "Авиационный титан"
-            },
-            { 
-                id: 7, 
-                name: "BTIME Grand Complication", 
-                priceUSD: 31000, 
-                image: "https://images.unsplash.com/photo-1508685096489-7aacd43bd3b1?auto=format&fit=crop&w=800&q=80", 
-                desc: "Уникальное усложнение: вечный календарь, учитывающий високосные годы вплоть до 2100 года, и индикатор фаз Луны с точностью до одних суток на 122 года.",
-                caseMat: "Белое золото 18К"
+            tj: {
+                siteTitle: "BTIME — Бутики Санъати Соатсозии Олӣ | Душанбе, City Mall",
+                top_address: "Душанбе, City Mall, ошёнаи 1",
+                nav_collections: "Маҷмӯаҳо",
+                nav_config: "Конфигуратор",
+                nav_invest: "Сармоягузорӣ",
+                nav_passport: "Шиноснома",
+                nav_concierge: "Консьерж",
+                hero_badge: "Бутики флагманӣ дар Душанбе",
+                hero_title_1: "Вақте, ки берун аз",
+                hero_title_2: "замон аст.",
+                hero_desc: "Намояндагии эксклюзивии микромеханикаи Швейтсария дар Тоҷикистон. Мунтазири шумо дар City Mall.",
+                hero_btn_catalog: "Интихоби соат",
+                hero_btn_config: "Сохтани тарҳи шахсӣ",
+                hit_badge: "Беҳтарин фурӯш",
+                m1_sub: "Кушодани дастӣ • Захираи барқ 72 соат",
+                price_label: "Арзиш:",
+                cat_subtitle: "Маҷмӯаи мануфактура",
+                cat_title: "Шоҳасарҳои соатсозӣ",
+                cat_hint: "Барои дидани шиноснома ва шарҳи муфассал ҳар кадомеро пахш кунед",
+                btn_rev: "Шарҳ",
+                btn_cart: "Ба сабад",
+                inv_subtitle: "Нарх ва дороӣ",
+                inv_title: "Трекери сармоягузории BTIME",
+                inv_desc: "Нусхаи маҳдуд (на бештар аз 500 адад дар силсила) арзиши коллексионии соатро ҳар сол меафзояд.",
+                inv_select: "Интихоби соат:",
+                inv_y1: "Пас аз 1 сол",
+                inv_y3: "Пас аз 3 сол",
+                inv_y5: "Пас аз 5 сол",
+                inv_badge: "Index +14.8% Солона",
+                inv_chart: "Графикаи афзоиши арзиш",
+                inv_cur: "2026 (Ҷорӣ)",
+                inv_fore: "2031 (Пешбинӣ)",
+                conf_sub: "Корхонаи фармоишӣ",
+                conf_title: "BTIME-и худро созед",
+                conf_desc: "Мавод ва ранги дилхоҳи циферблатро интихоб кунед",
+                conf_s1: "1. Маводи корпус",
+                conf_s2: "2. Ранги циферблат",
+                conf_s3: "3. Тасма",
+                c_gold: "Тилло", c_plat: "Платина", c_tit: "Титан",
+                d_obs: "Обсидиан", d_em: "Зумрад", d_champ: "Шампань",
+                s_leat: "Пӯсти тимсоҳ", s_brac: "Браслет",
+                total_label: "Арзиши умумӣ:",
+                cert_sub: "Шиносномаи блокчейни BTIME",
+                cert_title: "Генератори сертификати аслӣ",
+                cert_desc: "Рақами силсилавии соататонро ворид кунед ё шиносномаи намоиширо гиред.",
+                cert_btn: "Гирифтани шиноснома",
+                cert_stat: "Ҳолат",
+                cert_val: "Дороии аслӣ",
+                cert_own: "Соҳибмулк:",
+                cert_ser: "Рақами силсилавӣ:",
+                cert_dat: "Санаи барориш:",
+                cert_gar: "Кафолат:",
+                cert_life: "Умрбод",
+                back_cat: "Баргашт ба каталог",
+                in_stock: "Дар City Mall мавҷуд аст",
+                sp_bout: "Бутик", sp_mech: "Механизм", sp_wat: "Тобоварӣ ба об",
+                det_badge: "Мануфактураи Швейтсария",
+                feat_title: "Хусусиятҳои техникӣ:",
+                f1: "Санҷиш ва харид дар бутики City Mall (Душанбе)",
+                f2: "Шишаи дугонаи сапфирӣ аз харошидан муҳофизатшуда",
+                f3: "Кафолати расмӣ ва сертификати аслӣ",
+                f4: "Пардохт бо картҳои Корти Милли, DC, Visa/Mastercard",
+                btn_dc: "Харид тавассути Dushanbe City",
+                cart_title: "Сабади шумо",
+                cart_empty: "Сабади шумо холист",
+                cart_sum: "Ҷамъи фармоиш:",
+                cart_pay: "Пардохт тавассути Dushanbe City / Alif",
+                pay_sec: "Эквайринги Dushanbe City (Корти Милли)",
+                pay_h: "Пардохт бо картаи банкӣ",
+                pay_to_pay: "Маблағи пардохт:",
+                pay_cnum: "Рақами карта (Корти Милли / Visa)",
+                pay_exp: "Муҳлат (MM/YY)",
+                pay_hold: "Номи соҳиби карта",
+                pay_conf: "Тасдиқи пардохт",
+                pay_auth: "Санҷиши пардохт...",
+                pay_ok: "Пардохт бомуваффақият тасдиқ шуд!",
+                pay_done: "Иҷро шуд",
+                con_sub: "Бутики шахсӣ",
+                con_h: "Сабти ном барои санҷиш дар City Mall",
+                con_desc: "Рақами худро гузоред ва мутахассиси мо соатро омода мекунад.",
+                con_name: "Номи шумо",
+                con_ph: "Рақами телефон (+992)",
+                con_btn: "Брон кардани вақт",
+                ft_desc: "Салони расмии соатҳо дар Душанбе.",
+                ft_col: "Маҷмӯаҳо", ft_man: "Мануфактура", ft_bout: "Бутик дар Душанбе",
+                ft_mall: "City Mall, ошёнаи 1", ft_str: "хиёбони Рӯдакӣ / марказ",
+                ft_rights: "Ҳамаи ҳуқуқ маҳфуз аст."
             }
-        ];
+        };
 
+        // Тексты для 7 моделей часов на трех языках
+        const productsData = {
+            ru: [
+                { id: 1, name: "BTIME Royal Tourbillon", desc: "Вершина часового мастерства BTIME. В сердце модели бьется сложнейший узел — парящий турбийон. Корпус из розового золота 18 карат.", caseMat: "Розовое золото 18К" },
+                { id: 2, name: "BTIME Obsidian Skeleton", desc: "Полностью скелетонизированный циферблат открывает взору работу всех 248 микроскопических деталей механизма.", caseMat: "Черный карбон и сталь" },
+                { id: 3, name: "BTIME Chrono Platinum", desc: "Изысканный хронограф в благородном корпусе из швейцарской платины с функцией мгновенного сброса.", caseMat: "Швейцарская Платина" },
+                { id: 4, name: "BTIME Vanguard Gold", desc: "Строгая классика для деловой элиты. Толщина корпуса составляет всего 7.2 мм с гальванической позолотой.", caseMat: "Позолоченная сталь 316L" },
+                { id: 5, name: "BTIME Deep Dive 300m", desc: "Профессиональные дайверские часы с гелиевым клапаном и керамическим безелем. До 300 метров под водой.", caseMat: "Матовый титан" },
+                { id: 6, name: "BTIME Minimalist Slate", desc: "Воплощение минимализма и чистоты линий с матовым грифельным циферблатом.", caseMat: "Авиационный титан" },
+                { id: 7, name: "BTIME Grand Complication", desc: "Уникальное усложнение: вечный календарь и индикатор фаз Луны с точностью на 122 года.", caseMat: "Белое золото 18К" }
+            ],
+            en: [
+                { id: 1, name: "BTIME Royal Tourbillon", desc: "The pinnacle of BTIME watchmaking. A complex flying tourbillon beats at the heart. 18k rose gold case.", caseMat: "18K Rose Gold" },
+                { id: 2, name: "BTIME Obsidian Skeleton", desc: "Fully skeletonized dial reveals the meticulous work of all 248 microscopic movement components.", caseMat: "Black Carbon & Steel" },
+                { id: 3, name: "BTIME Chrono Platinum", desc: "Exquisite chronograph in a noble Swiss platinum case with flyback reset function.", caseMat: "Swiss Platinum" },
+                { id: 4, name: "BTIME Vanguard Gold", desc: "Strict classics for business elites. Case thickness is only 7.2 mm with galvanic gold plating.", caseMat: "Gold-plated 316L Steel" },
+                { id: 5, name: "BTIME Deep Dive 300m", desc: "Professional diving watch with helium valve and ceramic bezel. Waterproof up to 300 meters.", caseMat: "Matte Titanium" },
+                { id: 6, name: "BTIME Minimalist Slate", desc: "The embodiment of minimalism and clean lines with a matte slate dial.", caseMat: "Aerospace Titanium" },
+                { id: 7, name: "BTIME Grand Complication", desc: "Unique complication: perpetual calendar and moon phase indicator accurate for 122 years.", caseMat: "18K White Gold" }
+            ],
+            tj: [
+                { id: 1, name: "BTIME Royal Tourbillon", desc: "Қуллаи ҳунари соатсозии BTIME. Дар қалби соат турбиёни парвозкунанда ҷойгир аст. Корпуси тиллои 18 карат.", caseMat: "Тиллои садбарги 18К" },
+                { id: 2, name: "BTIME Obsidian Skeleton", desc: "Циферблати пурра скелетонишуда кори ҳамаи 248 ҷузъи микроскопики механизмоти соатро намоён мекунад.", caseMat: "Карбони сиёҳ ва пӯлод" },
+                { id: 3, name: "BTIME Chrono Platinum", desc: "Хронографи нодир дар корпуси олиҷаноби платинаи швейтсарӣ бо функсияи баргардонидани фаврӣ.", caseMat: "Платинаи Швейтсария" },
+                { id: 4, name: "BTIME Vanguard Gold", desc: "Классикаи қатъӣ барои элитаи тиҷоратӣ. Ғафсии корпус ҳамагӣ 7.2 мм бо тиллодиҳӣ.", caseMat: "Пӯлоди тиллододашудаи 316L" },
+                { id: 5, name: "BTIME Deep Dive 300m", desc: "Соати касбии ғарқшавӣ бо клапани гелий ва безели сафолӣ. То 300 метр зери об.", caseMat: "Титани матӣ" },
+                { id: 6, name: "BTIME Minimalist Slate", desc: "Таҷассуми минимализм ва хатҳои тоза бо циферблати матӣ.", caseMat: "Титани авиационӣ" },
+                { id: 7, name: "BTIME Grand Complication", desc: "Печидагии беназир: тақвими абадӣ ва нишондиҳандаи фазаҳои Моҳ бо дақиқии 122 сол.", caseMat: "Тиллои сафеди 18К" }
+            ]
+        };
+
+        let currentLang = 'ru';
         let currentCurrency = 'TJS';
-        // Базовый курс обмена к USD (1 USD = ~11.0 TJS)
         let currencyRates = { TJS: 11.0, USD: 1, EUR: 0.92, RUB: 92.5 };
         let cart = [];
-        let soundActive = false;
+        let activeProductId = 1;
 
         let configState = {
             caseType: 'gold', casePrice: 1500, caseImg: 'https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?auto=format&fit=crop&w=600&q=80', caseTitle: 'Розовое золото 18К',
@@ -646,24 +801,53 @@
             strapType: 'leather', strapPrice: 0, strapTitle: 'Кожа Аллигатора'
         };
 
+        const imagesMap = [
+            "https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=800&q=80",
+            "https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?auto=format&fit=crop&w=800&q=80",
+            "https://images.unsplash.com/photo-1547996160-81dfa63595aa?auto=format&fit=crop&w=800&q=80",
+            "https://images.unsplash.com/photo-1524592094714-0f0654e20314?auto=format&fit=crop&w=800&q=80",
+            "https://images.unsplash.com/photo-1533139502658-0198f920d8e8?auto=format&fit=crop&w=800&q=80",
+            "https://images.unsplash.com/photo-1509042239860-f550ce710b93?auto=format&fit=crop&w=800&q=80",
+            "https://images.unsplash.com/photo-1508685096489-7aacd43bd3b1?auto=format&fit=crop&w=800&q=80"
+        ];
+        const pricesMap = [24500, 18900, 12400, 9800, 11200, 7500, 31000];
+
+        function changeLanguage() {
+            currentLang = document.getElementById('langSelector').value;
+            document.querySelectorAll('[data-i18n]').forEach(el => {
+                let key = el.getAttribute('data-i18n');
+                if (i18n[currentLang][key]) {
+                    el.innerText = i18n[currentLang][key];
+                }
+            });
+            document.getElementById('siteTitle').innerText = i18n[currentLang].siteTitle;
+            initCatalog();
+            updateInvestment();
+            updateCartDisplay();
+            if (!document.getElementById('productDetailView').classList.contains('hidden')) {
+                renderProductDetail(activeProductId);
+            }
+        }
+
         function initCatalog() {
             const grid = document.getElementById('productsGrid');
-            grid.innerHTML = products.map(p => `
+            const pList = productsData[currentLang];
+            grid.innerHTML = pList.map((p, index) => `
                 <div class="glass-card rounded-3xl overflow-hidden p-6 flex flex-col justify-between">
                     <div>
-                        <div class="zoom-container rounded-2xl mb-4 overflow-hidden h-64 cursor-pointer" onclick="openProductDetail(${p.id})" onmousemove="zoomMove(event)" onmouseleave="zoomLeave()">
-                            <img src="${p.image}" alt="${p.name}" class="w-full h-full object-cover rounded-2xl">
+                        <div class="zoom-container rounded-2xl mb-4 overflow-hidden h-60 sm:h-64 cursor-pointer" onclick="openProductDetail(${p.id})" onmousemove="zoomMove(event)" onmouseleave="zoomLeave()">
+                            <img src="${imagesMap[index]}" alt="${p.name}" class="w-full h-full object-cover rounded-2xl">
                             <div class="zoom-lens"></div>
                         </div>
                         <h3 class="text-xl font-serif font-bold text-white cursor-pointer hover:text-yellow-400 transition" onclick="openProductDetail(${p.id})">${p.name}</h3>
                         <p class="text-xs text-gray-400 mt-1 line-clamp-2">${p.desc}</p>
                     </div>
-                    <div class="mt-6 flex items-center justify-between border-t border-white/10 pt-4">
-                        <span class="text-lg font-bold gold-gradient-text catalog-price" data-usd="${p.priceUSD}">0 ЅМ</span>
-                        <div class="space-x-2">
-                            <button onclick="openProductDetail(${p.id})" class="text-xs text-gray-300 hover:text-yellow-400 px-3 py-2 border border-white/10 rounded-full transition">Обзор</button>
-                            <button onclick="addToCart('${p.name}', ${p.priceUSD})" class="bg-gradient-to-r from-yellow-500 to-yellow-600 text-black font-semibold uppercase tracking-wider text-xs px-4 py-2.5 rounded-full hover:brightness-110 transition">
-                                В корзину
+                    <div class="mt-6 flex flex-wrap items-center justify-between border-t border-white/10 pt-4 gap-2">
+                        <span class="text-base sm:text-lg font-bold gold-gradient-text catalog-price" data-usd="${pricesMap[index]}">0 ЅМ</span>
+                        <div class="space-x-1 sm:space-x-2">
+                            <button onclick="openProductDetail(${p.id})" class="text-xs text-gray-300 hover:text-yellow-400 px-3 py-2 border border-white/10 rounded-full transition">${i18n[currentLang].btn_rev}</button>
+                            <button onclick="addToCart('${p.name}', ${pricesMap[index]})" class="bg-gradient-to-r from-yellow-500 to-yellow-600 text-black font-semibold uppercase tracking-wider text-xs px-4 py-2.5 rounded-full hover:brightness-110 transition">
+                                ${i18n[currentLang].btn_cart}
                             </button>
                         </div>
                     </div>
@@ -674,61 +858,47 @@
 
         function switchView(viewName, productId = null) {
             window.scrollTo({ top: 0, behavior: 'smooth' });
-            if(viewName === 'home') {
+            if (viewName === 'home') {
                 document.getElementById('homeView').classList.remove('hidden');
                 document.getElementById('productDetailView').classList.add('hidden');
-            } else if(viewName === 'detail') {
+            } else if (viewName === 'detail') {
                 document.getElementById('homeView').classList.add('hidden');
                 document.getElementById('productDetailView').classList.remove('hidden');
                 renderProductDetail(productId);
             }
         }
 
-        function openProductDetail(id) {
-            switchView('detail', id);
-        }
+        function openProductDetail(id) { switchView('detail', id); }
 
-        let activeProductId = 1;
         function renderProductDetail(id) {
             activeProductId = id;
-            let p = products.find(x => x.id === id) || products[0];
+            let index = id - 1;
+            let p = productsData[currentLang][index];
             document.getElementById('detailTitle').innerText = p.name;
-            document.getElementById('detailImg').src = p.image;
+            document.getElementById('detailImg').src = imagesMap[index];
             document.getElementById('detailDesc').innerText = p.desc;
-            document.getElementById('detailCaseMat').innerText = p.caseMat;
-            document.getElementById('detailPrice').innerText = formatPrice(p.priceUSD);
-            document.getElementById('detailBuyBtn').setAttribute('onclick', `addToCart('${p.name}', ${p.priceUSD})`);
+            document.getElementById('detailPrice').innerText = formatPrice(pricesMap[index]);
+            document.getElementById('detailBuyBtn').setAttribute('onclick', `addToCart('${p.name}', ${pricesMap[index]})`);
         }
 
         function zoomMove(e) {
+            if (window.innerWidth < 768) return;
             const container = e.currentTarget;
             const img = container.querySelector('img');
             const lens = container.querySelector('.zoom-lens');
             if(!lens || !img) return;
-            
             lens.style.display = 'block';
             const rect = container.getBoundingClientRect();
-            let x = e.clientX - rect.left;
-            let y = e.clientY - rect.top;
-
-            let lensX = x - lens.offsetWidth / 2;
-            let lensY = y - lens.offsetHeight / 2;
-
-            if (lensX < 0) lensX = 0;
-            if (lensX > container.offsetWidth - lens.offsetWidth) lensX = container.offsetWidth - lens.offsetWidth;
-            if (lensY < 0) lensY = 0;
-            if (lensY > container.offsetHeight - lens.offsetHeight) lensY = container.offsetHeight - lens.offsetHeight;
-
-            lens.style.left = lensX + 'px';
-            lens.style.top = lensY + 'px';
+            let x = e.clientX - rect.left, y = e.clientY - rect.top;
+            let lensX = x - lens.offsetWidth / 2, lensY = y - lens.offsetHeight / 2;
+            if (lensX < 0) lensX = 0; if (lensX > container.offsetWidth - lens.offsetWidth) lensX = container.offsetWidth - lens.offsetWidth;
+            if (lensY < 0) lensY = 0; if (lensY > container.offsetHeight - lens.offsetHeight) lensY = container.offsetHeight - lens.offsetHeight;
+            lens.style.left = lensX + 'px'; lens.style.top = lensY + 'px';
             lens.style.backgroundImage = `url('${img.src}')`;
             lens.style.backgroundSize = `${container.offsetWidth * 2.5}px ${container.offsetHeight * 2.5}px`;
             lens.style.backgroundPosition = `-${lensX * 2.5}px -${lensY * 2.5}px`;
         }
-
-        function zoomLeave() {
-            document.querySelectorAll('.zoom-lens').forEach(l => l.style.display = 'none');
-        }
+        function zoomLeave() { document.querySelectorAll('.zoom-lens').forEach(l => l.style.display = 'none'); }
 
         function changeCurrency() {
             currentCurrency = document.getElementById('currencySelector').value;
@@ -736,7 +906,7 @@
             updateInvestment();
             updateConfigPrice();
             updateCartDisplay();
-            if(!document.getElementById('productDetailView').classList.contains('hidden')) {
+            if (!document.getElementById('productDetailView').classList.contains('hidden')) {
                 renderProductDetail(activeProductId);
             }
         }
@@ -753,52 +923,25 @@
         function updatePricesDisplay() {
             document.querySelectorAll('.price-tag, .catalog-price').forEach(el => {
                 let usd = parseFloat(el.getAttribute('data-usd'));
-                if(usd) el.innerText = formatPrice(usd);
+                if (usd) el.innerText = formatPrice(usd);
             });
-        }
-
-        function toggleSound() {
-            const audio = document.getElementById('tickAudio');
-            const icon = document.getElementById('soundIcon');
-            soundActive = !soundActive;
-            if(soundActive) {
-                audio.play().catch(() => {});
-                icon.className = "fa-solid fa-volume-high text-sm text-yellow-400";
-            } else {
-                audio.pause();
-                icon.className = "fa-solid fa-volume-xmark text-sm";
-            }
         }
 
         function updateInvestment() {
             let baseUSD = parseFloat(document.getElementById('investModelSelect').value);
-            let y1 = baseUSD * 1.15;
-            let y3 = baseUSD * 1.52;
-            let y5 = baseUSD * 2.05;
-
+            let y1 = baseUSD * 1.15, y3 = baseUSD * 1.52, y5 = baseUSD * 2.05;
             document.getElementById('inv1yr').innerText = formatPrice(y1);
             document.getElementById('inv3yr').innerText = formatPrice(y3);
             document.getElementById('inv5yr').innerText = formatPrice(y5);
 
             let chartContainer = document.getElementById('investChartBars');
-            let maxVal = y5;
             let items = [
-                {year: '2023', val: baseUSD * 0.85},
-                {year: '2024', val: baseUSD * 0.95},
-                {year: '2025', val: baseUSD},
-                {year: '2026', val: y1},
-                {year: '2028', val: y3},
-                {year: '2031', val: y5}
+                {year: '2023', val: baseUSD * 0.85}, {year: '2024', val: baseUSD * 0.95},
+                {year: '2025', val: baseUSD}, {year: '2026', val: y1}, {year: '2028', val: y3}, {year: '2031', val: y5}
             ];
-
             chartContainer.innerHTML = items.map(item => {
-                let heightPercent = Math.round((item.val / maxVal) * 100);
-                return `
-                    <div class="flex-1 flex flex-col items-center h-full justify-end group">
-                        <div class="w-full bg-yellow-500/20 group-hover:bg-yellow-500 transition rounded-t-lg relative" style="height: ${heightPercent}%"></div>
-                        <span class="text-[9px] text-gray-500 mt-2">${item.year}</span>
-                    </div>
-                `;
+                let heightPercent = Math.round((item.val / y5) * 100);
+                return `<div class="flex-1 flex flex-col items-center h-full justify-end group"><div class="w-full bg-yellow-500/20 group-hover:bg-yellow-500 transition rounded-t-lg relative" style="height: ${heightPercent}%"></div><span class="text-[9px] text-gray-500 mt-2">${item.year}</span></div>`;
             }).join('');
         }
 
@@ -840,8 +983,7 @@
         function updateCartBadge() {
             const badge = document.getElementById('cartBadge');
             badge.innerText = cart.length;
-            if(cart.length > 0) badge.classList.remove('scale-0');
-            else badge.classList.add('scale-0');
+            if(cart.length > 0) badge.classList.remove('scale-0'); else badge.classList.add('scale-0');
         }
 
         function openCart() { document.getElementById('cartDrawer').classList.remove('translate-x-full'); updateCartDisplay(); }
@@ -850,75 +992,42 @@
         function updateCartDisplay() {
             const list = document.getElementById('cartItemsList');
             if(cart.length === 0) {
-                list.innerHTML = `<p class="text-gray-500 text-sm text-center py-12">Ваша корзина пуста</p>`;
+                list.innerHTML = `<p class="text-gray-500 text-sm text-center py-12">${i18n[currentLang].cart_empty}</p>`;
                 document.getElementById('cartTotalPrice').innerText = formatPrice(0);
                 return;
             }
             let totalUSD = 0;
             list.innerHTML = cart.map((item, index) => {
                 totalUSD += item.priceUSD;
-                return `
-                    <div class="glass-panel p-4 rounded-xl flex items-center justify-between">
-                        <div>
-                            <h4 class="text-white text-sm font-semibold">${item.name}</h4>
-                            <span class="text-xs gold-gradient-text">${formatPrice(item.priceUSD)}</span>
-                        </div>
-                        <button onclick="removeFromCart(${index})" class="text-gray-400 hover:text-red-400"><i class="fa-solid fa-trash"></i></button>
-                    </div>
-                `;
+                return `<div class="glass-panel p-4 rounded-xl flex items-center justify-between gap-2"><div><h4 class="text-white text-sm font-semibold">${item.name}</h4><span class="text-xs gold-gradient-text">${formatPrice(item.priceUSD)}</span></div><button onclick="removeFromCart(${index})" class="text-gray-400 hover:text-red-400 p-2"><i class="fa-solid fa-trash"></i></button></div>`;
             }).join('');
             document.getElementById('cartTotalPrice').innerText = formatPrice(totalUSD);
         }
 
-        function removeFromCart(index) {
-            cart.splice(index, 1);
-            updateCartBadge();
-            updateCartDisplay();
-        }
-
-        // --- ЛОГИКА ОПЛАТЫ КАРТОЙ ---
+        function removeFromCart(index) { cart.splice(index, 1); updateCartBadge(); updateCartDisplay(); }
         function openPaymentModal() {
             let totalUSD = cart.length > 0 ? cart.reduce((sum, item) => sum + item.priceUSD, 0) : 24500;
             document.getElementById('paymentModalSum').innerText = formatPrice(totalUSD);
-            
             document.getElementById('paymentFormStep').classList.remove('hidden');
             document.getElementById('paymentLoadingStep').classList.add('hidden');
             document.getElementById('paymentSuccessStep').classList.add('hidden');
-            
             document.getElementById('paymentModal').classList.remove('hidden');
         }
-
-        function closePaymentModal() {
-            document.getElementById('paymentModal').classList.add('hidden');
-        }
-
+        function closePaymentModal() { document.getElementById('paymentModal').classList.add('hidden'); }
         function processCardPayment(e) {
             e.preventDefault();
             document.getElementById('paymentFormStep').classList.add('hidden');
             document.getElementById('paymentLoadingStep').classList.remove('hidden');
-
             setTimeout(() => {
                 document.getElementById('paymentLoadingStep').classList.add('hidden');
                 document.getElementById('paymentSuccessStep').classList.remove('hidden');
-                
-                cart = [];
-                updateCartBadge();
-                closeCart();
+                cart = []; updateCartBadge(); closeCart();
             }, 2500);
         }
-
-        function closeAllModalsCompletely() {
-            closePaymentModal();
-        }
-
+        function closeAllModalsCompletely() { closePaymentModal(); }
         function openConciergeModal() { document.getElementById('conciergeModal').classList.remove('hidden'); }
         function closeConciergeModal() { document.getElementById('conciergeModal').classList.add('hidden'); }
-        function submitConcierge(e) {
-            e.preventDefault();
-            alert('Запрос принят! Бутик в City Mall свяжется с вами для подтверждения визита.');
-            closeConciergeModal();
-        }
-
+        function submitConcierge(e) { e.preventDefault(); alert('Готово!'); closeConciergeModal(); }
         function generateCertificate() {
             let num = document.getElementById('certInputNumber').value.trim();
             if(!num) num = "BTIME-" + Math.floor(1000 + Math.random() * 9000) + "-TJ";
@@ -926,11 +1035,7 @@
             document.getElementById('certResultBox').classList.remove('hidden');
         }
 
-        window.onload = () => {
-            initCatalog();
-            updateInvestment();
-            updateConfigPrice();
-        };
+        window.onload = () => { initCatalog(); updateInvestment(); updateConfigPrice(); };
     </script>
 </body>
 </html>
