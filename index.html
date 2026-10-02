@@ -127,15 +127,24 @@
                 <a href="#certificate" onclick="switchView('home')" class="hover:text-yellow-400 transition" data-i18n="nav_passport">Паспорт</a>
             </nav>
 
-            <div class="flex items-center space-x-4">
+            <div class="flex items-center space-x-3">
                 <button onclick="openCart()" class="relative text-gray-300 hover:text-yellow-400 transition p-2">
                     <i class="fa-solid fa-bag-shopping text-xl"></i>
                     <span id="cartBadge" class="absolute top-0 right-0 bg-yellow-500 text-black text-[10px] font-bold w-5 h-5 rounded-full flex items-center justify-center scale-0 transition-transform">0</span>
                 </button>
-                <button onclick="openConciergeModal()" class="hidden sm:inline-flex items-center space-x-2 bg-gradient-to-r from-yellow-600 to-yellow-500 text-black font-semibold text-xs tracking-wider uppercase px-4 py-2.5 rounded-full hover:brightness-110 transition shadow-lg shadow-yellow-600/20">
-                    <i class="fa-solid fa-headset"></i>
-                    <span data-i18n="nav_concierge">Консьерж</span>
-                </button>
+
+                <!-- Авторизация Google Firebase -->
+                <div id="authContainer">
+                    <button onclick="loginWithGoogle()" id="googleLoginBtn" class="flex items-center space-x-2 bg-white text-black font-semibold text-xs px-4 py-2 rounded-full hover:bg-gray-200 transition shadow-md">
+                        <i class="fa-brands fa-google text-red-500"></i>
+                        <span data-i18n="login_google">Войти</span>
+                    </button>
+                    <div id="userProfile" class="hidden flex items-center space-x-2 glass-panel px-3 py-1.5 rounded-full border border-yellow-500/30">
+                        <img id="userAvatar" src="" alt="Avatar" class="w-7 h-7 rounded-full border border-yellow-500 object-cover">
+                        <span id="userName" class="text-xs font-medium text-white hidden sm:inline">User</span>
+                        <button onclick="logoutFirebase()" class="text-gray-400 hover:text-red-400 text-xs ml-2 transition" title="Выйти"><i class="fa-solid fa-right-from-bracket"></i></button>
+                    </div>
+                </div>
             </div>
         </div>
     </header>
@@ -217,18 +226,9 @@
                                 </select>
                             </div>
                             <div class="grid grid-cols-3 gap-4 pt-2">
-                                <div class="glass-card p-4 rounded-xl text-center">
-                                    <div class="text-[10px] text-gray-400 uppercase" data-i18n="inv_y1">Через 1 год</div>
-                                    <div id="inv1yr" class="text-sm sm:text-lg font-bold text-yellow-400 mt-1">--</div>
-                                </div>
-                                <div class="glass-card p-4 rounded-xl text-center">
-                                    <div class="text-[10px] text-gray-400 uppercase" data-i18n="inv_y3">Через 3 года</div>
-                                    <div id="inv3yr" class="text-sm sm:text-lg font-bold text-yellow-400 mt-1">--</div>
-                                </div>
-                                <div class="glass-card p-4 rounded-xl text-center">
-                                    <div class="text-[10px] text-gray-400 uppercase" data-i18n="inv_y5">Через 5 лет</div>
-                                    <div id="inv5yr" class="text-sm sm:text-lg font-bold text-yellow-400 mt-1">--</div>
-                                </div>
+                                <div class="glass-card p-4 rounded-xl text-center"><div class="text-[10px] text-gray-400 uppercase" data-i18n="inv_y1">Через 1 год</div><div id="inv1yr" class="text-sm sm:text-lg font-bold text-yellow-400 mt-1">--</div></div>
+                                <div class="glass-card p-4 rounded-xl text-center"><div class="text-[10px] text-gray-400 uppercase" data-i18n="inv_y3">Через 3 года</div><div id="inv3yr" class="text-sm sm:text-lg font-bold text-yellow-400 mt-1">--</div></div>
+                                <div class="glass-card p-4 rounded-xl text-center"><div class="text-[10px] text-gray-400 uppercase" data-i18n="inv_y5">Через 5 лет</div><div id="inv5yr" class="text-sm sm:text-lg font-bold text-yellow-400 mt-1">--</div></div>
                             </div>
                         </div>
                     </div>
@@ -237,9 +237,7 @@
                         <h3 class="text-lg font-serif font-bold text-white mb-4"><i class="fa-solid fa-chart-line text-yellow-500 mr-2"></i> <span data-i18n="inv_chart">График роста стоимости</span></h3>
                         <div class="h-64 flex items-end justify-between space-x-2 sm:space-x-3 pt-8 border-b border-white/10 px-2" id="investChartBars"></div>
                         <div class="flex justify-between text-[10px] sm:text-xs text-gray-400 mt-3">
-                            <span>2023</span>
-                            <span data-i18n="inv_cur">2026 (Текущий)</span>
-                            <span data-i18n="inv_fore">2031 (Прогноз)</span>
+                            <span>2023</span><span data-i18n="inv_cur">2026 (Текущий)</span><span data-i18n="inv_fore">2031 (Прогноз)</span>
                         </div>
                     </div>
                 </div>
@@ -486,279 +484,166 @@
         </div>
     </footer>
 
-    <!-- СКРИПТЫ И ПОЛНЫЙ СЛОВАРЬ ПЕРЕВОДОВ ВСЕХ 7 МОДЕЛЕЙ И ИНТЕРФЕЙСА -->
+    <!-- Firebase SDK (Modular v11) + Firestore -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+        import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+        import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+
+        // Замени на данные из своей Firebase Console
+        const firebaseConfig = {
+            apiKey: "AIzaSyYOUR_API_KEY_HERE",
+            authDomain: "btime-dushanbe.firebaseapp.com",
+            projectId: "btime-dushanbe",
+            storageBucket: "btime-dushanbe.appspot.com",
+            messagingSenderId: "1234567890",
+            appId: "1:1234567890:web:abcdef"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+        const provider = new GoogleAuthProvider();
+
+        window.currentUser = null;
+
+        window.loginWithGoogle = async function() {
+            try {
+                const result = await signInWithPopup(auth, provider);
+                console.log("Вход выполнен:", result.user);
+            } catch (error) {
+                console.error("Ошибка входа:", error);
+            }
+        };
+
+        window.logoutFirebase = async function() {
+            try {
+                await signOut(auth);
+            } catch (error) {
+                console.error("Ошибка выхода:", error);
+            }
+        };
+
+        // Сохранение данных пользователя и заказов в Firestore
+        async function syncUserToFirestore(user) {
+            try {
+                const userRef = doc(db, "users", user.uid);
+                await setDoc(userRef, {
+                    uid: user.uid,
+                    name: user.displayName,
+                    email: user.email,
+                    photo: user.photoURL,
+                    lastLogin: new Date().toISOString()
+                }, { merge: true });
+            } catch (e) {
+                console.error("Ошибка Firestore:", e);
+            }
+        }
+
+        onAuthStateChanged(auth, (user) => {
+            const loginBtn = document.getElementById('googleLoginBtn');
+            const profileDiv = document.getElementById('userProfile');
+            const avatarImg = document.getElementById('userAvatar');
+            const nameSpan = document.getElementById('userName');
+
+            if (user) {
+                window.currentUser = user;
+                loginBtn.classList.add('hidden');
+                profileDiv.classList.remove('hidden');
+                avatarImg.src = user.photoURL || "https://www.gravatar.com/avatar/?d=mp";
+                nameSpan.innerText = user.displayName || "VIP User";
+                syncUserToFirestore(user);
+            } else {
+                window.currentUser = null;
+                loginBtn.classList.remove('hidden');
+                profileDiv.classList.add('hidden');
+            }
+        });
+    </script>
+
+    <!-- Скрипты сайта и локализации -->
     <script>
         const i18n = {
             ru: {
                 siteTitle: "BTIME — Бутик Высокого Часового Искусства | Душанбе, City Mall",
                 top_address: "Душанбе, City Mall, 1 этаж",
-                nav_collections: "Коллекции",
-                nav_config: "Конфигуратор",
-                nav_invest: "Инвестиции",
-                nav_passport: "Паспорт",
-                nav_concierge: "Консьерж",
+                nav_collections: "Коллекции", nav_config: "Конфигуратор", nav_invest: "Инвестиции", nav_passport: "Паспорт", nav_concierge: "Консьерж",
+                login_google: "Войти",
                 hero_badge: "Флагманский бутик в Душанбе",
-                hero_title_1: "Время, неподвластное",
-                hero_title_2: "эпохам.",
+                hero_title_1: "Время, неподвластное", hero_title_2: "эпохам.",
                 hero_desc: "Эксклюзивный представитель швейцарской микромеханики в Таджикистане. Ждем вас в City Mall.",
-                hero_btn_catalog: "Выбрать модель",
-                hero_btn_config: "Собрать свой стиль",
-                hit_badge: "Хит продаж",
-                m1_sub: "Ручной завод • Запас хода 72 часа",
-                price_label: "Стоимость:",
-                cat_subtitle: "Коллекция мануфактуры",
-                cat_title: "Шедевры часового искусства",
-                cat_hint: "Нажмите на любую модель, чтобы открыть её эксклюзивный паспорт и детальный обзор",
-                btn_rev: "Обзор",
-                btn_cart: "В корзину",
-                inv_subtitle: "Ликвидность и актив",
-                inv_title: "Инвестиционный трекер BTIME",
-                inv_desc: "Ограниченный тираж (не более 500 экземпляров в серии) ежегодно увеличивает коллекционную стоимость часов.",
-                inv_select: "Выберите модель:",
-                inv_y1: "Через 1 год",
-                inv_y3: "Через 3 года",
-                inv_y5: "Через 5 лет",
-                inv_badge: "Index +14.8% Годовых",
-                inv_chart: "График роста стоимости",
-                inv_cur: "2026 (Текущий)",
-                inv_fore: "2031 (Прогноз)",
-                conf_sub: "Мастерская кастомизации",
-                conf_title: "Создайте свой BTIME",
-                conf_desc: "Соберите уникальную комбинацию материалов и циферблата",
-                conf_s1: "1. Материал корпуса",
-                conf_s2: "2. Циферблат",
-                conf_s3: "3. Ремешок",
-                c_gold: "Золото", c_plat: "Платина", c_tit: "Титан",
-                d_obs: "Обсидиан", d_em: "Изумруд", d_champ: "Шампань",
-                s_leat: "Кожа аллигатора", s_brac: "Браслет",
+                hero_btn_catalog: "Выбрать модель", hero_btn_config: "Собрать свой стиль",
+                hit_badge: "Хит продаж", m1_sub: "Ручной завод • Запас хода 72 часа", price_label: "Стоимость:",
+                cat_subtitle: "Коллекция мануфактуры", cat_title: "Шедевры часового искусства", cat_hint: "Нажмите на любую модель, чтобы открыть её эксклюзивный паспорт",
+                btn_rev: "Обзор", btn_cart: "В корзину",
+                inv_subtitle: "Ликвидность и актив", inv_title: "Инвестиционный трекер BTIME", inv_desc: "Ограниченный тираж (не более 500 экземпляров в серии) ежегодно увеличивает коллекционную стоимость часов.",
+                inv_select: "Выберите модель:", inv_y1: "Через 1 год", inv_y3: "Через 3 года", inv_y5: "Через 5 лет", inv_badge: "Index +14.8% Годовых", inv_chart: "График роста стоимости", inv_cur: "2026 (Текущий)", inv_fore: "2031 (Прогноз)",
+                conf_sub: "Мастерская кастомизации", conf_title: "Создайте свой BTIME", conf_desc: "Соберите уникальную комбинацию материалов и циферблата",
+                conf_s1: "1. Материал корпуса", conf_s2: "2. Циферблат", conf_s3: "3. Ремешок",
+                c_gold: "Золото", c_plat: "Платина", c_tit: "Титан", d_obs: "Обсидиан", d_em: "Изумруд", d_champ: "Шампань", s_leat: "Кожа аллигатора", s_brac: "Браслет",
                 total_label: "Итоговая стоимость:",
-                cert_sub: "Блокчейн-паспорт BTIME",
-                cert_title: "Генератор сертификата подлинности",
-                cert_desc: "Введите серийный номер ваших часов или сгенерируйте демонстрационный паспорт владельца.",
-                cert_btn: "Получить паспорт",
-                cert_stat: "Статус",
-                cert_val: "Подлинный актив",
-                cert_own: "Владелец:",
-                cert_ser: "Серийный номер:",
-                cert_dat: "Дата выпуска:",
-                cert_gar: "Гарантия:",
-                cert_life: "Пожизненная",
-                back_cat: "Вернуться к каталогу",
-                in_stock: "В наличии в City Mall",
-                sp_bout: "Бутик", sp_mech: "Механизм", sp_wat: "Водостойкость",
-                det_badge: "Швейцарская мануфактура",
-                feat_title: "Технические особенности:",
-                f1: "Примерка и покупка в бутике City Mall (Душанбе)",
-                f2: "Двойное сапфировое стекло с защитой от царапин",
-                f3: "Официальная гарантия и сертификат подлинности",
-                f4: "Оплата картами Корти Милли, DC, Visa/Mastercard",
-                btn_dc: "Купить через Dushanbe City",
-                cart_title: "Ваша корзина",
-                cart_empty: "Ваша корзина пуста",
-                cart_sum: "Сумма заказа:",
-                cart_pay: "Оплатить через Dushanbe City / Alif",
-                pay_sec: "Эквайринг Dushanbe City (Корти Милли)",
-                pay_h: "Оплата банковской картой",
-                pay_to_pay: "Сумма к списанию:",
-                pay_cnum: "Номер карты (Корти Милли / Visa)",
-                pay_exp: "Срок (MM/YY)",
-                pay_hold: "Имя владельца карты",
-                pay_conf: "Подтвердить списание",
-                pay_auth: "Авторизация платежа...",
-                pay_ok: "Оплата успешно подтверждена!",
-                pay_done: "Готово",
-                con_sub: "Персональный бутик",
-                con_h: "Запись на примерку в City Mall",
-                con_desc: "Оставьте номер телефона, и наш эксперт подготовит для вас часы.",
-                con_name: "Ваше имя",
-                con_ph: "Номер телефона (+992)",
-                con_btn: "Забронировать время визита",
-                ft_desc: "Официальный часовой салон в Душанбе.",
-                ft_col: "Коллекции", ft_man: "Мануфактура", ft_bout: "Бутик в Душанбе",
-                ft_mall: "City Mall, 1 этаж", ft_str: "пр. Рудаки / центр города",
-                ft_rights: "Все права защищены."
+                cert_sub: "Блокчейн-паспорт BTIME", cert_title: "Генератор сертификата подлинности", cert_desc: "Введите серийный номер ваших часов или сгенерируйте демонстрационный паспорт.", cert_btn: "Получить паспорт", cert_stat: "Статус", cert_val: "Подлинный актив", cert_own: "Владелец:", cert_ser: "Серийный номер:", cert_dat: "Дата выпуска:", cert_gar: "Гарантия:", cert_life: "Пожизненная",
+                back_cat: "Вернуться к каталогу", in_stock: "В наличии в City Mall", sp_bout: "Бутик", sp_mech: "Механизм", sp_wat: "Водостойкость", det_badge: "Швейцарская мануфактура",
+                feat_title: "Технические особенности:", f1: "Примерка и покупка в бутике City Mall (Душанбе)", f2: "Двойное сапфировое стекло с защитой от царапин", f3: "Официальная гарантия и сертификат подлинности", f4: "Оплата картами Корти Милли, DC, Visa/Mastercard", btn_dc: "Купить через Dushanbe City",
+                cart_title: "Ваша корзина", cart_empty: "Ваша корзина пуста", cart_sum: "Сумма заказа:", cart_pay: "Оплатить через Dushanbe City / Alif",
+                pay_sec: "Эквайринг Dushanbe City (Корти Милли)", pay_h: "Оплата банковской картой", pay_to_pay: "Сумма к списанию:", pay_cnum: "Номер карты (Корти Милли / Visa)", pay_exp: "Срок (MM/YY)", pay_hold: "Имя владельца карты", pay_conf: "Подтвердить списание", pay_auth: "Авторизация платежа...", pay_ok: "Оплата успешно подтверждена!", pay_done: "Готово",
+                con_sub: "Персональный бутик", con_h: "Запись на примерку в City Mall", con_desc: "Оставьте номер телефона, и наш эксперт подготовит для вас часы.", con_name: "Ваше имя", con_ph: "Номер телефона (+992)", con_btn: "Забронировать время визита",
+                ft_desc: "Официальный часовой салон в Душанбе.", ft_col: "Коллекции", ft_man: "Мануфактура", ft_bout: "Бутик в Душанбе", ft_mall: "City Mall, 1 этаж", ft_str: "пр. Рудаки / центр города", ft_rights: "Все права защищены."
             },
             en: {
                 siteTitle: "BTIME — Haute Horlogerie Boutique | Dushanbe, City Mall",
                 top_address: "Dushanbe, City Mall, 1st Floor",
-                nav_collections: "Collections",
-                nav_config: "Configurator",
-                nav_invest: "Investment",
-                nav_passport: "Passport",
-                nav_concierge: "Concierge",
+                nav_collections: "Collections", nav_config: "Configurator", nav_invest: "Investment", nav_passport: "Passport", nav_concierge: "Concierge",
+                login_google: "Sign in",
                 hero_badge: "Flagship Boutique in Dushanbe",
-                hero_title_1: "Time defying",
-                hero_title_2: "epochs.",
+                hero_title_1: "Time defying", hero_title_2: "epochs.",
                 hero_desc: "Exclusive representative of Swiss micromechanics in Tajikistan. We await you at City Mall.",
-                hero_btn_catalog: "Choose Model",
-                hero_btn_config: "Build Your Style",
-                hit_badge: "Best Seller",
-                m1_sub: "Manual winding • 72h Power Reserve",
-                price_label: "Price:",
-                cat_subtitle: "Manufacture Collection",
-                cat_title: "Masterpieces of Horology",
-                cat_hint: "Click on any model to open its exclusive passport and detailed review",
-                btn_rev: "Review",
-                btn_cart: "Add to Cart",
-                inv_subtitle: "Liquidity & Asset",
-                inv_title: "BTIME Investment Tracker",
-                inv_desc: "Limited edition (no more than 500 pieces per series) annually increases the collection value of the watches.",
-                inv_select: "Select model:",
-                inv_y1: "In 1 year",
-                inv_y3: "In 3 years",
-                inv_y5: "In 5 years",
-                inv_badge: "Index +14.8% Annual",
-                inv_chart: "Asset Value Growth Chart",
-                inv_cur: "2026 (Current)",
-                inv_fore: "2031 (Forecast)",
-                conf_sub: "Customization Workshop",
-                conf_title: "Create Your BTIME",
-                conf_desc: "Assemble a unique combination of materials and dial",
-                conf_s1: "1. Case Material",
-                conf_s2: "2. Dial Color",
-                conf_s3: "3. Strap",
-                c_gold: "Gold", c_plat: "Platinum", c_tit: "Titanium",
-                d_obs: "Obsidian", d_em: "Emerald", d_champ: "Champagne",
-                s_leat: "Alligator Leather", s_brac: "Bracelet",
+                hero_btn_catalog: "Choose Model", hero_btn_config: "Build Your Style",
+                hit_badge: "Best Seller", m1_sub: "Manual winding • 72h Power Reserve", price_label: "Price:",
+                cat_subtitle: "Manufacture Collection", cat_title: "Masterpieces of Horology", cat_hint: "Click on any model to open its exclusive passport",
+                btn_rev: "Review", btn_cart: "Add to Cart",
+                inv_subtitle: "Liquidity & Asset", inv_title: "BTIME Investment Tracker", inv_desc: "Limited edition annually increases the collection value.",
+                inv_select: "Select model:", inv_y1: "In 1 year", inv_y3: "In 3 years", inv_y5: "In 5 years", inv_badge: "Index +14.8% Annual", inv_chart: "Asset Value Growth Chart", inv_cur: "2026 (Current)", inv_fore: "2031 (Forecast)",
+                conf_sub: "Customization Workshop", conf_title: "Create Your BTIME", conf_desc: "Assemble a unique combination of materials and dial",
+                conf_s1: "1. Case Material", conf_s2: "2. Dial Color", conf_s3: "3. Strap",
+                c_gold: "Gold", c_plat: "Platinum", c_tit: "Titanium", d_obs: "Obsidian", d_em: "Emerald", d_champ: "Champagne", s_leat: "Alligator Leather", s_brac: "Bracelet",
                 total_label: "Total Price:",
-                cert_sub: "BTIME Blockchain Passport",
-                cert_title: "Authenticity Certificate Generator",
-                cert_desc: "Enter the serial number of your watch or generate a demo owner passport.",
-                cert_btn: "Get Passport",
-                cert_stat: "Status",
-                cert_val: "Genuine Asset",
-                cert_own: "Owner:",
-                cert_ser: "Serial Number:",
-                cert_dat: "Release Date:",
-                cert_gar: "Warranty:",
-                cert_life: "Lifetime",
-                back_cat: "Back to Catalog",
-                in_stock: "In stock at City Mall",
-                sp_bout: "Boutique", sp_mech: "Movement", sp_wat: "Water Resistance",
-                det_badge: "Swiss Manufacture",
-                feat_title: "Technical Features:",
-                f1: "Fitting and purchase at City Mall boutique (Dushanbe)",
-                f2: "Double sapphire crystal with scratch protection",
-                f3: "Official warranty and certificate of authenticity",
-                f4: "Payment via Korti Milli, DC, Visa/Mastercard",
-                btn_dc: "Buy via Dushanbe City",
-                cart_title: "Your Cart",
-                cart_empty: "Your cart is empty",
-                cart_sum: "Order Total:",
-                cart_pay: "Checkout via Dushanbe City / Alif",
-                pay_sec: "Dushanbe City Acquiring (Korti Milli)",
-                pay_h: "Bank Card Payment",
-                pay_to_pay: "Amount to charge:",
-                pay_cnum: "Card Number (Korti Milli / Visa)",
-                pay_exp: "Expiry (MM/YY)",
-                pay_hold: "Cardholder Name",
-                pay_conf: "Confirm Payment",
-                pay_auth: "Authorizing payment...",
-                pay_ok: "Payment Successfully Confirmed!",
-                pay_done: "Done",
-                con_sub: "Personal Boutique",
-                con_h: "Book a Fitting at City Mall",
-                con_desc: "Leave your phone number and our expert will prepare the watch for you.",
-                con_name: "Your Name",
-                con_ph: "Phone Number (+992)",
-                con_btn: "Book Visit Time",
-                ft_desc: "Official watch boutique in Dushanbe.",
-                ft_col: "Collections", ft_man: "Manufacture", ft_bout: "Dushanbe Boutique",
-                ft_mall: "City Mall, 1st floor", ft_str: "Rudaki Ave / City Center",
-                ft_rights: "All rights reserved."
+                cert_sub: "BTIME Blockchain Passport", cert_title: "Authenticity Certificate Generator", cert_desc: "Enter the serial number of your watch or generate a demo passport.", cert_btn: "Get Passport", cert_stat: "Status", cert_val: "Genuine Asset", cert_own: "Owner:", cert_ser: "Serial Number:", cert_dat: "Release Date:", cert_gar: "Warranty:", cert_life: "Lifetime",
+                back_cat: "Back to Catalog", in_stock: "In stock at City Mall", sp_bout: "Boutique", sp_mech: "Movement", sp_wat: "Water Resistance", det_badge: "Swiss Manufacture",
+                feat_title: "Technical Features:", f1: "Fitting and purchase at City Mall boutique (Dushanbe)", f2: "Double sapphire crystal with scratch protection", f3: "Official warranty and certificate of authenticity", f4: "Payment via Korti Milli, DC, Visa/Mastercard", btn_dc: "Buy via Dushanbe City",
+                cart_title: "Your Cart", cart_empty: "Your cart is empty", cart_sum: "Order Total:", cart_pay: "Checkout via Dushanbe City / Alif",
+                pay_sec: "Dushanbe City Acquiring (Korti Milli)", pay_h: "Bank Card Payment", pay_to_pay: "Amount to charge:", pay_cnum: "Card Number (Korti Milli / Visa)", pay_exp: "Expiry (MM/YY)", pay_hold: "Cardholder Name", pay_conf: "Confirm Payment", pay_auth: "Authorizing payment...", pay_ok: "Payment Successfully Confirmed!", pay_done: "Done",
+                con_sub: "Personal Boutique", con_h: "Book a Fitting at City Mall", con_desc: "Leave your phone number and our expert will prepare the watch for you.", con_name: "Your Name", con_ph: "Phone Number (+992)", con_btn: "Book Visit Time",
+                ft_desc: "Official watch boutique in Dushanbe.", ft_col: "Collections", ft_man: "Manufacture", ft_bout: "Dushanbe Boutique", ft_mall: "City Mall, 1st floor", ft_str: "Rudaki Ave / City Center", ft_rights: "All rights reserved."
             },
             tj: {
                 siteTitle: "BTIME — Бутики Санъати Соатсозии Олӣ | Душанбе, City Mall",
                 top_address: "Душанбе, City Mall, ошёнаи 1",
-                nav_collections: "Маҷмӯаҳо",
-                nav_config: "Конфигуратор",
-                nav_invest: "Сармоягузорӣ",
-                nav_passport: "Шиноснома",
-                nav_concierge: "Консьерж",
+                nav_collections: "Маҷмӯаҳо", nav_config: "Конфигуратор", nav_invest: "Сармоягузорӣ", nav_passport: "Шиноснома", nav_concierge: "Консьерж",
+                login_google: "Даромадан",
                 hero_badge: "Бутики флагманӣ дар Душанбе",
-                hero_title_1: "Вақте, ки берун аз",
-                hero_title_2: "замон аст.",
+                hero_title_1: "Вақте, ки берун аз", hero_title_2: "замон аст.",
                 hero_desc: "Намояндагии эксклюзивии микромеханикаи Швейтсария дар Тоҷикистон. Мунтазири шумо дар City Mall.",
-                hero_btn_catalog: "Интихоби соат",
-                hero_btn_config: "Сохтани тарҳи шахсӣ",
-                hit_badge: "Беҳтарин фурӯш",
-                m1_sub: "Кушодани дастӣ • Захираи барқ 72 соат",
-                price_label: "Арзиш:",
-                cat_subtitle: "Маҷмӯаи мануфактура",
-                cat_title: "Шоҳасарҳои соатсозӣ",
-                cat_hint: "Барои дидани шиноснома ва шарҳи муфассал ҳар кадомеро пахш кунед",
-                btn_rev: "Шарҳ",
-                btn_cart: "Ба сабад",
-                inv_subtitle: "Нарх ва дороӣ",
-                inv_title: "Трекери сармоягузории BTIME",
-                inv_desc: "Нусхаи маҳдуд (на бештар аз 500 адад дар силсила) арзиши коллексионии соатро ҳар сол меафзояд.",
-                inv_select: "Интихоби соат:",
-                inv_y1: "Пас аз 1 сол",
-                inv_y3: "Пас аз 3 сол",
-                inv_y5: "Пас аз 5 сол",
-                inv_badge: "Index +14.8% Солона",
-                inv_chart: "Графикаи афзоиши арзиш",
-                inv_cur: "2026 (Ҷорӣ)",
-                inv_fore: "2031 (Пешбинӣ)",
-                conf_sub: "Корхонаи фармоишӣ",
-                conf_title: "BTIME-и худро созед",
-                conf_desc: "Мавод ва ранги дилхоҳи циферблатро интихоб кунед",
-                conf_s1: "1. Маводи корпус",
-                conf_s2: "2. Ранги циферблат",
-                conf_s3: "3. Тасма",
-                c_gold: "Тилло", c_plat: "Платина", c_tit: "Титан",
-                d_obs: "Обсидиан", d_em: "Зумрад", d_champ: "Шампань",
-                s_leat: "Пӯсти тимсоҳ", s_brac: "Браслет",
+                hero_btn_catalog: "Интихоби соат", hero_btn_config: "Сохтани тарҳи шахсӣ",
+                hit_badge: "Беҳтарин фурӯш", m1_sub: "Кушодани дастӣ • Захираи барқ 72 соат", price_label: "Арзиш:",
+                cat_subtitle: "Маҷмӯаи мануфактура", cat_title: "Шоҳасарҳои соатсозӣ", cat_hint: "Барои дидани шиноснома ҳар кадомеро пахш кунед",
+                btn_rev: "Шарҳ", btn_cart: "Ба сабад",
+                inv_subtitle: "Нарх ва дороӣ", inv_title: "Трекери сармоягузории BTIME", inv_desc: "Нусхаи маҳдуд арзиши коллексиониро ҳар сол меафзояд.",
+                inv_select: "Интихоби соат:", inv_y1: "Пас аз 1 сол", inv_y3: "Пас аз 3 сол", inv_y5: "Пас аз 5 сол", inv_badge: "Index +14.8% Солона", inv_chart: "Графикаи афзоиши арзиш", inv_cur: "2026 (Ҷорӣ)", inv_fore: "2031 (Пешбинӣ)",
+                conf_sub: "Корхонаи фармоишӣ", conf_title: "BTIME-и худро созед", conf_desc: "Мавод ва ранги дилхоҳи циферблатро интихоб кунед",
+                conf_s1: "1. Маводи корпус", conf_s2: "2. Ранги циферблат", conf_s3: "3. Тасма",
+                c_gold: "Тилло", c_plat: "Платина", c_tit: "Титан", d_obs: "Обсидиан", d_em: "Зумрад", d_champ: "Шампань", s_leat: "Пӯсти тимсоҳ", s_brac: "Браслет",
                 total_label: "Арзиши умумӣ:",
-                cert_sub: "Шиносномаи блокчейни BTIME",
-                cert_title: "Генератори сертификати аслӣ",
-                cert_desc: "Рақами силсилавии соататонро ворид кунед ё шиносномаи намоиширо гиред.",
-                cert_btn: "Гирифтани шиноснома",
-                cert_stat: "Ҳолат",
-                cert_val: "Дороии аслӣ",
-                cert_own: "Соҳибмулк:",
-                cert_ser: "Рақами силсилавӣ:",
-                cert_dat: "Санаи барориш:",
-                cert_gar: "Кафолат:",
-                cert_life: "Умрбод",
-                back_cat: "Баргашт ба каталог",
-                in_stock: "Дар City Mall мавҷуд аст",
-                sp_bout: "Бутик", sp_mech: "Механизм", sp_wat: "Тобоварӣ ба об",
-                det_badge: "Мануфактураи Швейтсария",
-                feat_title: "Хусусиятҳои техникӣ:",
-                f1: "Санҷиш ва харид дар бутики City Mall (Душанбе)",
-                f2: "Шишаи дугонаи сапфирӣ аз харошидан муҳофизатшуда",
-                f3: "Кафолати расмӣ ва сертификати аслӣ",
-                f4: "Пардохт бо картҳои Корти Милли, DC, Visa/Mastercard",
-                btn_dc: "Харид тавассути Dushanbe City",
-                cart_title: "Сабади шумо",
-                cart_empty: "Сабади шумо холист",
-                cart_sum: "Ҷамъи фармоиш:",
-                cart_pay: "Пардохт тавассути Dushanbe City / Alif",
-                pay_sec: "Эквайринги Dushanbe City (Корти Милли)",
-                pay_h: "Пардохт бо картаи банкӣ",
-                pay_to_pay: "Маблағи пардохт:",
-                pay_cnum: "Рақами карта (Корти Милли / Visa)",
-                pay_exp: "Муҳлат (MM/YY)",
-                pay_hold: "Номи соҳиби карта",
-                pay_conf: "Тасдиқи пардохт",
-                pay_auth: "Санҷиши пардохт...",
-                pay_ok: "Пардохт бомуваффақият тасдиқ шуд!",
-                pay_done: "Иҷро шуд",
-                con_sub: "Бутики шахсӣ",
-                con_h: "Сабти ном барои санҷиш дар City Mall",
-                con_desc: "Рақами худро гузоред ва мутахассиси мо соатро омода мекунад.",
-                con_name: "Номи шумо",
-                con_ph: "Рақами телефон (+992)",
-                con_btn: "Брон кардани вақт",
-                ft_desc: "Салони расмии соатҳо дар Душанбе.",
-                ft_col: "Маҷмӯаҳо", ft_man: "Мануфактура", ft_bout: "Бутик дар Душанбе",
-                ft_mall: "City Mall, ошёнаи 1", ft_str: "хиёбони Рӯдакӣ / марказ",
-                ft_rights: "Ҳамаи ҳуқуқ маҳфуз аст."
+                cert_sub: "Шиносномаи блокчейни BTIME", cert_title: "Генератори сертификати аслӣ", cert_desc: "Рақами силсилавии соататонро ворид кунед.", cert_btn: "Гирифтани шиноснома", cert_stat: "Ҳолат", cert_val: "Дороии аслӣ", cert_own: "Соҳибмулк:", cert_ser: "Рақами силсилавӣ:", cert_dat: "Санаи барориш:", cert_gar: "Кафолат:", cert_life: "Умрбод",
+                back_cat: "Баргашт ба каталог", in_stock: "Дар City Mall мавҷуд аст", sp_bout: "Бутик", sp_mech: "Механизм", sp_wat: "Тобоварӣ ба об", det_badge: "Мануфактураи Швейтсария",
+                feat_title: "Хусусиятҳои техникӣ:", f1: "Санҷиш ва харид дар бутики City Mall (Душанбе)", f2: "Шишаи дугонаи сапфирӣ аз харошидан муҳофизатшуда", f3: "Кафолати расмӣ ва сертификати аслӣ", f4: "Пардохт бо картҳои Корти Милли, DC, Visa/Mastercard", btn_dc: "Харид тавассути Dushanbe City",
+                cart_title: "Сабади шумо", cart_empty: "Сабади шумо холист", cart_sum: "Ҷамъи фармоиш:", cart_pay: "Пардохт тавассути Dushanbe City / Alif",
+                pay_sec: "Эквайринги Dushanbe City (Корти Милли)", pay_h: "Пардохт бо картаи банкӣ", pay_to_pay: "Маблағи пардохт:", pay_cnum: "Рақами карта (Корти Милли / Visa)", pay_exp: "Муҳлат (MM/YY)", pay_hold: "Номи соҳиби карта", pay_conf: "Тасдиқи пардохт", pay_auth: "Санҷиши пардохт...", pay_ok: "Пардохт бомуваффақият тасдиқ шуд!", pay_done: "Иҷро шуд",
+                con_sub: "Бутики шахсӣ", con_h: "Сабти ном барои санҷиш дар City Mall", con_desc: "Рақами худро гузоред ва мутахассиси мо соатро омода мекунад.", con_name: "Номи шумо", con_ph: "Рақами телефон (+992)", con_btn: "Брон кардани вақт",
+                ft_desc: "Салони расмии соатҳо дар Душанбе.", ft_col: "Маҷмӯаҳо", ft_man: "Мануфактура", ft_bout: "Бутик дар Душанбе", ft_mall: "City Mall, ошёнаи 1", ft_str: "хиёбони Рӯдакӣ / марказ", ft_rights: "Ҳамаи ҳуқуқ маҳфуз аст."
             }
         };
 
-        // Тексты для 7 моделей часов на трех языках
         const productsData = {
             ru: [
                 { id: 1, name: "BTIME Royal Tourbillon", desc: "Вершина часового мастерства BTIME. В сердце модели бьется сложнейший узел — парящий турбийон. Корпус из розового золота 18 карат.", caseMat: "Розовое золото 18К" },
@@ -816,9 +701,7 @@
             currentLang = document.getElementById('langSelector').value;
             document.querySelectorAll('[data-i18n]').forEach(el => {
                 let key = el.getAttribute('data-i18n');
-                if (i18n[currentLang][key]) {
-                    el.innerText = i18n[currentLang][key];
-                }
+                if (i18n[currentLang][key]) el.innerText = i18n[currentLang][key];
             });
             document.getElementById('siteTitle').innerText = i18n[currentLang].siteTitle;
             initCatalog();
