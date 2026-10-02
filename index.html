@@ -487,18 +487,17 @@
     <!-- Firebase SDK (Modular v11) + Firestore -->
     <script type="module">
         
-        // 1. Импортируем всё необходимое, включая onAuthStateChanged
+       // 1. Импортируем Firebase и нужные функции
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
 import { 
     getAuth, 
     GoogleAuthProvider, 
     signInWithRedirect, 
-    getRedirectResult,
     onAuthStateChanged,
     signOut
 } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
 
-// 2. Настройки Firebase
+// 2. Твои настройки Firebase с твоим API-ключом
 const firebaseConfig = {
     apiKey: "AIzaSyDF3opewIOrGdEWZYvsIQ08GxTHN8EOmSE",
     authDomain: "b-time-68401.firebaseapp.com",
@@ -513,7 +512,7 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const provider = new GoogleAuthProvider();
 
-// 4. Функция входа по клику на кнопку
+// 4. Функция входа по клику
 window.loginWithGoogle = async function() {
     try {
         await signInWithRedirect(auth, provider);
@@ -522,8 +521,8 @@ window.loginWithGoogle = async function() {
     }
 };
 
-// 5. Функция выхода (если захочешь добавить кнопку «Выйти»)
-window.logoutUser = async function() {
+// 5. Функция выхода (соответствует твоему onclick="logoutFirebase()")
+window.logoutFirebase = async function() {
     try {
         await signOut(auth);
         console.log("Выход выполнен");
@@ -532,33 +531,36 @@ window.logoutUser = async function() {
     }
 };
 
-// 6. Главная магия: следим за статусом пользователя в реальном времени
+// 6. Управление интерфейсом в зависимости от статуса авторизации
 onAuthStateChanged(auth, (user) => {
-    // Ищем элементы на странице (предположим, у тебя есть кнопка входа и блок для профиля)
-    const loginBtn = document.getElementById("login-btn"); // ID твоей кнопки входа
-    const userProfile = document.getElementById("user-profile"); // ID блока, где должно быть имя
-    const userName = document.getElementById("user-name"); // ID элемента для вывода имени
+    const loginBtn = document.getElementById("googleLoginBtn");
+    const userProfile = document.getElementById("userProfile");
+    const userName = document.getElementById("userName");
+    const userAvatar = document.getElementById("userAvatar");
 
     if (user) {
-        // --- ПОЛЬЗОВАТЕЛЬ ВОШЕЛ ---
-        console.log("Пользователь авторизован:", user.displayName, user.email);
+        // --- ПОЛЬЗОВАТЕЛЬ АВТОРИЗОВАН ---
+        console.log("Пользователь вошел:", user.displayName);
         
-        // Скрываем кнопку входа, если она есть
-        if (loginBtn) loginBtn.style.display = "none";
+        // Скрываем кнопку входа
+        if (loginBtn) loginBtn.classList.add("hidden");
         
-        // Показываем блок профиля и выводим имя из Google
-        if (userProfile) userProfile.style.display = "block";
-        if (userName) userName.textContent = user.displayName;
+        // Показываем блок профиля (убираем класс hidden)
+        if (userProfile) userProfile.classList.remove("hidden");
+        
+        // Подставляем имя и аватарку из Google
+        if (userName) userName.textContent = user.displayName || user.email;
+        if (userAvatar && user.photoURL) userAvatar.src = user.photoURL;
 
     } else {
-        // --- ПОЛЬЗОВАТЕЛЬ НЕ ВЫХОДИЛ / ГОСТЬ ---
-        console.log("Пользователь не авторизован");
+        // --- ПОЛЬЗОВАТЕЛЬ НЕ АВТОРИЗОВАН ---
+        console.log("Пользователь не в системе");
         
         // Показываем кнопку входа
-        if (loginBtn) loginBtn.style.display = "block";
+        if (loginBtn) loginBtn.classList.remove("hidden");
         
-        // Скрываем профиль
-        if (userProfile) userProfile.style.display = "none";
+        // Скрываем блок профиля
+        if (userProfile) userProfile.classList.add("hidden");
     }
 });
         window.logoutFirebase = async function() {
