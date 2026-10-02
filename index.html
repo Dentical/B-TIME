@@ -135,16 +135,18 @@
 
                 <!-- Авторизация Google Firebase -->
                 <div id="authContainer">
-                    <button onclick="loginWithGoogle()" id="googleLoginBtn" class="flex items-center space-x-2 bg-white text-black font-semibold text-xs px-4 py-2 rounded-full hover:bg-gray-200 transition shadow-md">
-                        <i class="fa-brands fa-google text-red-500"></i>
-                        <span data-i18n="login_google">Войти</span>
-                    </button>
-                    <div id="userProfile" class="hidden flex items-center space-x-2 glass-panel px-3 py-1.5 rounded-full border border-yellow-500/30">
-                        <img id="userAvatar" src="" alt="Avatar" class="w-7 h-7 rounded-full border border-yellow-500 object-cover">
-                        <span id="userName" class="text-xs font-medium text-white hidden sm:inline">User</span>
-                        <button onclick="logoutFirebase()" class="text-gray-400 hover:text-red-400 text-xs ml-2 transition" title="Выйти"><i class="fa-solid fa-right-from-bracket"></i></button>
-                    </div>
-                </div>
+    <button onclick="loginWithGoogle()" id="googleLoginBtn" class="flex items-center space-x-2 bg-white text-black font-semibold text-xs px-4 py-2 rounded-full hover:bg-gray-200 transition shadow-md">
+        <i class="fa-brands fa-google text-red-500"></i>
+        <span data-i18n="login_google">Войти</span>
+    </button>
+    <div id="userProfile" class="hidden flex items-center space-x-2 glass-panel px-3 py-1.5 rounded-full border border-yellow-500/30">
+        <img id="userAvatar" src="" alt="Avatar" class="w-7 h-7 rounded-full border border-yellow-500 object-cover">
+        <span id="userName" class="text-xs font-medium text-white hidden sm:inline">User</span>
+        <button onclick="logoutFirebase()" class="text-gray-400 hover:text-red-400 text-xs ml-2 transition" title="Выйти">
+            <i class="fa-solid fa-right-from-bracket"></i>
+        </button>
+    </div>
+</div>
             </div>
         </div>
     </header>
@@ -487,7 +489,7 @@
     <!-- Firebase SDK (Modular v11) + Firestore -->
     <script type="module">
         
-       import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
 import { 
     getAuth, 
     GoogleAuthProvider, 
@@ -509,7 +511,7 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const provider = new GoogleAuthProvider();
 
-// Функция обновления интерфейса
+// Функция управления интерфейсом
 function updateUI(user) {
     const loginBtn = document.getElementById("googleLoginBtn");
     const userProfile = document.getElementById("userProfile");
@@ -517,19 +519,19 @@ function updateUI(user) {
     const userAvatar = document.getElementById("userAvatar");
 
     if (user) {
-        console.log("Интерфейс: пользователь вошел ->", user.displayName);
+        console.log("B-TIME UI: Пользователь вошел ->", user.displayName);
         if (loginBtn) loginBtn.classList.add("hidden");
         if (userProfile) userProfile.classList.remove("hidden");
         if (userName) userName.textContent = user.displayName || user.email;
         if (userAvatar && user.photoURL) userAvatar.src = user.photoURL;
     } else {
-        console.log("Интерфейс: пользователь не в системе");
+        console.log("B-TIME UI: Пользователь не в системе");
         if (loginBtn) loginBtn.classList.remove("hidden");
         if (userProfile) userProfile.classList.add("hidden");
     }
 }
 
-// Функция входа
+// Привязываем функцию входа к глобальному объекту window
 window.loginWithGoogle = async function() {
     try {
         await signInWithRedirect(auth, provider);
@@ -538,11 +540,11 @@ window.loginWithGoogle = async function() {
     }
 };
 
-// Функция выхода
+// Привязываем функцию выхода к глобальному объекту window
 window.logoutFirebase = async function() {
     try {
         await signOut(auth);
-        localStorage.removeItem("b_time_user"); // Очищаем локальные данные
+        localStorage.removeItem("b_time_user");
         updateUI(null);
         console.log("Выход выполнен");
     } catch (error) {
@@ -550,51 +552,30 @@ window.logoutFirebase = async function() {
     }
 };
 
-// При загрузке страницы проверяем, сохранен ли пользователь в localStorage
+// Проверяем сохраненного пользователя в localStorage при загрузке страницы
 const savedUser = localStorage.getItem("b_time_user");
 if (savedUser) {
     updateUI(JSON.parse(savedUser));
 }
 
-// Проверяем результат редиректа от Google
+// Ловим результат после редиректа из Google
 getRedirectResult(auth)
   .then((result) => {
     if (result && result.user) {
       console.log("Успешный редирект:", result.user.displayName);
-      
-      // Сохраняем данные пользователя в localStorage, чтобы они не терялись из-за специфики GitHub Pages
       const userData = {
           displayName: result.user.displayName,
           email: result.user.email,
           photoURL: result.user.photoURL
       };
       localStorage.setItem("b_time_user", JSON.stringify(userData));
-      
       updateUI(userData);
     }
   })
   .catch((error) => {
     console.error("Ошибка редиректа:", error);
   });
-// Функция входа
-window.loginWithGoogle = async function() {
-    try {
-        await signInWithRedirect(auth, provider);
-    } catch (error) {
-        console.error("Ошибка при входе:", error);
-    }
-};
-
-// Функция выхода
-window.logoutFirebase = async function() {
-    try {
-        await signOut(auth);
-        console.log("Выход выполнен");
-    } catch (error) {
-        console.error("Ошибка выхода:", error);
-    }
-};
-
+        
 // Функция обновления интерфейса
 function updateUI(user) {
     const loginBtn = document.getElementById("googleLoginBtn");
