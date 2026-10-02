@@ -491,31 +491,52 @@
         import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
 
         // Замени на данные из своей Firebase Console
-        const firebaseConfig = {
-            apiKey: "AIzaSyDF3opewIOrGdEWZYvsIQ08GxTHN8EOmSE",
-            authDomain: "btime-dushanbe.firebaseapp.com",
-            projectId: "btime-dushanbe",
-            storageBucket: "btime-dushanbe.appspot.com",
-            messagingSenderId: "1234567890",
-            appId: "1:1234567890:web:abcdef"
-        };
+        // 1. Импортируем Firebase и нужные функции аутентификации
+import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+import { 
+    getAuth, 
+    GoogleAuthProvider, 
+    signInWithRedirect, 
+    getRedirectResult 
+} from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
 
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const db = getFirestore(app);
-        const provider = new GoogleAuthProvider();
+// 2. Настройки Firebase для твоих проектов (с твоим реальным API-ключом)
+const firebaseConfig = {
+    apiKey: "AIzaSyDF3opewIOrGdEWZYvsIQ08GxTHN8EOmSE",
+    authDomain: "b-time-68401.firebaseapp.com",
+    projectId: "b-time-68401",
+    storageBucket: "b-time-68401.firebasestorage.app",
+    messagingSenderId: "613990731467",
+    appId: "1:613990731467:web:..."
+};
 
-        window.currentUser = null;
+// 3. Инициализация приложения
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const provider = new GoogleAuthProvider();
 
-        window.loginWithGoogle = async function() {
-            try {
-                const result = await signInWithPopup(auth, provider);
-                console.log("Вход выполнен:", result.user);
-            } catch (error) {
-                console.error("Ошибка входа:", error);
-            }
-        };
+// 4. Функция при нажатии на кнопку входа
+window.loginWithGoogle = async function() {
+    try {
+        // Используем редирект вместо попапа
+        await signInWithRedirect(auth, provider);
+    } catch (error) {
+        console.error("Ошибка при перенаправлении на вход:", error);
+    }
+};
 
+// 5. Проверяем результат авторизации сразу после возвращения на сайт
+getRedirectResult(auth)
+  .then((result) => {
+    if (result && result.user) {
+      console.log("Успешный вход!", result.user.displayName);
+      // Здесь код, который выполняется после успешного входа 
+      // (например, перенаправление на другую страницу или сокрытие кнопки входа)
+    }
+  })
+  .catch((error) => {
+    console.error("Ошибка входа через редирект:", error);
+  });
         window.logoutFirebase = async function() {
             try {
                 await signOut(auth);
