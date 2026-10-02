@@ -494,7 +494,9 @@ import {
     signInWithRedirect, 
     getRedirectResult,
     onAuthStateChanged,
-    signOut
+    signOut,
+    setPersistence,
+    browserLocalPersistence
 } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
 
 const firebaseConfig = {
@@ -508,6 +510,16 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
+
+// Жёстко фиксируем сохранение сессии в браузере
+setPersistence(auth, browserLocalPersistence)
+  .then(() => {
+      console.log("Персистентность сессии успешно настроена");
+  })
+  .catch((error) => {
+      console.error("Ошибка настройки персистентности:", error);
+  });
+
 const provider = new GoogleAuthProvider();
 
 // Функция входа
@@ -549,7 +561,7 @@ function updateUI(user) {
     }
 }
 
-// 1. Сначала проверяем результат редиректа (нужно сразу после возвращения с Google)
+// Проверяем результат редиректа при загрузке
 getRedirectResult(auth)
   .then((result) => {
     if (result && result.user) {
@@ -561,7 +573,7 @@ getRedirectResult(auth)
     console.error("Ошибка редиректа:", error);
   });
 
-// 2. Параллельно слушаем общее состояние (для постоянной сессии)
+// Слушаем состояние в реальном времени
 onAuthStateChanged(auth, (user) => {
     updateUI(user);
 });
