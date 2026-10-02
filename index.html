@@ -493,10 +493,7 @@ import {
     GoogleAuthProvider, 
     signInWithRedirect, 
     getRedirectResult,
-    onAuthStateChanged,
-    signOut,
-    setPersistence,
-    browserLocalPersistence
+    signOut
 } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
 
 const firebaseConfig = {
@@ -510,18 +507,75 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
-
-// Жёстко фиксируем сохранение сессии в браузере
-setPersistence(auth, browserLocalPersistence)
-  .then(() => {
-      console.log("Персистентность сессии успешно настроена");
-  })
-  .catch((error) => {
-      console.error("Ошибка настройки персистентности:", error);
-  });
-
 const provider = new GoogleAuthProvider();
 
+// Функция обновления интерфейса
+function updateUI(user) {
+    const loginBtn = document.getElementById("googleLoginBtn");
+    const userProfile = document.getElementById("userProfile");
+    const userName = document.getElementById("userName");
+    const userAvatar = document.getElementById("userAvatar");
+
+    if (user) {
+        console.log("Интерфейс: пользователь вошел ->", user.displayName);
+        if (loginBtn) loginBtn.classList.add("hidden");
+        if (userProfile) userProfile.classList.remove("hidden");
+        if (userName) userName.textContent = user.displayName || user.email;
+        if (userAvatar && user.photoURL) userAvatar.src = user.photoURL;
+    } else {
+        console.log("Интерфейс: пользователь не в системе");
+        if (loginBtn) loginBtn.classList.remove("hidden");
+        if (userProfile) userProfile.classList.add("hidden");
+    }
+}
+
+// Функция входа
+window.loginWithGoogle = async function() {
+    try {
+        await signInWithRedirect(auth, provider);
+    } catch (error) {
+        console.error("Ошибка при входе:", error);
+    }
+};
+
+// Функция выхода
+window.logoutFirebase = async function() {
+    try {
+        await signOut(auth);
+        localStorage.removeItem("b_time_user"); // Очищаем локальные данные
+        updateUI(null);
+        console.log("Выход выполнен");
+    } catch (error) {
+        console.error("Ошибка выхода:", error);
+    }
+};
+
+// При загрузке страницы проверяем, сохранен ли пользователь в localStorage
+const savedUser = localStorage.getItem("b_time_user");
+if (savedUser) {
+    updateUI(JSON.parse(savedUser));
+}
+
+// Проверяем результат редиректа от Google
+getRedirectResult(auth)
+  .then((result) => {
+    if (result && result.user) {
+      console.log("Успешный редирект:", result.user.displayName);
+      
+      // Сохраняем данные пользователя в localStorage, чтобы они не терялись из-за специфики GitHub Pages
+      const userData = {
+          displayName: result.user.displayName,
+          email: result.user.email,
+          photoURL: result.user.photoURL
+      };
+      localStorage.setItem("b_time_user", JSON.stringify(userData));
+      
+      updateUI(userData);
+    }
+  })
+  .catch((error) => {
+    console.error("Ошибка редиректа:", error);
+  });
 // Функция входа
 window.loginWithGoogle = async function() {
     try {
