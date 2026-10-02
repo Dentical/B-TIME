@@ -486,17 +486,19 @@
 
     <!-- Firebase SDK (Modular v11) + Firestore -->
     <script type="module">
-        // Замени на данные из своей Firebase Console
-        // 1. Импортируем Firebase и нужные функции аутентификации
+        
+        // 1. Импортируем всё необходимое, включая onAuthStateChanged
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
 import { 
     getAuth, 
     GoogleAuthProvider, 
     signInWithRedirect, 
-    getRedirectResult 
+    getRedirectResult,
+    onAuthStateChanged,
+    signOut
 } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
 
-// 2. Настройки Firebase для твоих проектов (с твоим реальным API-ключом)
+// 2. Настройки Firebase
 const firebaseConfig = {
     apiKey: "AIzaSyDF3opewIOrGdEWZYvsIQ08GxTHN8EOmSE",
     authDomain: "b-time-68401.firebaseapp.com",
@@ -506,33 +508,59 @@ const firebaseConfig = {
     appId: "1:613990731467:web:..."
 };
 
-// 3. Инициализация приложения
+// 3. Инициализация
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const provider = new GoogleAuthProvider();
 
-// 4. Функция при нажатии на кнопку входа
+// 4. Функция входа по клику на кнопку
 window.loginWithGoogle = async function() {
     try {
-        // Используем редирект вместо попапа
         await signInWithRedirect(auth, provider);
     } catch (error) {
-        console.error("Ошибка при перенаправлении на вход:", error);
+        console.error("Ошибка при входе:", error);
     }
 };
 
-// 5. Проверяем результат авторизации сразу после возвращения на сайт
-getRedirectResult(auth)
-  .then((result) => {
-    if (result && result.user) {
-      console.log("Успешный вход!", result.user.displayName);
-      // Здесь код, который выполняется после успешного входа 
-      // (например, перенаправление на другую страницу или сокрытие кнопки входа)
+// 5. Функция выхода (если захочешь добавить кнопку «Выйти»)
+window.logoutUser = async function() {
+    try {
+        await signOut(auth);
+        console.log("Выход выполнен");
+    } catch (error) {
+        console.error("Ошибка выхода:", error);
     }
-  })
-  .catch((error) => {
-    console.error("Ошибка входа через редирект:", error);
-  });
+};
+
+// 6. Главная магия: следим за статусом пользователя в реальном времени
+onAuthStateChanged(auth, (user) => {
+    // Ищем элементы на странице (предположим, у тебя есть кнопка входа и блок для профиля)
+    const loginBtn = document.getElementById("login-btn"); // ID твоей кнопки входа
+    const userProfile = document.getElementById("user-profile"); // ID блока, где должно быть имя
+    const userName = document.getElementById("user-name"); // ID элемента для вывода имени
+
+    if (user) {
+        // --- ПОЛЬЗОВАТЕЛЬ ВОШЕЛ ---
+        console.log("Пользователь авторизован:", user.displayName, user.email);
+        
+        // Скрываем кнопку входа, если она есть
+        if (loginBtn) loginBtn.style.display = "none";
+        
+        // Показываем блок профиля и выводим имя из Google
+        if (userProfile) userProfile.style.display = "block";
+        if (userName) userName.textContent = user.displayName;
+
+    } else {
+        // --- ПОЛЬЗОВАТЕЛЬ НЕ ВЫХОДИЛ / ГОСТЬ ---
+        console.log("Пользователь не авторизован");
+        
+        // Показываем кнопку входа
+        if (loginBtn) loginBtn.style.display = "block";
+        
+        // Скрываем профиль
+        if (userProfile) userProfile.style.display = "none";
+    }
+});
         window.logoutFirebase = async function() {
             try {
                 await signOut(auth);
