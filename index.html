@@ -489,158 +489,112 @@
     <!-- Firebase SDK (Modular v11) + Firestore -->
     <script type="module">
         
-      import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
-import { 
-    getAuth, 
-    GoogleAuthProvider, 
-    signInWithRedirect, 
-    getRedirectResult,
-    signOut
-} from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+    import { 
+        getAuth, 
+        GoogleAuthProvider, 
+        signInWithRedirect, 
+        getRedirectResult,
+        signOut,
+        onAuthStateChanged
+    } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+    import { 
+        getFirestore, 
+        doc, 
+        setDoc 
+    } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
 
-const firebaseConfig = {
-    apiKey: "AIzaSyDF3opewIOrGdEWZYvsIQ08GxTHN8EOmSE",
-    authDomain: "b-time-68401.firebaseapp.com",
-    projectId: "b-time-68401",
-    storageBucket: "b-time-68401.firebasestorage.app",
-    messagingSenderId: "613990731467",
-    appId: "1:613990731467:web:..."
-};
+    const firebaseConfig = {
+        apiKey: "AIzaSyDF3opewIOrGdEWZYvsIQ08GxTHN8EOmSE",
+        authDomain: "b-time-68401.firebaseapp.com",
+        projectId: "b-time-68401",
+        storageBucket: "b-time-68401.firebasestorage.app",
+        messagingSenderId: "613990731467",
+        appId: "1:613990731467:web:..."
+    };
 
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const provider = new GoogleAuthProvider();
+    // Инициализация Firebase
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+    const provider = new GoogleAuthProvider();
 
-// Функция управления интерфейсом
-function updateUI(user) {
-    const loginBtn = document.getElementById("googleLoginBtn");
-    const userProfile = document.getElementById("userProfile");
-    const userName = document.getElementById("userName");
-    const userAvatar = document.getElementById("userAvatar");
+    // Единая функция управления интерфейсом
+    function updateUI(user) {
+        const loginBtn = document.getElementById("googleLoginBtn");
+        const userProfile = document.getElementById("userProfile");
+        const userName = document.getElementById("userName");
+        const userAvatar = document.getElementById("userAvatar");
 
-    if (user) {
-        console.log("B-TIME UI: Пользователь вошел ->", user.displayName);
-        if (loginBtn) loginBtn.classList.add("hidden");
-        if (userProfile) userProfile.classList.remove("hidden");
-        if (userName) userName.textContent = user.displayName || user.email;
-        if (userAvatar && user.photoURL) userAvatar.src = user.photoURL;
-    } else {
-        console.log("B-TIME UI: Пользователь не в системе");
-        if (loginBtn) loginBtn.classList.remove("hidden");
-        if (userProfile) userProfile.classList.add("hidden");
-    }
-}
-
-// Привязываем функцию входа к глобальному объекту window
-window.loginWithGoogle = async function() {
-    try {
-        await signInWithRedirect(auth, provider);
-    } catch (error) {
-        console.error("Ошибка при входе:", error);
-    }
-};
-
-// Привязываем функцию выхода к глобальному объекту window
-window.logoutFirebase = async function() {
-    try {
-        await signOut(auth);
-        localStorage.removeItem("b_time_user");
-        updateUI(null);
-        console.log("Выход выполнен");
-    } catch (error) {
-        console.error("Ошибка выхода:", error);
-    }
-};
-
-// Проверяем сохраненного пользователя в localStorage при загрузке страницы
-const savedUser = localStorage.getItem("b_time_user");
-if (savedUser) {
-    updateUI(JSON.parse(savedUser));
-}
-
-// Ловим результат после редиректа из Google
-getRedirectResult(auth)
-  .then((result) => {
-    if (result && result.user) {
-      console.log("Успешный редирект:", result.user.displayName);
-      const userData = {
-          displayName: result.user.displayName,
-          email: result.user.email,
-          photoURL: result.user.photoURL
-      };
-      localStorage.setItem("b_time_user", JSON.stringify(userData));
-      updateUI(userData);
-    }
-  })
-  .catch((error) => {
-    console.error("Ошибка редиректа:", error);
-  });
-        
-// Функция обновления интерфейса
-function updateUI(user) {
-    const loginBtn = document.getElementById("googleLoginBtn");
-    const userProfile = document.getElementById("userProfile");
-    const userName = document.getElementById("userName");
-    const userAvatar = document.getElementById("userAvatar");
-
-    if (user) {
-        console.log("Интерфейс: пользователь вошел ->", user.displayName);
-        if (loginBtn) loginBtn.classList.add("hidden");
-        if (userProfile) userProfile.classList.remove("hidden");
-        if (userName) userName.textContent = user.displayName || user.email;
-        if (userAvatar && user.photoURL) userAvatar.src = user.photoURL;
-    } else {
-        console.log("Интерфейс: пользователь не в системе");
-        if (loginBtn) loginBtn.classList.remove("hidden");
-        if (userProfile) userProfile.classList.add("hidden");
-    }
-}
-
-// Проверяем результат редиректа при загрузке
-getRedirectResult(auth)
-  .then((result) => {
-    if (result && result.user) {
-      console.log("Успешный редирект:", result.user.displayName);
-      updateUI(result.user);
-    }
-  })
-  .catch((error) => {
-    console.error("Ошибка редиректа:", error);
-  });
-
-// Слушаем состояние в реальном времени
-onAuthStateChanged(auth, (user) => {
-    updateUI(user);
-});
-        window.logoutFirebase = async function() {
-            try {
-                await signOut(auth);
-            } catch (error) {
-                console.error("Ошибка выхода:", error);
-            }
-        };
-
-        // Сохранение данных пользователя и заказов в Firestore
-        async function syncUserToFirestore(user) {
-            try {
-                const userRef = doc(db, "users", user.uid);
-                await setDoc(userRef, {
-                    uid: user.uid,
-                    name: user.displayName,
-                    email: user.email,
-                    photo: user.photoURL,
-                    lastLogin: new Date().toISOString()
-                }, { merge: true });
-            } catch (e) {
-                console.error("Ошибка Firestore:", e);
-            }
+        if (user) {
+            console.log("B-TIME UI: Пользователь вошел ->", user.displayName);
+            if (loginBtn) loginBtn.classList.add("hidden");
+            if (userProfile) userProfile.classList.remove("hidden");
+            if (userName) userName.textContent = user.displayName || user.email || "VIP User";
+            if (userAvatar) userAvatar.src = user.photoURL || "https://www.gravatar.com/avatar/?d=mp";
+        } else {
+            console.log("B-TIME UI: Пользователь не в системе");
+            if (loginBtn) loginBtn.classList.remove("hidden");
+            if (userProfile) userProfile.classList.add("hidden");
         }
+    }
 
-        onAuthStateChanged(auth, (user) => {
-            const loginBtn = document.getElementById('googleLoginBtn');
-            const profileDiv = document.getElementById('userProfile');
-            const avatarImg = document.getElementById('userAvatar');
-            const nameSpan = document.getElementById('userName');
+    // Синхронизация данных с Firestore
+    async function syncUserToFirestore(user) {
+        try {
+            const userRef = doc(db, "users", user.uid);
+            await setDoc(userRef, {
+                uid: user.uid,
+                name: user.displayName,
+                email: user.email,
+                photo: user.photoURL,
+                lastLogin: new Date().toISOString()
+            }, { merge: true });
+        } catch (e) {
+            console.error("Ошибка Firestore:", e);
+        }
+    }
+
+    // Функция входа через Google (редирект)
+    window.loginWithGoogle = async function() {
+        try {
+            await signInWithRedirect(auth, provider);
+        } catch (error) {
+            console.error("Ошибка при входе:", error);
+        }
+    };
+
+    // Функция выхода
+    window.logoutFirebase = async function() {
+        try {
+            await signOut(auth);
+            localStorage.removeItem("b_time_user");
+            console.log("Выход выполнен");
+        } catch (error) {
+            console.error("Ошибка выхода:", error);
+        }
+    };
+
+    // Проверка результата редиректа после возврата с Google
+    getRedirectResult(auth)
+      .then((result) => {
+        if (result && result.user) {
+          console.log("Успешный редирект:", result.user.displayName);
+          syncUserToFirestore(result.user);
+        }
+      })
+      .catch((error) => {
+        console.error("Ошибка редиректа:", error);
+      });
+
+    // Отслеживание состояния авторизации в реальном времени
+    onAuthStateChanged(auth, (user) => {
+        window.currentUser = user;
+        updateUI(user);
+        if (user) {
+            syncUserToFirestore(user);
+        }
+    });
 
             if (user) {
                 window.currentUser = user;
