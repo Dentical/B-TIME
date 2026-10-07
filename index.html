@@ -124,7 +124,7 @@
                     <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-2.5 text-gray-400 text-sm"></i>
                 </div>
 
-                <!-- КНОПКА ЗАЯВОК ДЛЯ АДМИНА (Иконка бумаги) -->
+                <!-- КНОПКА ЗАЯВОК ДЛЯ АДМИНА (Иконка бумаги)[cite: 1] -->
                 <button id="adminOrdersBtn" onclick="openAdminOrdersModal()" title="Панель заявок и заказов" class="relative p-2.5 text-amber-400 bg-gold-500/10 border border-gold-500/30 rounded-full hover:bg-gold-500/20 transition-colors hidden">
                     <i class="fa-solid fa-file-lines text-lg"></i>
                     <span id="adminOrdersCount" class="absolute -top-1 -right-1 bg-amber-500 text-black text-[10px] font-bold w-5 h-5 rounded-full flex items-center justify-center hidden">0</span>
@@ -307,15 +307,15 @@
         </div>
     </div>
 
-    <!-- МОДАЛЬНОЕ ОКНО АДМИНА (ЗАЯВКИ / ЗАКАЗЫ) -->
+    <!-- МОДАЛЬНОЕ ОКНО АДМИНА (ЗАЯВКИ ИЗ FIRESTORE) -->
     <div id="adminOrdersModal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden flex items-center justify-center p-4">
         <div class="bg-white border border-blue-100 rounded-3xl max-w-2xl w-full p-6 sm:p-8 relative text-gray-900 shadow-2xl max-h-[85vh] overflow-y-auto">
             <button onclick="closeAdminOrdersModal()" class="absolute top-6 right-6 text-gray-400 hover:text-gray-900 text-xl"><i class="fa-solid fa-xmark"></i></button>
             <h3 class="text-2xl font-bold text-gray-950 serif-font mb-4 flex items-center gap-2">
-                <i class="fa-solid fa-file-lines text-amber-600"></i> Заявки и заказы клиентов
+                <i class="fa-solid fa-file-lines text-amber-600"></i> Заявки и заказы из облака
             </h3>
             <div id="adminOrdersList" class="space-y-4">
-                <!-- Заполняется динамически -->
+                <p class="text-gray-500 text-center py-4">Загрузка заказов...</p>
             </div>
         </div>
     </div>
@@ -387,7 +387,7 @@
         </div>
     </div>
 
-    <!-- ПОДКЛЮЧЕНИЕ FIREBASE SDK И ЛОГИКА (GOOGLE AUTH + ADMIN + ORDERS) -->
+    <!-- FIREBASE SDK И ЛОГИКА (FIRESTORE CLOUD ORDERS) -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js";
         import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-analytics.js";
@@ -400,6 +400,14 @@
             signOut, 
             onAuthStateChanged 
         } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
+        import { 
+            getFirestore, 
+            collection, 
+            addDoc, 
+            getDocs, 
+            query, 
+            orderBy 
+        } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyDCyzNeJt0Fi67LALJljFjjeQWJ9uqC2io",
@@ -414,6 +422,7 @@
         const app = initializeApp(firebaseConfig);
         const analytics = getAnalytics(app);
         const auth = getAuth(app);
+        const db = getFirestore(app);
         const googleProvider = new GoogleAuthProvider();
 
         const ADMIN_EMAILS = ["samirdv888@gmail.com", "abdullochoriev4242@gmail.com"];
@@ -421,7 +430,7 @@
         let isRegisterMode = false;
         let currentUser = null;
 
-        // Отслеживание авторизации и прав админа
+        // Отслеживание авторизации и админских прав
         onAuthStateChanged(auth, (user) => {
             currentUser = user;
             const authContainer = document.getElementById('authContainer');
@@ -430,7 +439,6 @@
             if (user) {
                 const isAdmin = ADMIN_EMAILS.includes(user.email.toLowerCase());
                 
-                // Кнопка профиля и выхода
                 authContainer.innerHTML = `
                     <div class="flex items-center gap-2">
                         <span class="text-xs text-gold-400 font-semibold hidden sm:inline"><i class="fa-solid fa-user-check mr-1"></i>${user.email.split('@')[0]}</span>
@@ -440,10 +448,9 @@
                     </div>
                 `;
 
-                // Показываем кнопку заявок (иконка бумаги) если это админ
                 if (isAdmin) {
                     adminBtn.classList.remove('hidden');
-                    updateAdminBadge();
+                    fetchCloudOrdersCount();
                 } else {
                     adminBtn.classList.add('hidden');
                 }
@@ -459,9 +466,7 @@
 
         window.logoutUser = function() {
             if (confirm("Вы действительно хотите выйти из аккаунта?")) {
-                signOut(auth).then(() => {
-                    alert("Вы вышли из системы.");
-                });
+                signOut(auth).then(() => alert("Вы вышли из системы."));
             }
         }
 
@@ -523,54 +528,72 @@
             return true;
         }
 
-        // Локальное хранилище заказов для демонстрации админке
-        window.getStoredOrders = function() {
-            return JSON.parse(localStorage.getItem('b_time_orders') || '[]');
-        }
-
-        window.saveOrderToStorage = function(orderData) {
-            const orders = getStoredOrders();
-            orders.unshift(orderData);
-            localStorage.setItem('b_time_orders', JSON.stringify(orders));
-            updateAdminBadge();
-        }
-
-        window.updateAdminBadge = function() {
-            const orders = getStoredOrders();
-            const badge = document.getElementById('adminOrdersCount');
-            if (orders.length > 0) {
-                badge.innerText = orders.length;
-                badge.classList.remove('hidden');
-            } else {
-                badge.classList.add('hidden');
+        // Сохранение заказа в облачную базу Firebase Firestore
+        window.saveOrderToCloud = async function(orderData) {
+            try {
+                await addDoc(collection(db, "orders"), orderData);
+                fetchCloudOrdersCount();
+            } catch (e) {
+                console.error("Ошибка сохранения заказа в облако: ", e);
             }
         }
 
-        window.openAdminOrdersModal = function() {
-            const orders = getStoredOrders();
+        window.fetchCloudOrdersCount = async function() {
+            try {
+                const querySnapshot = await getDocs(collection(db, "orders"));
+                const count = querySnapshot.size;
+                const badge = document.getElementById('adminOrdersCount');
+                if (count > 0) {
+                    badge.innerText = count;
+                    badge.classList.remove('hidden');
+                } else {
+                    badge.classList.add('hidden');
+                }
+            } catch (e) {
+                console.error("Ошибка получения счетчика:", e);
+            }
+        }
+
+        window.openAdminOrdersModal = async function() {
             const container = document.getElementById('adminOrdersList');
-            if (orders.length === 0) {
-                container.innerHTML = `<p class="text-gray-500 text-center py-8">Новых заявок и заказов пока нет.</p>`;
-            } else {
-                container.innerHTML = orders.map((o, idx) => `
-                    <div class="bg-gray-50 border border-gray-200 p-4 rounded-xl">
-                        <div class="flex justify-between items-center mb-2 border-b border-gray-200 pb-2">
-                            <span class="font-bold text-sm text-amber-700">Заказ #${orders.length - idx}</span>
-                            <span class="text-xs text-gray-500">${o.date}</span>
-                        </div>
-                        <p class="text-xs text-gray-700 mb-1"><strong>Клиент:</strong> ${o.name} (${o.phone})</p>
-                        <p class="text-xs text-gray-700 mb-2"><strong>Адрес:</strong> ${o.address}</p>
-                        <div class="text-xs bg-white p-2.5 rounded border border-gray-200 space-y-1 mb-2">
-                            ${o.items.map(i => `<div>• ${i.name} (x${i.qty})</div>`).join('')}
-                        </div>
-                        <div class="flex justify-between items-center text-xs font-bold text-gray-900">
-                            <span>Сумма заказа:</span>
-                            <span class="text-amber-600">${o.total}</span>
-                        </div>
-                    </div>
-                `).join('');
-            }
+            container.innerHTML = `<p class="text-gray-500 text-center py-4">Загрузка из облака...</p>`;
             document.getElementById('adminOrdersModal').classList.remove('hidden');
+
+            try {
+                const q = query(collection(db, "orders"), orderBy("timestamp", "desc"));
+                const querySnapshot = await getDocs(q);
+                
+                if (querySnapshot.empty) {
+                    container.innerHTML = `<p class="text-gray-500 text-center py-8">Новых заявок в облаке нет.</p>`;
+                    return;
+                }
+
+                let html = "";
+                let index = querySnapshot.size;
+                querySnapshot.forEach((doc) => {
+                    const o = doc.data();
+                    html += `
+                        <div class="bg-gray-50 border border-gray-200 p-4 rounded-xl">
+                            <div class="flex justify-between items-center mb-2 border-b border-gray-200 pb-2">
+                                <span class="font-bold text-sm text-amber-700">Заказ #${index--}</span>
+                                <span class="text-xs text-gray-500">${o.date}</span>
+                            </div>
+                            <p class="text-xs text-gray-700 mb-1"><strong>Клиент:</strong> ${o.name} (${o.phone})</p>
+                            <p class="text-xs text-gray-700 mb-2"><strong>Адрес:</strong> ${o.address}</p>
+                            <div class="text-xs bg-white p-2.5 rounded border border-gray-200 space-y-1 mb-2">
+                                ${o.items.map(i => `<div>• ${i.name} (x${i.qty})</div>`).join('')}
+                            </div>
+                            <div class="flex justify-between items-center text-xs font-bold text-gray-900">
+                                <span>Сумма заказа:</span>
+                                <span class="text-amber-600">${o.total}</span>
+                            </div>
+                        </div>
+                    `;
+                });
+                container.innerHTML = html;
+            } catch (e) {
+                container.innerHTML = `<p class="text-rose-500 text-center py-4">Ошибка загрузки: ${e.message}</p>`;
+            }
         }
 
         window.closeAdminOrdersModal = function() {
@@ -624,7 +647,6 @@
             renderCatalog(products);
             renderReviews();
             updateCounters();
-            if (typeof updateAdminBadge === 'function') updateAdminBadge();
         });
 
         function switchTab(tabId) {
@@ -747,12 +769,14 @@
                     return { name: p.name, qty: i.qty };
                 }),
                 total: formatPrice(totalTJS),
-                date: new Date().toLocaleString()
+                date: new Date().toLocaleString(),
+                timestamp: Date.now()
             };
 
-            saveOrderToStorage(orderDetails);
+            // Отправляем в облако Firebase Firestore
+            window.saveOrderToCloud(orderDetails);
 
-            alert(`Спасибо, ${name}! Заказ успешно оформлен. Менеджер свяжется с вами.`);
+            alert(`Спасибо, ${name}! Заказ успешно оформлен и отправлен в систему.`);
             cart = [];
             updateCounters();
             closeCheckoutModal();
