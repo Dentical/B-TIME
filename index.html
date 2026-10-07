@@ -272,14 +272,13 @@
         </div>
     </main>
 
-    <!-- МОДАЛЬНОЕ ОКНО АВТОРИЗАЦИИ (GOOGLE И EMAIL) -->
+    <!-- МОДАЛЬНОЕ ОКНО АВТОРИЗАЦИИ -->
     <div id="authModal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden flex items-center justify-center p-4">
         <div class="bg-white border border-blue-100 rounded-3xl max-w-md w-full p-6 sm:p-8 relative text-gray-900 shadow-2xl">
             <button onclick="closeAuthModal()" class="absolute top-6 right-6 text-gray-400 hover:text-gray-900 text-xl"><i class="fa-solid fa-xmark"></i></button>
             <h3 id="authModalTitle" class="text-2xl font-bold text-gray-950 serif-font mb-4">Вход в аккаунт</h3>
             <div id="authFormError" class="text-xs text-rose-600 mb-3 hidden"></div>
             
-            <!-- Кнопка Вход через Google -->
             <button onclick="loginWithGoogle()" class="w-full flex items-center justify-center gap-3 bg-white border border-gray-300 hover:bg-gray-50 text-gray-800 font-semibold py-3 rounded-xl shadow-sm transition-colors mb-4">
                 <i class="fa-brands fa-google text-red-500 text-lg"></i> Войти через Google
             </button>
@@ -307,15 +306,22 @@
         </div>
     </div>
 
-    <!-- МОДАЛЬНОЕ ОКНО АДМИНА (ЗАЯВКИ ИЗ FIRESTORE) -->
+    <!-- МОДАЛЬНОЕ ОКНО АДМИНА (ПАНЕЛЬ ЗАЯВОК И УПРАВЛЕНИЯ) -->
     <div id="adminOrdersModal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden flex items-center justify-center p-4">
-        <div class="bg-white border border-blue-100 rounded-3xl max-w-2xl w-full p-6 sm:p-8 relative text-gray-900 shadow-2xl max-h-[85vh] overflow-y-auto">
+        <div class="bg-white border border-blue-100 rounded-3xl max-w-3xl w-full p-6 sm:p-8 relative text-gray-900 shadow-2xl max-h-[85vh] overflow-y-auto">
             <button onclick="closeAdminOrdersModal()" class="absolute top-6 right-6 text-gray-400 hover:text-gray-900 text-xl"><i class="fa-solid fa-xmark"></i></button>
-            <h3 class="text-2xl font-bold text-gray-950 serif-font mb-4 flex items-center gap-2">
-                <i class="fa-solid fa-file-lines text-amber-600"></i> Заявки и заказы из облака
-            </h3>
+            
+            <div class="flex justify-between items-center mb-6 border-b border-gray-200 pb-4">
+                <h3 class="text-2xl font-bold text-gray-950 serif-font flex items-center gap-2">
+                    <i class="fa-solid fa-file-lines text-amber-600"></i> Панель заявок и клиентов
+                </h3>
+                <button onclick="loadAdminOrders()" class="flex items-center gap-1.5 bg-blue-50 text-blue-700 border border-blue-200 px-3 py-1.5 rounded-xl text-xs font-bold hover:bg-blue-100 transition-colors">
+                    <i class="fa-solid fa-rotate"></i> Обновить
+                </button>
+            </div>
+
             <div id="adminOrdersList" class="space-y-4">
-                <p class="text-gray-500 text-center py-4">Загрузка заказов...</p>
+                <p class="text-gray-500 text-center py-4">Загрузка данных...</p>
             </div>
         </div>
     </div>
@@ -387,7 +393,7 @@
         </div>
     </div>
 
-    <!-- FIREBASE SDK И ЛОГИКА (FIRESTORE CLOUD ORDERS) -->
+    <!-- FIREBASE SDK И ПРОДВИНУТАЯ ЛОГИКА (REAL-TIME FIRESTORE + УПРАВЛЕНИЕ ЗАЯВКАМИ) -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js";
         import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-analytics.js";
@@ -405,6 +411,11 @@
             collection, 
             addDoc, 
             getDocs, 
+            doc,
+            deleteDoc,
+            setDoc,
+            getDoc,
+            onSnapshot,
             query, 
             orderBy 
         } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
@@ -429,9 +440,11 @@
 
         let isRegisterMode = false;
         let currentUser = null;
+        let unsubscribeOrders = null;
+        let cachedOrders = [];
 
-        // Отслеживание авторизации и админских прав
-        onAuthStateChanged(auth, (user) => {
+        // Авторизация и запуск Live-слушателя для админа
+        onAuthStateChanged(auth, async (user) => {
             currentUser = user;
             const authContainer = document.getElementById('authContainer');
             const adminBtn = document.getElementById('adminOrdersBtn');
@@ -450,9 +463,10 @@
 
                 if (isAdmin) {
                     adminBtn.classList.remove('hidden');
-                    fetchCloudOrdersCount();
+                    startRealtimeOrdersListener();
                 } else {
                     adminBtn.classList.add('hidden');
+                    if (unsubscribeOrders) unsubscribeOrders();
                 }
             } else {
                 authContainer.innerHTML = `
@@ -461,6 +475,7 @@
                     </button>
                 `;
                 adminBtn.classList.add('hidden');
+                if (unsubscribeOrders) unsubscribeOrders();
             }
         });
 
@@ -519,85 +534,147 @@
             }
         }
 
-        window.checkAuthBeforeCheckout = function() {
+        // Проверка блокировки пользователя перед оформлением заказа
+        window.checkAuthBeforeCheckout = async function() {
             if (!currentUser) {
                 alert("Для оформления заказа необходимо войти в аккаунт!");
                 openAuthModal();
                 return false;
             }
+            try {
+                const blockDoc = await getDoc(doc(db, "blocked_users", currentUser.uid));
+                if (blockDoc.exists()) {
+                    alert("Ваш аккаунт заблокирован администратором для оформления заказов.");
+                    return false;
+                }
+            } catch(e) {}
             return true;
         }
 
-        // Сохранение заказа в облачную базу Firebase Firestore
+        // Real-time слушатель заказов для мгновенного уведомления админа без обновления страницы
+        function startRealtimeOrdersListener() {
+            const q = query(collection(db, "orders"), orderBy("timestamp", "desc"));
+            unsubscribeOrders = onSnapshot(q, (snapshot) => {
+                cachedOrders = [];
+                snapshot.forEach((docSnap) => {
+                    cachedOrders.push({ id: docSnap.id, ...docSnap.data() });
+                });
+
+                updateAdminBadge(cachedOrders.length);
+                
+                // Если открыто модальное окно админа, обновляем его содержимое на лету
+                if (!document.getElementById('adminOrdersModal').classList.contains('hidden')) {
+                    renderOrdersList(cachedOrders);
+                }
+            });
+        }
+
+        function updateAdminBadge(count) {
+            const badge = document.getElementById('adminOrdersCount');
+            if (count > 0) {
+                badge.innerText = count;
+                badge.classList.remove('hidden');
+            } else {
+                badge.classList.add('hidden');
+            }
+        }
+
         window.saveOrderToCloud = async function(orderData) {
             try {
                 await addDoc(collection(db, "orders"), orderData);
-                fetchCloudOrdersCount();
             } catch (e) {
-                console.error("Ошибка сохранения заказа в облако: ", e);
+                console.error("Ошибка сохранения заказа: ", e);
             }
         }
 
-        window.fetchCloudOrdersCount = async function() {
-            try {
-                const querySnapshot = await getDocs(collection(db, "orders"));
-                const count = querySnapshot.size;
-                const badge = document.getElementById('adminOrdersCount');
-                if (count > 0) {
-                    badge.innerText = count;
-                    badge.classList.remove('hidden');
-                } else {
-                    badge.classList.add('hidden');
-                }
-            } catch (e) {
-                console.error("Ошибка получения счетчика:", e);
-            }
-        }
-
-        window.openAdminOrdersModal = async function() {
-            const container = document.getElementById('adminOrdersList');
-            container.innerHTML = `<p class="text-gray-500 text-center py-4">Загрузка из облака...</p>`;
+        window.openAdminOrdersModal = function() {
             document.getElementById('adminOrdersModal').classList.remove('hidden');
-
-            try {
-                const q = query(collection(db, "orders"), orderBy("timestamp", "desc"));
-                const querySnapshot = await getDocs(q);
-                
-                if (querySnapshot.empty) {
-                    container.innerHTML = `<p class="text-gray-500 text-center py-8">Новых заявок в облаке нет.</p>`;
-                    return;
-                }
-
-                let html = "";
-                let index = querySnapshot.size;
-                querySnapshot.forEach((doc) => {
-                    const o = doc.data();
-                    html += `
-                        <div class="bg-gray-50 border border-gray-200 p-4 rounded-xl">
-                            <div class="flex justify-between items-center mb-2 border-b border-gray-200 pb-2">
-                                <span class="font-bold text-sm text-amber-700">Заказ #${index--}</span>
-                                <span class="text-xs text-gray-500">${o.date}</span>
-                            </div>
-                            <p class="text-xs text-gray-700 mb-1"><strong>Клиент:</strong> ${o.name} (${o.phone})</p>
-                            <p class="text-xs text-gray-700 mb-2"><strong>Адрес:</strong> ${o.address}</p>
-                            <div class="text-xs bg-white p-2.5 rounded border border-gray-200 space-y-1 mb-2">
-                                ${o.items.map(i => `<div>• ${i.name} (x${i.qty})</div>`).join('')}
-                            </div>
-                            <div class="flex justify-between items-center text-xs font-bold text-gray-900">
-                                <span>Сумма заказа:</span>
-                                <span class="text-amber-600">${o.total}</span>
-                            </div>
-                        </div>
-                    `;
-                });
-                container.innerHTML = html;
-            } catch (e) {
-                container.innerHTML = `<p class="text-rose-500 text-center py-4">Ошибка загрузки: ${e.message}</p>`;
-            }
+            renderOrdersList(cachedOrders);
         }
 
         window.closeAdminOrdersModal = function() {
             document.getElementById('adminOrdersModal').classList.add('hidden');
+        }
+
+        window.loadAdminOrders = async function() {
+            // Ручная кнопка обновления данных
+            try {
+                const q = query(collection(db, "orders"), orderBy("timestamp", "desc"));
+                const querySnapshot = await getDocs(q);
+                cachedOrders = [];
+                querySnapshot.forEach((docSnap) => {
+                    cachedOrders.push({ id: docSnap.id, ...docSnap.data() });
+                });
+                renderOrdersList(cachedOrders);
+                updateAdminBadge(cachedOrders.length);
+                alert("Данные успешно обновлены!");
+            } catch(e) {
+                alert("Ошибка обновления: " + e.message);
+            }
+        }
+
+        function renderOrdersList(orders) {
+            const container = document.getElementById('adminOrdersList');
+            if (orders.length === 0) {
+                container.innerHTML = `<p class="text-gray-500 text-center py-8">Новых заявок и заказов нет.</p>`;
+                return;
+            }
+
+            container.innerHTML = orders.map((o, idx) => `
+                <div class="bg-gray-50 border border-gray-200 p-4 rounded-xl relative">
+                    <div class="flex justify-between items-center mb-2 border-b border-gray-200 pb-2">
+                        <span class="font-bold text-sm text-amber-700">Заказ #${orders.length - idx} (${o.status || 'Новый'})</span>
+                        <span class="text-xs text-gray-500">${o.date}</span>
+                    </div>
+                    <p class="text-xs text-gray-700 mb-1"><strong>Клиент:</strong> ${o.name} (${o.phone})</p>
+                    <p class="text-xs text-gray-700 mb-2"><strong>Адрес:</strong> ${o.address}</p>
+                    <div class="text-xs bg-white p-2.5 rounded border border-gray-200 space-y-1 mb-2">
+                        ${o.items.map(i => `<div>• ${i.name} (x${i.qty})</div>`).join('')}
+                    </div>
+                    <div class="flex justify-between items-center text-xs font-bold text-gray-900 mb-3">
+                        <span>Сумма:</span>
+                        <span class="text-amber-600">${o.total}</span>
+                    </div>
+                    <!-- Кнопки управления администратора -->
+                    <div class="flex flex-wrap gap-2 pt-2 border-t border-gray-200">
+                        <button onclick="acceptOrder('${o.id}')" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold px-3 py-1.5 rounded-lg shadow-sm">
+                            <i class="fa-solid fa-check mr-1"></i> Принять
+                        </button>
+                        <button onclick="deleteOrder('${o.id}')" class="bg-rose-600 hover:bg-rose-700 text-white text-xs font-semibold px-3 py-1.5 rounded-lg shadow-sm">
+                            <i class="fa-solid fa-trash mr-1"></i> Удалить
+                        </button>
+                        ${o.userId ? `
+                        <button onclick="blockUser('${o.userId}')" class="bg-gray-800 hover:bg-black text-white text-xs font-semibold px-3 py-1.5 rounded-lg shadow-sm">
+                            <i class="fa-solid fa-ban mr-1"></i> Заблокировать клиента
+                        </button>` : ''}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Действия администратора
+        window.acceptOrder = async function(orderId) {
+            try {
+                await setDoc(doc(db, "orders", orderId), { status: "Принят в обработку" }, { merge: true });
+                alert("Заказ принят!");
+            } catch(e) { alert("Ошибка: " + e.message); }
+        }
+
+        window.deleteOrder = async function(orderId) {
+            if (confirm("Удалить эту заявку?")) {
+                try {
+                    await deleteDoc(doc(db, "orders", orderId));
+                } catch(e) { alert("Ошибка удаления: " + e.message); }
+            }
+        }
+
+        window.blockUser = async function(userId) {
+            if (confirm("Заблокировать этого пользователя? Он больше не сможет оформлять заказы.")) {
+                try {
+                    await setDoc(doc(db, "blocked_users", userId), { blockedAt: new Date().toISOString() });
+                    alert("Пользователь заблокирован!");
+                } catch(e) { alert("Ошибка: " + e.message); }
+            }
         }
     </script>
 
@@ -742,8 +819,9 @@
         }
         function closeCartModal() { document.getElementById('cartModal').classList.add('hidden'); }
 
-        function openCheckoutModal() {
-            if (!window.checkAuthBeforeCheckout()) return;
+        async function openCheckoutModal() {
+            const allowed = await window.checkAuthBeforeCheckout();
+            if (!allowed) return;
             closeCartModal();
             document.getElementById('checkoutModal').classList.remove('hidden');
         }
@@ -761,6 +839,8 @@
             }, 0);
 
             const orderDetails = {
+                userId: auth.currentUser ? auth.currentUser.uid : null,
+                userEmail: auth.currentUser ? auth.currentUser.email : null,
                 name,
                 phone,
                 address,
@@ -770,13 +850,13 @@
                 }),
                 total: formatPrice(totalTJS),
                 date: new Date().toLocaleString(),
-                timestamp: Date.now()
+                timestamp: Date.now(),
+                status: "Новый"
             };
 
-            // Отправляем в облако Firebase Firestore
             window.saveOrderToCloud(orderDetails);
 
-            alert(`Спасибо, ${name}! Заказ успешно оформлен и отправлен в систему.`);
+            alert(`Спасибо, ${name}! Заказ успешно оформлен и отправлен администраторам.`);
             cart = [];
             updateCounters();
             closeCheckoutModal();
