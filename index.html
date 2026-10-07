@@ -77,10 +77,12 @@
                         <option value="RUB" class="bg-gray-900 text-white">RUB (₽)</option>
                     </select>
                 </div>
-                <!-- Авторизация (Кнопка профиля) -->
-                <button onclick="openAuthModal()" id="authBtn" class="flex items-center gap-1.5 bg-gold-500/10 border border-gold-500/30 text-gold-400 px-3 py-1 rounded hover:bg-gold-500/20 transition-colors">
-                    <i class="fa-solid fa-user"></i> <span id="authBtnText">Войти</span>
-                </button>
+                <!-- Авторизация / Профиль -->
+                <div id="authContainer">
+                    <button onclick="openAuthModal()" id="authBtn" class="flex items-center gap-1.5 bg-gold-500/10 border border-gold-500/30 text-gold-400 px-3 py-1 rounded hover:bg-gold-500/20 transition-colors">
+                        <i class="fa-solid fa-user"></i> <span id="authBtnText">Войти</span>
+                    </button>
+                </div>
             </div>
         </div>
     </div>
@@ -116,11 +118,17 @@
             </nav>
 
             <!-- Поиск и Иконки действий -->
-            <div class="flex items-center gap-4">
+            <div class="flex items-center gap-3">
                 <div class="relative hidden lg:block w-48 xl:w-64">
-                    <input type="text" id="searchInput" oninput="handleSearch(this.value)" data-i18n-placeholder="searchPlaceholder" placeholder="Поиск часов, бренда..." class="w-full bg-white/10 border border-blue-900 rounded-full py-2 pl-9 pr-4 text-sm text-white placeholder-gray-400 focus:outline-none focus:border-gold-500 transition-all">
+                    <input type="text" id="searchInput" oninput="handleSearch(this.value)" data-i18n-placeholder="searchPlaceholder" placeholder="Поиск часов..." class="w-full bg-white/10 border border-blue-900 rounded-full py-2 pl-9 pr-4 text-sm text-white placeholder-gray-400 focus:outline-none focus:border-gold-500 transition-all">
                     <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-2.5 text-gray-400 text-sm"></i>
                 </div>
+
+                <!-- КНОПКА ЗАЯВОК ДЛЯ АДМИНА (Иконка бумаги) -->
+                <button id="adminOrdersBtn" onclick="openAdminOrdersModal()" title="Панель заявок и заказов" class="relative p-2.5 text-amber-400 bg-gold-500/10 border border-gold-500/30 rounded-full hover:bg-gold-500/20 transition-colors hidden">
+                    <i class="fa-solid fa-file-lines text-lg"></i>
+                    <span id="adminOrdersCount" class="absolute -top-1 -right-1 bg-amber-500 text-black text-[10px] font-bold w-5 h-5 rounded-full flex items-center justify-center hidden">0</span>
+                </button>
 
                 <button onclick="openWishlistModal()" class="relative p-2.5 text-gray-200 hover:text-gold-400 bg-white/10 border border-blue-900 rounded-full transition-colors">
                     <i class="fa-regular fa-heart text-lg"></i>
@@ -264,12 +272,24 @@
         </div>
     </main>
 
-    <!-- МОДАЛЬНОЕ ОКНО АВТОРИЗАЦИИ FIREBASE -->
+    <!-- МОДАЛЬНОЕ ОКНО АВТОРИЗАЦИИ (GOOGLE И EMAIL) -->
     <div id="authModal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden flex items-center justify-center p-4">
         <div class="bg-white border border-blue-100 rounded-3xl max-w-md w-full p-6 sm:p-8 relative text-gray-900 shadow-2xl">
             <button onclick="closeAuthModal()" class="absolute top-6 right-6 text-gray-400 hover:text-gray-900 text-xl"><i class="fa-solid fa-xmark"></i></button>
             <h3 id="authModalTitle" class="text-2xl font-bold text-gray-950 serif-font mb-4">Вход в аккаунт</h3>
             <div id="authFormError" class="text-xs text-rose-600 mb-3 hidden"></div>
+            
+            <!-- Кнопка Вход через Google -->
+            <button onclick="loginWithGoogle()" class="w-full flex items-center justify-center gap-3 bg-white border border-gray-300 hover:bg-gray-50 text-gray-800 font-semibold py-3 rounded-xl shadow-sm transition-colors mb-4">
+                <i class="fa-brands fa-google text-red-500 text-lg"></i> Войти через Google
+            </button>
+
+            <div class="relative flex py-2 items-center mb-4">
+                <div class="flex-grow border-t border-gray-200"></div>
+                <span class="flex-shrink mx-4 text-gray-400 text-xs uppercase">или по email</span>
+                <div class="flex-grow border-t border-gray-200"></div>
+            </div>
+
             <form onsubmit="handleAuthSubmit(event)" class="space-y-4">
                 <div>
                     <label class="block text-sm text-gray-700 mb-1">Email</label>
@@ -283,6 +303,19 @@
             </form>
             <div class="mt-4 text-center text-sm">
                 <button onclick="toggleAuthMode()" id="authSwitchText" class="text-amber-700 hover:underline">Нет аккаунта? Зарегистрироваться</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- МОДАЛЬНОЕ ОКНО АДМИНА (ЗАЯВКИ / ЗАКАЗЫ) -->
+    <div id="adminOrdersModal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden flex items-center justify-center p-4">
+        <div class="bg-white border border-blue-100 rounded-3xl max-w-2xl w-full p-6 sm:p-8 relative text-gray-900 shadow-2xl max-h-[85vh] overflow-y-auto">
+            <button onclick="closeAdminOrdersModal()" class="absolute top-6 right-6 text-gray-400 hover:text-gray-900 text-xl"><i class="fa-solid fa-xmark"></i></button>
+            <h3 class="text-2xl font-bold text-gray-950 serif-font mb-4 flex items-center gap-2">
+                <i class="fa-solid fa-file-lines text-amber-600"></i> Заявки и заказы клиентов
+            </h3>
+            <div id="adminOrdersList" class="space-y-4">
+                <!-- Заполняется динамически -->
             </div>
         </div>
     </div>
@@ -354,7 +387,7 @@
         </div>
     </div>
 
-    <!-- ПОДКЛЮЧЕНИЕ FIREBASE SDK И ЛОГИКА АВТОРИЗАЦИИ -->
+    <!-- ПОДКЛЮЧЕНИЕ FIREBASE SDK И ЛОГИКА (GOOGLE AUTH + ADMIN + ORDERS) -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js";
         import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-analytics.js";
@@ -362,11 +395,12 @@
             getAuth, 
             signInWithEmailAndPassword, 
             createUserWithEmailAndPassword, 
+            signInWithPopup,
+            GoogleAuthProvider,
             signOut, 
             onAuthStateChanged 
         } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
 
-        // Твой конфиг Firebase
         const firebaseConfig = {
             apiKey: "AIzaSyDCyzNeJt0Fi67LALJljFjjeQWJ9uqC2io",
             authDomain: "b-time-225ac.firebaseapp.com",
@@ -380,27 +414,67 @@
         const app = initializeApp(firebaseConfig);
         const analytics = getAnalytics(app);
         const auth = getAuth(app);
+        const googleProvider = new GoogleAuthProvider();
+
+        const ADMIN_EMAILS = ["samirdv888@gmail.com", "abdullochoriev4242@gmail.com"];
 
         let isRegisterMode = false;
         let currentUser = null;
 
-        // Отслеживание состояния сессии пользователя
+        // Отслеживание авторизации и прав админа
         onAuthStateChanged(auth, (user) => {
             currentUser = user;
-            const authBtnText = document.getElementById('authBtnText');
+            const authContainer = document.getElementById('authContainer');
+            const adminBtn = document.getElementById('adminOrdersBtn');
+
             if (user) {
-                authBtnText.innerText = user.email.split('@')[0];
-                document.getElementById('authBtn').title = "Нажмите для выхода";
-                document.getElementById('authBtn').onclick = () => {
-                    if (confirm("Хотите выйти из аккаунта?")) {
-                        signOut(auth);
-                    }
-                };
+                const isAdmin = ADMIN_EMAILS.includes(user.email.toLowerCase());
+                
+                // Кнопка профиля и выхода
+                authContainer.innerHTML = `
+                    <div class="flex items-center gap-2">
+                        <span class="text-xs text-gold-400 font-semibold hidden sm:inline"><i class="fa-solid fa-user-check mr-1"></i>${user.email.split('@')[0]}</span>
+                        <button onclick="logoutUser()" title="Выйти из аккаунта" class="flex items-center gap-1 bg-rose-500/10 border border-rose-500/30 text-rose-400 px-3 py-1 rounded hover:bg-rose-500/20 transition-colors">
+                            <i class="fa-solid fa-right-from-bracket"></i> <span class="hidden sm:inline">Выйти</span>
+                        </button>
+                    </div>
+                `;
+
+                // Показываем кнопку заявок (иконка бумаги) если это админ
+                if (isAdmin) {
+                    adminBtn.classList.remove('hidden');
+                    updateAdminBadge();
+                } else {
+                    adminBtn.classList.add('hidden');
+                }
             } else {
-                authBtnText.innerText = "Войти";
-                document.getElementById('authBtn').onclick = openAuthModal;
+                authContainer.innerHTML = `
+                    <button onclick="openAuthModal()" id="authBtn" class="flex items-center gap-1.5 bg-gold-500/10 border border-gold-500/30 text-gold-400 px-3 py-1 rounded hover:bg-gold-500/20 transition-colors">
+                        <i class="fa-solid fa-user"></i> <span id="authBtnText">Войти</span>
+                    </button>
+                `;
+                adminBtn.classList.add('hidden');
             }
         });
+
+        window.logoutUser = function() {
+            if (confirm("Вы действительно хотите выйти из аккаунта?")) {
+                signOut(auth).then(() => {
+                    alert("Вы вышли из системы.");
+                });
+            }
+        }
+
+        window.loginWithGoogle = async function() {
+            try {
+                await signInWithPopup(auth, googleProvider);
+                alert("Успешный вход через Google!");
+                closeAuthModal();
+            } catch (error) {
+                document.getElementById('authFormError').innerText = "Ошибка Google входа: " + error.message;
+                document.getElementById('authFormError').classList.remove('hidden');
+            }
+        }
 
         window.openAuthModal = function() {
             if (currentUser) return;
@@ -447,6 +521,60 @@
                 return false;
             }
             return true;
+        }
+
+        // Локальное хранилище заказов для демонстрации админке
+        window.getStoredOrders = function() {
+            return JSON.parse(localStorage.getItem('b_time_orders') || '[]');
+        }
+
+        window.saveOrderToStorage = function(orderData) {
+            const orders = getStoredOrders();
+            orders.unshift(orderData);
+            localStorage.setItem('b_time_orders', JSON.stringify(orders));
+            updateAdminBadge();
+        }
+
+        window.updateAdminBadge = function() {
+            const orders = getStoredOrders();
+            const badge = document.getElementById('adminOrdersCount');
+            if (orders.length > 0) {
+                badge.innerText = orders.length;
+                badge.classList.remove('hidden');
+            } else {
+                badge.classList.add('hidden');
+            }
+        }
+
+        window.openAdminOrdersModal = function() {
+            const orders = getStoredOrders();
+            const container = document.getElementById('adminOrdersList');
+            if (orders.length === 0) {
+                container.innerHTML = `<p class="text-gray-500 text-center py-8">Новых заявок и заказов пока нет.</p>`;
+            } else {
+                container.innerHTML = orders.map((o, idx) => `
+                    <div class="bg-gray-50 border border-gray-200 p-4 rounded-xl">
+                        <div class="flex justify-between items-center mb-2 border-b border-gray-200 pb-2">
+                            <span class="font-bold text-sm text-amber-700">Заказ #${orders.length - idx}</span>
+                            <span class="text-xs text-gray-500">${o.date}</span>
+                        </div>
+                        <p class="text-xs text-gray-700 mb-1"><strong>Клиент:</strong> ${o.name} (${o.phone})</p>
+                        <p class="text-xs text-gray-700 mb-2"><strong>Адрес:</strong> ${o.address}</p>
+                        <div class="text-xs bg-white p-2.5 rounded border border-gray-200 space-y-1 mb-2">
+                            ${o.items.map(i => `<div>• ${i.name} (x${i.qty})</div>`).join('')}
+                        </div>
+                        <div class="flex justify-between items-center text-xs font-bold text-gray-900">
+                            <span>Сумма заказа:</span>
+                            <span class="text-amber-600">${o.total}</span>
+                        </div>
+                    </div>
+                `).join('');
+            }
+            document.getElementById('adminOrdersModal').classList.remove('hidden');
+        }
+
+        window.closeAdminOrdersModal = function() {
+            document.getElementById('adminOrdersModal').classList.add('hidden');
         }
     </script>
 
@@ -496,6 +624,7 @@
             renderCatalog(products);
             renderReviews();
             updateCounters();
+            if (typeof updateAdminBadge === 'function') updateAdminBadge();
         });
 
         function switchTab(tabId) {
@@ -602,7 +731,28 @@
             e.preventDefault();
             const name = sanitizeInput(document.getElementById('orderName').value);
             const phone = sanitizeInput(document.getElementById('orderPhone').value);
-            alert(`Спасибо, ${name}! Заказ оформлен. Мы позвоним на номер ${phone}.`);
+            const address = sanitizeInput(document.getElementById('orderAddress').value);
+
+            let totalTJS = cart.reduce((sum, item) => {
+                const p = products.find(prod => prod.id === item.id);
+                return sum + (p.priceTJS * item.qty);
+            }, 0);
+
+            const orderDetails = {
+                name,
+                phone,
+                address,
+                items: cart.map(i => {
+                    const p = products.find(prod => prod.id === i.id);
+                    return { name: p.name, qty: i.qty };
+                }),
+                total: formatPrice(totalTJS),
+                date: new Date().toLocaleString()
+            };
+
+            saveOrderToStorage(orderDetails);
+
+            alert(`Спасибо, ${name}! Заказ успешно оформлен. Менеджер свяжется с вами.`);
             cart = [];
             updateCounters();
             closeCheckoutModal();
