@@ -1,406 +1,224 @@
 <!DOCTYPE html>
-<html lang="ru" class="dark">
+<html lang="ru">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title id="pageTitle">B-Time — Официальный интернет-магазин часов</title>
-    <!-- Tailwind CSS CDN -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            darkMode: 'class',
-            theme: {
-                extend: {
-                    colors: {
-                        gold: {
-                            400: '#facc15',
-                            500: '#eab308',
-                            600: '#ca8a04',
-                        }
-                    }
-                }
-            }
-        }
-    </script>
+    <title>B-Time — Официальный интернет-магазин часов</title>
     <!-- FontAwesome для иконок -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap');
-        body {
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            background-color: #0b1329;
-            color: #f3f4f6;
-        }
-        .serif-font {
-            font-family: 'Playfair Display', serif;
-        }
-        .no-scrollbar::-webkit-scrollbar {
-            display: none;
-        }
-        .no-scrollbar {
-            -ms-overflow-style: none;
-            scrollbar-width: none;
-        }
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
+        
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', sans-serif; }
+        body { background-color: #0b1329; color: #f3f4f6; min-height: 100vh; display: flex; flex-direction: column; }
+        .serif { font-family: 'Playfair Display', serif; }
+        
+        /* Быстрые и легкие стили интерфейса */
+        .top-bar { background: #070d1d; border-bottom: 1px solid rgba(30, 58, 138, 0.5); font-size: 12px; color: #d1d5db; padding: 8px 16px; }
+        .top-bar-inner { max-width: 1280px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; }
+        
+        header { position: sticky; top: 0; z-index: 40; background: rgba(11, 19, 41, 0.95); backdrop-filter: blur(10px); border-bottom: 1px solid rgba(30, 58, 138, 0.6); height: 80px; display: flex; align-items: center; }
+        .header-inner { max-width: 1280px; margin: 0 auto; width: 100%; padding: 0 16px; display: flex; justify-content: space-between; align-items: center; }
+        
+        .logo { display: flex; align-items: center; gap: 12px; cursor: pointer; text-decoration: none; color: white; }
+        .logo-icon { width: 40px; height: 40px; border-radius: 12px; background: linear-gradient(135deg, #ca8a04, #facc15); display: flex; align-items: center; justify-content: center; color: black; font-size: 18px; }
+        
+        nav { display: flex; gap: 24px; font-size: 14px; font-weight: 500; }
+        nav button { background: none; border: none; color: #e5e7eb; cursor: pointer; transition: color 0.2s; }
+        nav button:hover, nav button.active { color: #facc15; }
+
+        .actions { display: flex; align-items: center; gap: 12px; }
+        .btn-icon { background: rgba(255, 255, 255, 0.1); border: 1px solid #1e3a8a; color: #e5e7eb; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; position: relative; transition: 0.2s; }
+        .btn-icon:hover { border-color: #facc15; color: #facc15; }
+        
+        .badge { position: absolute; top: -4px; right: -4px; background: #eab308; color: black; font-size: 10px; font-weight: bold; width: 18px; height: 18px; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
+        .badge-rose { background: #f43f5e; color: white; }
+        
+        .main-content { flex-grow: 1; max-width: 1280px; margin: 0 auto; width: 100%; padding: 32px 16px; }
+        .tab-pane { display: none; }
+        .tab-pane.active { display: block; }
+
+        /* Сетка товаров */
+        .grid-products { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 24px; }
+        .card { background: white; border-radius: 16px; overflow: hidden; color: #111827; box-shadow: 0 4px 6px rgba(0,0,0,0.1); display: flex; flex-direction: column; }
+        .card-img { background: #f9fafb; height: 220px; display: flex; align-items: center; justify-content: center; position: relative; }
+        .card-img img { height: 170px; object-fit: cover; }
+        .card-body { padding: 20px; display: flex; flex-direction: column; flex-grow: 1; justify-content: space-between; }
+        
+        .btn-gold { background: linear-gradient(135deg, #eab308, #facc15); color: black; font-weight: bold; border: none; padding: 12px 20px; border-radius: 12px; cursor: pointer; width: 100%; transition: opacity 0.2s; }
+        .btn-gold:hover { opacity: 0.9; }
+
+        /* Модальные окна */
+        .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(5px); z-index: 100; display: none; align-items: center; justify-content: center; padding: 16px; }
+        .modal.open { display: flex; }
+        .modal-box { background: white; color: #111827; width: 100%; max-width: 480px; border-radius: 24px; padding: 32px; position: relative; max-height: 90vh; overflow-y: auto; }
+        .modal-close { position: absolute; top: 20px; right: 20px; background: none; border: none; font-size: 20px; cursor: pointer; color: #6b7280; }
+        
+        form div { margin-bottom: 16px; }
+        form label { display: block; font-size: 13px; font-weight: 600; margin-bottom: 6px; color: #374151; }
+        form input, form textarea, form select { width: 100%; padding: 10px 14px; border: 1px solid #d1d5db; border-radius: 10px; font-size: 14px; }
+        
+        .hidden { display: none !important; }
+        
+        /* Специфичные цвета */
+        .text-gold { color: #facc15; }
+        .text-amber { color: #d97706; }
     </style>
 </head>
-<body class="min-h-screen flex flex-col selection:bg-gold-500 selection:text-black">
+<body>
 
     <!-- Верхняя панель -->
-    <div class="bg-[#070d1d] border-b border-blue-900/50 text-xs text-gray-300 py-2 px-4">
-        <div class="max-w-7xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-2">
-            <div class="flex items-center gap-4">
-                <span class="flex items-center gap-1.5"><i class="fa-solid fa-location-dot text-gold-500"></i> 
-                    <select id="citySelect" class="bg-transparent text-gray-200 focus:outline-none cursor-pointer">
-                        <option value="dushanbe" class="bg-gray-900 text-white">Душанбе</option>
-                        <option value="khujand" class="bg-gray-900 text-white">Худжанд</option>
-                        <option value="bokhtar" class="bg-gray-900 text-white">Бохтар</option>
-                        <option value="moscow" class="bg-gray-900 text-white">Москва</option>
-                    </select>
-                </span>
-                <span class="hidden md:inline"><i class="fa-solid fa-phone text-gold-500 mr-1"></i> +992 (90) 000-00-00</span>
-            </div>
-            <div class="flex items-center gap-4">
-                <!-- Выбор Языка -->
-                <div class="flex items-center gap-1 bg-blue-950/80 px-2.5 py-1 rounded border border-blue-800">
-                    <span class="text-gray-400" data-i18n="langLabel">Язык:</span>
-                    <select id="langSelect" onchange="changeLanguage(this.value)" class="bg-transparent text-gold-400 font-semibold focus:outline-none cursor-pointer">
-                        <option value="ru" class="bg-gray-900 text-white">RU</option>
-                        <option value="en" class="bg-gray-900 text-white">EN</option>
-                    </select>
-                </div>
-                <!-- Выбор Валюты -->
-                <div class="flex items-center gap-1 bg-blue-950/80 px-2.5 py-1 rounded border border-blue-800">
-                    <span class="text-gray-400" data-i18n="currLabel">Валюта:</span>
-                    <select id="currencySelect" onchange="changeCurrency(this.value)" class="bg-transparent text-gold-400 font-semibold focus:outline-none cursor-pointer">
-                        <option value="TJS" class="bg-gray-900 text-white">TJS (ЅM)</option>
-                        <option value="USD" class="bg-gray-900 text-white">USD ($)</option>
-                        <option value="RUB" class="bg-gray-900 text-white">RUB (₽)</option>
-                    </select>
-                </div>
-                <!-- Авторизация / Профиль -->
-                <div id="authContainer">
-                    <button onclick="openAuthModal()" id="authBtn" class="flex items-center gap-1.5 bg-gold-500/10 border border-gold-500/30 text-gold-400 px-3 py-1 rounded hover:bg-gold-500/20 transition-colors">
-                        <i class="fa-solid fa-user"></i> <span id="authBtnText">Войти</span>
-                    </button>
-                </div>
+    <div class="top-bar">
+        <div class="top-bar-inner">
+            <div><i class="fa-solid fa-location-dot text-gold"></i> Душанбе | <i class="fa-solid fa-phone text-gold ml-2"></i> +992 (90) 000-00-00</div>
+            <div id="authContainer">
+                <button onclick="openAuthModal()" style="background: rgba(234,179,8,0.1); border: 1px solid rgba(234,179,8,0.3); color: #facc15; padding: 4px 12px; border-radius: 6px; cursor: pointer;">
+                    <i class="fa-solid fa-user"></i> Войти
+                </button>
             </div>
         </div>
     </div>
 
-    <!-- Основной Header -->
-    <header class="sticky top-0 z-40 bg-[#0b1329]/95 backdrop-blur-md border-b border-blue-900/60 shadow-lg">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between gap-4">
-            
-            <button onclick="toggleMobileMenu()" class="md:hidden text-2xl text-gray-200 hover:text-gold-500 focus:outline-none">
-                <i class="fa-solid fa-bars"></i>
-            </button>
-
-            <!-- Логотип -->
-            <div onclick="switchTab('home')" class="flex items-center gap-3 cursor-pointer group">
-                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-gold-600 to-amber-300 flex items-center justify-center text-black shadow-lg shadow-gold-500/20 group-hover:scale-105 transition-transform">
-                    <i class="fa-solid fa-clock text-xl animate-spin" style="animation-duration: 12s;"></i>
-                </div>
+    <!-- Шапка сайта -->
+    <header>
+        <div class="header-inner">
+            <div class="logo" onclick="switchTab('home')">
+                <div class="logo-icon"><i class="fa-solid fa-clock"></i></div>
                 <div>
-                    <span class="text-2xl font-black tracking-wider text-white serif-font">B-TIME</span>
-                    <span class="block text-[10px] text-gold-400 tracking-widest uppercase font-semibold">Luxury & Swiss Watches</span>
+                    <span style="font-size: 22px; font-weight: 900; letter-spacing: 1px;" class="serif">B-TIME</span>
+                    <span style="display: block; font-size: 9px; color: #facc15; letter-spacing: 2px; font-weight: 600;">LUXURY WATCHES</span>
                 </div>
             </div>
 
-            <!-- Десктоп навигация -->
-            <nav class="hidden md:flex items-center gap-8 font-medium text-sm">
-                <button onclick="switchTab('home')" class="nav-link text-gold-400 transition-colors" data-tab="home" data-i18n="navHome">Главная</button>
-                <button onclick="switchTab('catalog')" class="nav-link text-gray-200 hover:text-gold-400 transition-colors" data-tab="catalog" data-i18n="navCatalog">Каталог</button>
-                <button onclick="switchTab('compare')" class="nav-link text-gray-200 hover:text-gold-400 transition-colors flex items-center gap-1.5" data-tab="compare">
-                    <span data-i18n="navCompare">Сравнение</span> <span id="compareBadge" class="bg-gold-500 text-black text-xs font-bold px-1.5 py-0.2 rounded-full hidden">0</span>
-                </button>
-                <button onclick="switchTab('reviews')" class="nav-link text-gray-200 hover:text-gold-400 transition-colors" data-tab="reviews" data-i18n="navReviews">Отзывы</button>
-                <button onclick="switchTab('articles')" class="nav-link text-gray-200 hover:text-gold-400 transition-colors" data-tab="articles" data-i18n="navArticles">Статьи</button>
+            <nav>
+                <button onclick="switchTab('home')" class="nav-btn active" data-tab="home">Главная</button>
+                <button onclick="switchTab('catalog')" class="nav-btn" data-tab="catalog">Каталог</button>
             </nav>
 
-            <!-- Поиск и Иконки действий -->
-            <div class="flex items-center gap-3">
-                <div class="relative hidden lg:block w-48 xl:w-64">
-                    <input type="text" id="searchInput" oninput="handleSearch(this.value)" data-i18n-placeholder="searchPlaceholder" placeholder="Поиск часов..." class="w-full bg-white/10 border border-blue-900 rounded-full py-2 pl-9 pr-4 text-sm text-white placeholder-gray-400 focus:outline-none focus:border-gold-500 transition-all">
-                    <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-2.5 text-gray-400 text-sm"></i>
-                </div>
-
-                <!-- КНОПКА ЗАЯВОК ДЛЯ АДМИНА (Иконка бумаги)[cite: 1] -->
-                <button id="adminOrdersBtn" onclick="openAdminOrdersModal()" title="Панель заявок и заказов" class="relative p-2.5 text-amber-400 bg-gold-500/10 border border-gold-500/30 rounded-full hover:bg-gold-500/20 transition-colors hidden">
-                    <i class="fa-solid fa-file-lines text-lg"></i>
-                    <span id="adminOrdersCount" class="absolute -top-1 -right-1 bg-amber-500 text-black text-[10px] font-bold w-5 h-5 rounded-full flex items-center justify-center hidden">0</span>
+            <div class="actions">
+                <!-- Кнопка админа (Заявки) -->
+                <button id="adminOrdersBtn" onclick="openAdminModal()" class="btn-icon hidden" title="Панель заявок" style="color: #facc15; border-color: rgba(234,179,8,0.4);">
+                    <i class="fa-solid fa-file-lines"></i>
+                    <span id="adminBadge" class="badge hidden">0</span>
                 </button>
 
-                <button onclick="openWishlistModal()" class="relative p-2.5 text-gray-200 hover:text-gold-400 bg-white/10 border border-blue-900 rounded-full transition-colors">
-                    <i class="fa-regular fa-heart text-lg"></i>
-                    <span id="wishlistCount" class="absolute -top-1 -right-1 bg-rose-500 text-white text-[10px] font-bold w-5 h-5 rounded-full flex items-center justify-center hidden">0</span>
-                </button>
-
-                <button onclick="openCartModal()" class="relative p-2.5 text-gray-200 hover:text-gold-400 bg-white/10 border border-blue-900 rounded-full transition-colors flex items-center gap-2 px-3.5">
-                    <i class="fa-solid fa-bag-shopping text-lg text-gold-400"></i>
-                    <span id="cartCount" class="bg-gold-500 text-black text-xs font-extrabold w-5 h-5 rounded-full flex items-center justify-center hidden">0</span>
-                    <span id="cartTotalHeader" class="hidden sm:inline text-xs font-semibold text-white">0 ЅM</span>
+                <button onclick="openCartModal()" class="btn-icon">
+                    <i class="fa-solid fa-bag-shopping"></i>
+                    <span id="cartBadge" class="badge hidden">0</span>
                 </button>
             </div>
         </div>
     </header>
 
-    <!-- Мобильное меню -->
-    <div id="mobileMenu" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden">
-        <div class="absolute left-0 top-0 bottom-0 w-80 bg-[#0b1329] p-6 flex flex-col justify-between border-r border-blue-900">
-            <div>
-                <div class="flex justify-between items-center mb-8">
-                    <div class="flex items-center gap-3">
-                        <div class="w-8 h-8 rounded-lg bg-gold-500 flex items-center justify-center text-black">
-                            <i class="fa-solid fa-clock"></i>
-                        </div>
-                        <span class="text-xl font-bold tracking-wider text-white serif-font">B-TIME</span>
-                    </div>
-                    <button onclick="toggleMobileMenu()" class="text-gray-400 hover:text-white text-xl"><i class="fa-solid fa-xmark"></i></button>
+    <!-- Основной контент -->
+    <main class="main-content">
+        <!-- Главная -->
+        <div id="tab-home" class="tab-pane active">
+            <div style="padding: 40px 0; display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: center;">
+                <div>
+                    <span style="background: rgba(234,179,8,0.1); border: 1px solid rgba(234,179,8,0.3); color: #facc15; padding: 6px 12px; border-radius: 20px; font-size: 11px; font-weight: 600; text-transform: uppercase;">Официальный дилер</span>
+                    <h1 class="serif" style="font-size: 48px; line-height: 1.1; margin: 20px 0;">Элегантность в каждой секунде</h1>
+                    <p style="color: #9ca3af; margin-bottom: 24px; font-size: 15px;">Эксклюзивная коллекция швейцарских и мировых брендов с гарантией качества и быстрой доставкой.</p>
+                    <button onclick="switchTab('catalog')" class="btn-gold" style="width: auto; padding: 14px 28px;">Перейти в каталог</button>
                 </div>
-                <div class="flex flex-col gap-4 font-medium text-lg">
-                    <button onclick="switchTab('home'); toggleMobileMenu();" class="text-left text-gold-400" data-i18n="navHome">Главная</button>
-                    <button onclick="switchTab('catalog'); toggleMobileMenu();" class="text-left text-gray-200" data-i18n="navCatalog">Каталог часов</button>
-                    <button onclick="switchTab('compare'); toggleMobileMenu();" class="text-left text-gray-200" data-i18n="navCompare">Сравнение товаров</button>
-                    <button onclick="switchTab('reviews'); toggleMobileMenu();" class="text-left text-gray-200" data-i18n="navReviews">Отзывы покупателей</button>
-                    <button onclick="switchTab('articles'); toggleMobileMenu();" class="text-left text-gray-200" data-i18n="navArticles">Часовой журнал</button>
+                <div style="text-align: center;">
+                    <img src="https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=600&auto=format&fit=crop&q=80" style="max-width: 100%; border-radius: 20px; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.5);" alt="Watch">
                 </div>
             </div>
-        </div>
-    </div>
 
-    <!-- ОСНОВНОЙ КОНТЕНТ -->
-    <main class="flex-grow">
-        <!-- 1. ГЛАВНАЯ СТРАНИЦА -->
-        <div id="tab-home" class="tab-content">
-            <section class="relative bg-gradient-to-r from-[#070d1d] via-[#0b1329] to-[#070d1d] py-20 lg:py-32 border-b border-blue-900/50 overflow-hidden">
-                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-                    <div>
-                        <span class="inline-block bg-gold-500/10 border border-gold-500/30 text-gold-400 text-xs font-semibold px-3 py-1 rounded-full mb-6 uppercase tracking-widest" data-i18n="heroBadge">
-                            Официальный дилер в Таджикистане
-                        </span>
-                        <h1 class="text-4xl sm:text-6xl font-black text-white leading-tight mb-6 serif-font">
-                            <span data-i18n="heroTitle1">Элегантность</span> <br><span data-i18n="heroTitle2">в каждой</span> <span class="text-transparent bg-clip-text bg-gradient-to-r from-gold-400 to-amber-200" data-i18n="heroTitle3">секунде</span>
-                        </h1>
-                        <p class="text-gray-300 text-base sm:text-lg mb-8 max-w-xl" data-i18n="heroDesc">
-                            Откройте для себя эксклюзивную коллекцию швейцарских и японских часов премиум-класса. Подлинное качество, статус и безупречный стиль для тех, кто ценит время.
-                        </p>
-                        <div class="flex flex-wrap gap-4">
-                            <button onclick="switchTab('catalog')" class="bg-gradient-to-r from-gold-500 to-amber-400 text-black font-bold px-8 py-4 rounded-xl shadow-lg shadow-gold-500/20 hover:opacity-95 transition-all">
-                                <span data-i18n="btnCatalog">Смотреть каталог</span> <i class="fa-solid fa-arrow-right ml-2"></i>
-                            </button>
-                        </div>
-                    </div>
-                    <div class="relative flex justify-center">
-                        <div class="relative bg-white border border-blue-100 p-6 rounded-3xl shadow-2xl max-w-sm text-gray-900">
-                            <img src="https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=600&auto=format&fit=crop&q=80" alt="Watch" class="rounded-2xl w-full h-72 object-cover mb-4">
-                            <div class="flex justify-between items-center">
-                                <div>
-                                    <span class="text-xs text-gold-600 font-bold uppercase" data-i18n="hitSeason">Хит сезона</span>
-                                    <h3 class="text-lg font-bold text-gray-900">Rolex Submariner Date</h3>
-                                </div>
-                                <span class="text-xl font-black text-amber-600" id="heroPrice">98 000 ЅM</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <!-- Хиты продаж -->
-            <section class="py-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div class="flex justify-between items-end mb-10">
-                    <div>
-                        <span class="text-gold-400 text-xs font-semibold uppercase tracking-widest" data-i18n="popularModels">Популярные модели</span>
-                        <h2 class="text-3xl font-bold text-white mt-1 serif-font" data-i18n="hitsTitle">Хиты продаж B-Time</h2>
-                    </div>
-                </div>
-                <div id="homeFeaturedGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6"></div>
-            </section>
+            <h2 class="serif" style="font-size: 28px; margin: 40px 0 20px;">Популярные модели</h2>
+            <div id="homeGrid" class="grid-products"></div>
         </div>
 
-        <!-- 2. КАТАЛОГ -->
-        <div id="tab-catalog" class="tab-content hidden py-10">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div class="mb-8">
-                    <h1 class="text-3xl font-bold text-white serif-font mb-2" data-i18n="catalogTitle">Каталог часов</h1>
-                </div>
-                <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
-                    <div class="bg-white border border-blue-100 p-6 rounded-2xl h-fit space-y-6 text-gray-900 shadow-sm">
-                        <h3 class="font-bold text-gray-900 text-lg"><i class="fa-solid fa-filter text-amber-600 mr-2"></i> <span data-i18n="filtersTitle">Фильтры</span></h3>
-                        <div>
-                            <label class="block text-sm font-semibold text-gray-700 mb-2" data-i18n="catLabel">Категория</label>
-                            <select id="filterCategory" onchange="applyFilters()" class="w-full bg-gray-50 border border-gray-300 rounded-xl p-2.5 text-sm text-gray-900">
-                                <option value="" data-i18n="optAllCat">Все категории</option>
-                                <option value="Мужские">Мужские</option>
-                                <option value="Женские">Женские</option>
-                                <option value="Механические">Механические</option>
-                                <option value="Кварцевые">Кварцевые</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="lg:col-span-3 space-y-6">
-                        <div id="catalogGrid" class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6"></div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- 3. СРАВНЕНИЕ -->
-        <div id="tab-compare" class="tab-content hidden py-10">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <h1 class="text-3xl font-bold text-white serif-font mb-2" data-i18n="compareTitle">Сравнение часов</h1>
-                <div id="compareContainer" class="bg-white rounded-2xl p-6 text-gray-900 shadow-sm"></div>
-            </div>
-        </div>
-
-        <!-- 4. ОТЗЫВЫ -->
-        <div id="tab-reviews" class="tab-content hidden py-10">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div class="flex justify-between items-center mb-10">
-                    <h1 class="text-3xl font-bold text-white serif-font" data-i18n="reviewsTitle">Отзывы клиентов</h1>
-                    <button onclick="openReviewModal()" class="bg-gold-500 text-black font-bold px-6 py-3 rounded-xl shadow">Оставить отзыв</button>
-                </div>
-                <div id="reviewsGrid" class="grid grid-cols-1 md:grid-cols-3 gap-6"></div>
-            </div>
-        </div>
-
-        <!-- 5. СТАТЬИ -->
-        <div id="tab-articles" class="tab-content hidden py-10">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <h1 class="text-3xl font-bold text-white serif-font mb-10" data-i18n="articlesTitle">Часовой журнал</h1>
-                <p class="text-gray-300">Обзоры новинок, тренды и советы по уходу за механическими часами.</p>
-            </div>
+        <!-- Каталог -->
+        <div id="tab-catalog" class="tab-pane">
+            <h2 class="serif" style="font-size: 28px; margin-bottom: 24px;">Каталог часов</h2>
+            <div id="catalogGrid" class="grid-products"></div>
         </div>
     </main>
 
-    <!-- МОДАЛЬНОЕ ОКНО АВТОРИЗАЦИИ -->
-    <div id="authModal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden flex items-center justify-center p-4">
-        <div class="bg-white border border-blue-100 rounded-3xl max-w-md w-full p-6 sm:p-8 relative text-gray-900 shadow-2xl">
-            <button onclick="closeAuthModal()" class="absolute top-6 right-6 text-gray-400 hover:text-gray-900 text-xl"><i class="fa-solid fa-xmark"></i></button>
-            <h3 id="authModalTitle" class="text-2xl font-bold text-gray-950 serif-font mb-4">Вход в аккаунт</h3>
-            <div id="authFormError" class="text-xs text-rose-600 mb-3 hidden"></div>
+    <!-- Модальное окно Авторизации -->
+    <div id="authModal" class="modal">
+        <div class="modal-box">
+            <button onclick="closeModal('authModal')" class="modal-close"><i class="fa-solid fa-xmark"></i></button>
+            <h3 class="serif" style="font-size: 24px; margin-bottom: 20px;">Вход в аккаунт</h3>
+            <div id="authError" style="color: #ef4444; font-size: 12px; margin-bottom: 12px;" class="hidden"></div>
             
-            <button onclick="loginWithGoogle()" class="w-full flex items-center justify-center gap-3 bg-white border border-gray-300 hover:bg-gray-50 text-gray-800 font-semibold py-3 rounded-xl shadow-sm transition-colors mb-4">
-                <i class="fa-brands fa-google text-red-500 text-lg"></i> Войти через Google
+            <button onclick="loginWithGoogle()" style="width: 100%; background: white; border: 1px solid #d1d5db; padding: 12px; border-radius: 10px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 16px;">
+                <i class="fa-brands fa-google" style="color: #ea4335;">}</i> Войти через Google
             </button>
 
-            <div class="relative flex py-2 items-center mb-4">
-                <div class="flex-grow border-t border-gray-200"></div>
-                <span class="flex-shrink mx-4 text-gray-400 text-xs uppercase">или по email</span>
-                <div class="flex-grow border-t border-gray-200"></div>
-            </div>
-
-            <form onsubmit="handleAuthSubmit(event)" class="space-y-4">
+            <form onsubmit="handleEmailAuth(event)">
                 <div>
-                    <label class="block text-sm text-gray-700 mb-1">Email</label>
-                    <input type="email" id="authEmail" required placeholder="user@example.com" class="w-full bg-gray-50 border border-gray-300 rounded-xl px-4 py-2.5 text-sm text-gray-900 focus:outline-none focus:border-gold-500">
+                    <label>Email</label>
+                    <input type="email" id="authEmail" required placeholder="name@example.com">
                 </div>
                 <div>
-                    <label class="block text-sm text-gray-700 mb-1">Пароль (мин. 6 символов)</label>
-                    <input type="password" id="authPassword" required minlength="6" placeholder="••••••••" class="w-full bg-gray-50 border border-gray-300 rounded-xl px-4 py-2.5 text-sm text-gray-900 focus:outline-none focus:border-gold-500">
+                    <label>Пароль</label>
+                    <input type="password" id="authPassword" required placeholder="••••••••">
                 </div>
-                <button type="submit" id="authSubmitBtn" class="w-full bg-gold-500 text-black font-bold py-3.5 rounded-xl shadow hover:bg-gold-400 transition-colors">Войти</button>
-            </form>
-            <div class="mt-4 text-center text-sm">
-                <button onclick="toggleAuthMode()" id="authSwitchText" class="text-amber-700 hover:underline">Нет аккаунта? Зарегистрироваться</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- МОДАЛЬНОЕ ОКНО АДМИНА (ПАНЕЛЬ ЗАЯВОК И УПРАВЛЕНИЯ) -->
-    <div id="adminOrdersModal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden flex items-center justify-center p-4">
-        <div class="bg-white border border-blue-100 rounded-3xl max-w-3xl w-full p-6 sm:p-8 relative text-gray-900 shadow-2xl max-h-[85vh] overflow-y-auto">
-            <button onclick="closeAdminOrdersModal()" class="absolute top-6 right-6 text-gray-400 hover:text-gray-900 text-xl"><i class="fa-solid fa-xmark"></i></button>
-            
-            <div class="flex justify-between items-center mb-6 border-b border-gray-200 pb-4">
-                <h3 class="text-2xl font-bold text-gray-950 serif-font flex items-center gap-2">
-                    <i class="fa-solid fa-file-lines text-amber-600"></i> Панель заявок и клиентов
-                </h3>
-                <button onclick="loadAdminOrders()" class="flex items-center gap-1.5 bg-blue-50 text-blue-700 border border-blue-200 px-3 py-1.5 rounded-xl text-xs font-bold hover:bg-blue-100 transition-colors">
-                    <i class="fa-solid fa-rotate"></i> Обновить
-                </button>
-            </div>
-
-            <div id="adminOrdersList" class="space-y-4">
-                <p class="text-gray-500 text-center py-4">Загрузка данных...</p>
-            </div>
-        </div>
-    </div>
-
-    <!-- МОДАЛЬНОЕ ОКНО КОРЗИНЫ -->
-    <div id="cartModal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden flex justify-end">
-        <div class="w-full max-w-md bg-white border-l border-blue-100 h-full p-6 flex flex-col justify-between text-gray-900 shadow-2xl">
-            <div>
-                <div class="flex justify-between items-center mb-6 border-b border-gray-100 pb-4">
-                    <h3 class="text-xl font-bold text-gray-900 flex items-center gap-2"><i class="fa-solid fa-bag-shopping text-gold-500"></i> Корзина</h3>
-                    <button onclick="closeCartModal()" class="text-gray-400 hover:text-gray-900 text-xl"><i class="fa-solid fa-xmark"></i></button>
-                </div>
-                <div id="cartItemsList" class="space-y-4 max-h-[50vh] overflow-y-auto pr-2"></div>
-            </div>
-            <div class="border-t border-gray-100 pt-4 space-y-4">
-                <div class="flex justify-between items-center text-lg font-bold text-gray-900">
-                    <span>Итого:</span>
-                    <span id="cartTotalPrice" class="text-amber-600">0 ЅM</span>
-                </div>
-                <button onclick="openCheckoutModal()" id="checkoutBtn" class="w-full bg-gradient-to-r from-gold-500 to-amber-400 text-black font-bold py-3.5 rounded-xl shadow">
-                    Оформить заказ
-                </button>
-            </div>
-        </div>
-    </div>
-
-    <!-- МОДАЛЬНОЕ ОКНО ОФОРМЛЕНИЯ ЗАКАЗА -->
-    <div id="checkoutModal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden flex items-center justify-center p-4">
-        <div class="bg-white border border-blue-100 rounded-3xl max-w-lg w-full p-6 sm:p-8 relative text-gray-900 shadow-2xl">
-            <button onclick="closeCheckoutModal()" class="absolute top-6 right-6 text-gray-400 hover:text-gray-900 text-xl"><i class="fa-solid fa-xmark"></i></button>
-            <h3 class="text-2xl font-bold text-gray-950 serif-font mb-4">Оформление заказа</h3>
-            <form onsubmit="submitOrder(event)" class="space-y-4">
-                <div>
-                    <label class="block text-sm text-gray-700 mb-1">Имя получателя</label>
-                    <input type="text" id="orderName" required class="w-full bg-gray-50 border border-gray-300 rounded-xl px-4 py-2.5 text-sm">
-                </div>
-                <div>
-                    <label class="block text-sm text-gray-700 mb-1">Телефон</label>
-                    <input type="tel" id="orderPhone" required class="w-full bg-gray-50 border border-gray-300 rounded-xl px-4 py-2.5 text-sm">
-                </div>
-                <div>
-                    <label class="block text-sm text-gray-700 mb-1">Адрес</label>
-                    <textarea id="orderAddress" required rows="2" class="w-full bg-gray-50 border border-gray-300 rounded-xl px-4 py-2.5 text-sm"></textarea>
-                </div>
-                <button type="submit" class="w-full bg-gold-500 text-black font-bold py-3.5 rounded-xl shadow">Подтвердить заказ</button>
+                <button type="submit" class="btn-gold">Войти</button>
             </form>
         </div>
     </div>
 
-    <!-- МОДАЛЬНОЕ ОКНО ОТЗЫВА -->
-    <div id="reviewModal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden flex items-center justify-center p-4">
-        <div class="bg-white border border-blue-100 rounded-3xl max-w-lg w-full p-6 sm:p-8 relative text-gray-900 shadow-2xl">
-            <button onclick="closeReviewModal()" class="absolute top-6 right-6 text-gray-400 hover:text-gray-900 text-xl"><i class="fa-solid fa-xmark"></i></button>
-            <h3 class="text-2xl font-bold text-gray-950 serif-font mb-4">Оставить отзыв</h3>
-            <form onsubmit="submitReview(event)" class="space-y-4">
+    <!-- Модальное окно Корзины -->
+    <div id="cartModal" class="modal">
+        <div class="modal-box">
+            <button onclick="closeModal('cartModal')" class="modal-close"><i class="fa-solid fa-xmark"></i></button>
+            <h3 class="serif" style="font-size: 24px; margin-bottom: 20px;">Корзина</h3>
+            <div id="cartList" style="margin-bottom: 20px; max-height: 200px; overflow-y: auto;"></div>
+            <div style="display: flex; justify-content: space-between; font-weight: bold; font-size: 18px; margin-bottom: 20px; border-top: 1px solid #e5e7eb; padding-top: 12px;">
+                <span>Итого:</span>
+                <span id="cartTotal" class="text-amber">0 ЅM</span>
+            </div>
+            <button onclick="openCheckout()" class="btn-gold">Оформить заказ</button>
+        </div>
+    </div>
+
+    <!-- Модальное окно Оформления заказа -->
+    <div id="checkoutModal" class="modal">
+        <div class="modal-box">
+            <button onclick="closeModal('checkoutModal')" class="modal-close"><i class="fa-solid fa-xmark"></i></button>
+            <h3 class="serif" style="font-size: 24px; margin-bottom: 20px;">Оформление заказа</h3>
+            <form onsubmit="submitOrder(event)">
                 <div>
-                    <label class="block text-sm text-gray-700 mb-1">Оценка</label>
-                    <select id="reviewRating" class="w-full bg-gray-50 border border-gray-300 rounded-xl px-4 py-2.5 text-sm">
-                        <option value="5">★★★★★ (5/5)</option>
-                        <option value="4">★★★★☆ (4/5)</option>
-                    </select>
+                    <label>Ваше имя</label>
+                    <input type="text" id="orderName" required>
                 </div>
                 <div>
-                    <label class="block text-sm text-gray-700 mb-1">Текст отзыва</label>
-                    <textarea id="reviewText" required rows="3" class="w-full bg-gray-50 border border-gray-300 rounded-xl px-4 py-2.5 text-sm" placeholder="Ваш отзыв..."></textarea>
+                    <label>Номер телефона</label>
+                    <input type="tel" id="orderPhone" required placeholder="+992 XX XXX XX XX">
                 </div>
-                <button type="submit" class="w-full bg-gold-500 text-black font-bold py-3.5 rounded-xl shadow">Отправить</button>
+                <div>
+                    <label>Адрес доставки</label>
+                    <textarea id="orderAddress" required rows="2"></textarea>
+                </div>
+                <button type="submit" class="btn-gold">Подтвердить заказ</button>
             </form>
         </div>
     </div>
 
-    <!-- FIREBASE SDK И ПРОДВИНУТАЯ ЛОГИКА (REAL-TIME FIRESTORE + УПРАВЛЕНИЕ ЗАЯВКАМИ) -->
+    <!-- Модальное окно Админ-панели (Заявки) -->
+    <div id="adminModal" class="modal">
+        <div class="modal-box" style="max-width: 640px;">
+            <button onclick="closeModal('adminModal')" class="modal-close"><i class="fa-solid fa-xmark"></i></button>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <h3 class="serif" style="font-size: 24px;"><i class="fa-solid fa-file-lines text-amber"></i> Заявки клиентов</h3>
+                <button onclick="loadAdminOrders()" style="background: #f3f4f6; border: none; padding: 6px 12px; border-radius: 8px; cursor: pointer; font-size: 12px; font-weight: bold;"><i class="fa-solid fa-rotate"></i> Обновить</button>
+            </div>
+            <div id="adminOrdersContainer" style="display: flex; flex-direction: column; gap: 12px; max-height: 60vh; overflow-y: auto;">
+                <p style="color: #6b7280; text-align: center;">Загрузка...</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Быстрые скрипты Firebase и Логика -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js";
-        import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-analytics.js";
         import { 
             getAuth, 
             signInWithEmailAndPassword, 
-            createUserWithEmailAndPassword, 
             signInWithPopup,
             GoogleAuthProvider,
             signOut, 
@@ -431,472 +249,236 @@
         };
 
         const app = initializeApp(firebaseConfig);
-        const analytics = getAnalytics(app);
         const auth = getAuth(app);
         const db = getFirestore(app);
         const googleProvider = new GoogleAuthProvider();
 
-        const ADMIN_EMAILS = ["samirdv888@gmail.com", "abdullochoriev4242@gmail.com"];
-
-        let isRegisterMode = false;
+        const ADMINS = ["samirdv888@gmail.com", "abdullochoriev4242@gmail.com"];
         let currentUser = null;
-        let unsubscribeOrders = null;
         let cachedOrders = [];
 
-        // Авторизация и запуск Live-слушателя для админа
-        onAuthStateChanged(auth, async (user) => {
+        // Слушатель авторизации (работает мгновенно)
+        onAuthStateChanged(auth, (user) => {
             currentUser = user;
             const authContainer = document.getElementById('authContainer');
             const adminBtn = document.getElementById('adminOrdersBtn');
 
             if (user) {
-                const isAdmin = ADMIN_EMAILS.includes(user.email.toLowerCase());
-                
+                const isAdmin = ADMINS.includes(user.email.toLowerCase());
                 authContainer.innerHTML = `
-                    <div class="flex items-center gap-2">
-                        <span class="text-xs text-gold-400 font-semibold hidden sm:inline"><i class="fa-solid fa-user-check mr-1"></i>${user.email.split('@')[0]}</span>
-                        <button onclick="logoutUser()" title="Выйти из аккаунта" class="flex items-center gap-1 bg-rose-500/10 border border-rose-500/30 text-rose-400 px-3 py-1 rounded hover:bg-rose-500/20 transition-colors">
-                            <i class="fa-solid fa-right-from-bracket"></i> <span class="hidden sm:inline">Выйти</span>
-                        </button>
-                    </div>
+                    <span style="color: #facc15; font-weight: 600; margin-right: 10px;">${user.email.split('@')[0]}</span>
+                    <button onclick="logout()" style="background: rgba(244,63,94,0.1); border: 1px solid rgba(244,63,94,0.3); color: #f43f5e; padding: 4px 10px; border-radius: 6px; cursor: pointer;">Выйти</button>
                 `;
-
                 if (isAdmin) {
                     adminBtn.classList.remove('hidden');
-                    startRealtimeOrdersListener();
+                    initRealtimeOrders();
                 } else {
                     adminBtn.classList.add('hidden');
-                    if (unsubscribeOrders) unsubscribeOrders();
                 }
             } else {
                 authContainer.innerHTML = `
-                    <button onclick="openAuthModal()" id="authBtn" class="flex items-center gap-1.5 bg-gold-500/10 border border-gold-500/30 text-gold-400 px-3 py-1 rounded hover:bg-gold-500/20 transition-colors">
-                        <i class="fa-solid fa-user"></i> <span id="authBtnText">Войти</span>
+                    <button onclick="openModal('authModal')" style="background: rgba(234,179,8,0.1); border: 1px solid rgba(234,179,8,0.3); color: #facc15; padding: 4px 12px; border-radius: 6px; cursor: pointer;">
+                        <i class="fa-solid fa-user"></i> Войти
                     </button>
                 `;
                 adminBtn.classList.add('hidden');
-                if (unsubscribeOrders) unsubscribeOrders();
             }
         });
 
-        window.logoutUser = function() {
-            if (confirm("Вы действительно хотите выйти из аккаунта?")) {
-                signOut(auth).then(() => alert("Вы вышли из системы."));
-            }
-        }
+        window.logout = () => { signOut(auth); };
+        window.loginWithGoogle = async () => {
+            try { await signInWithPopup(auth, googleProvider); closeModal('authModal'); } 
+            catch(e) { showAuthError(e.message); }
+        };
 
-        window.loginWithGoogle = async function() {
-            try {
-                await signInWithPopup(auth, googleProvider);
-                alert("Успешный вход через Google!");
-                closeAuthModal();
-            } catch (error) {
-                document.getElementById('authFormError').innerText = "Ошибка Google входа: " + error.message;
-                document.getElementById('authFormError').classList.remove('hidden');
-            }
-        }
-
-        window.openAuthModal = function() {
-            if (currentUser) return;
-            document.getElementById('authModal').classList.remove('hidden');
-        }
-        window.closeAuthModal = function() {
-            document.getElementById('authModal').classList.add('hidden');
-            document.getElementById('authFormError').classList.add('hidden');
-        }
-
-        window.toggleAuthMode = function() {
-            isRegisterMode = !isRegisterMode;
-            document.getElementById('authModalTitle').innerText = isRegisterMode ? "Регистрация аккаунта" : "Вход в аккаунт";
-            document.getElementById('authSubmitBtn').innerText = isRegisterMode ? "Зарегистрироваться" : "Войти";
-            document.getElementById('authSwitchText').innerText = isRegisterMode ? "Уже есть аккаунт? Войти" : "Нет аккаунта? Зарегистрироваться";
-        }
-
-        window.handleAuthSubmit = async function(e) {
+        window.handleEmailAuth = async (e) => {
             e.preventDefault();
-            const email = document.getElementById('authEmail').value.trim();
-            const password = document.getElementById('authPassword').value;
-            const errBox = document.getElementById('authFormError');
-            errBox.classList.add('hidden');
+            const email = document.getElementById('authEmail').value;
+            const pass = document.getElementById('authPassword').value;
+            try { await signInWithEmailAndPassword(auth, email, pass); closeModal('authModal'); }
+            catch(err) { showAuthError(err.message); }
+        };
 
-            try {
-                if (isRegisterMode) {
-                    await createUserWithEmailAndPassword(auth, email, password);
-                    alert("Регистрация успешна!");
-                } else {
-                    await signInWithEmailAndPassword(auth, email, password);
-                    alert("Успешный вход!");
-                }
-                closeAuthModal();
-            } catch (error) {
-                errBox.innerText = "Ошибка: " + error.message;
-                errBox.classList.remove('hidden');
-            }
+        function showAuthError(msg) {
+            const err = document.getElementById('authError');
+            err.innerText = msg;
+            err.classList.remove('hidden');
         }
 
-        // Проверка блокировки пользователя перед оформлением заказа
-        window.checkAuthBeforeCheckout = async function() {
-            if (!currentUser) {
-                alert("Для оформления заказа необходимо войти в аккаунт!");
-                openAuthModal();
-                return false;
-            }
-            try {
-                const blockDoc = await getDoc(doc(db, "blocked_users", currentUser.uid));
-                if (blockDoc.exists()) {
-                    alert("Ваш аккаунт заблокирован администратором для оформления заказов.");
-                    return false;
-                }
-            } catch(e) {}
-            return true;
-        }
-
-        // Real-time слушатель заказов для мгновенного уведомления админа без обновления страницы
-        function startRealtimeOrdersListener() {
+        // Live обновление заявок без задержек
+        function initRealtimeOrders() {
             const q = query(collection(db, "orders"), orderBy("timestamp", "desc"));
-            unsubscribeOrders = onSnapshot(q, (snapshot) => {
+            onSnapshot(q, (snapshot) => {
                 cachedOrders = [];
-                snapshot.forEach((docSnap) => {
-                    cachedOrders.push({ id: docSnap.id, ...docSnap.data() });
-                });
-
-                updateAdminBadge(cachedOrders.length);
+                snapshot.forEach(docSnap => cachedOrders.push({ id: docSnap.id, ...docSnap.data() }));
                 
-                // Если открыто модальное окно админа, обновляем его содержимое на лету
-                if (!document.getElementById('adminOrdersModal').classList.contains('hidden')) {
-                    renderOrdersList(cachedOrders);
+                const badge = document.getElementById('adminBadge');
+                if (cachedOrders.length > 0) {
+                    badge.innerText = cachedOrders.length;
+                    badge.classList.remove('hidden');
+                } else {
+                    badge.classList.add('hidden');
+                }
+                
+                if (!document.getElementById('adminModal').classList.contains('hidden')) {
+                    renderAdminOrders();
                 }
             });
         }
 
-        function updateAdminBadge(count) {
-            const badge = document.getElementById('adminOrdersCount');
-            if (count > 0) {
-                badge.innerText = count;
-                badge.classList.remove('hidden');
-            } else {
-                badge.classList.add('hidden');
-            }
-        }
+        window.saveOrderToCloud = async (orderData) => {
+            try { await addDoc(collection(db, "orders"), orderData); } catch(e) { console.error(e); }
+        };
 
-        window.saveOrderToCloud = async function(orderData) {
-            try {
-                await addDoc(collection(db, "orders"), orderData);
-            } catch (e) {
-                console.error("Ошибка сохранения заказа: ", e);
-            }
-        }
+        window.openAdminModal = () => {
+            document.getElementById('adminModal').classList.add('open');
+            renderAdminOrders();
+        };
 
-        window.openAdminOrdersModal = function() {
-            document.getElementById('adminOrdersModal').classList.remove('hidden');
-            renderOrdersList(cachedOrders);
-        }
+        window.loadAdminOrders = () => { renderAdminOrders(); };
 
-        window.closeAdminOrdersModal = function() {
-            document.getElementById('adminOrdersModal').classList.add('hidden');
-        }
-
-        window.loadAdminOrders = async function() {
-            // Ручная кнопка обновления данных
-            try {
-                const q = query(collection(db, "orders"), orderBy("timestamp", "desc"));
-                const querySnapshot = await getDocs(q);
-                cachedOrders = [];
-                querySnapshot.forEach((docSnap) => {
-                    cachedOrders.push({ id: docSnap.id, ...docSnap.data() });
-                });
-                renderOrdersList(cachedOrders);
-                updateAdminBadge(cachedOrders.length);
-                alert("Данные успешно обновлены!");
-            } catch(e) {
-                alert("Ошибка обновления: " + e.message);
-            }
-        }
-
-        function renderOrdersList(orders) {
-            const container = document.getElementById('adminOrdersList');
-            if (orders.length === 0) {
-                container.innerHTML = `<p class="text-gray-500 text-center py-8">Новых заявок и заказов нет.</p>`;
+        function renderAdminOrders() {
+            const container = document.getElementById('adminOrdersContainer');
+            if (cachedOrders.length === 0) {
+                container.innerHTML = `<p style="text-align: center; color: #6b7280; padding: 20px;">Нет активных заявок.</p>`;
                 return;
             }
-
-            container.innerHTML = orders.map((o, idx) => `
-                <div class="bg-gray-50 border border-gray-200 p-4 rounded-xl relative">
-                    <div class="flex justify-between items-center mb-2 border-b border-gray-200 pb-2">
-                        <span class="font-bold text-sm text-amber-700">Заказ #${orders.length - idx} (${o.status || 'Новый'})</span>
-                        <span class="text-xs text-gray-500">${o.date}</span>
+            container.innerHTML = cachedOrders.map((o, idx) => `
+                <div style="background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 12px; padding: 16px;">
+                    <div style="display: flex; justify-content: space-between; font-size: 13px; font-weight: bold; margin-bottom: 8px; color: #d97706;">
+                        <span>Заказ #${cachedOrders.length - idx} (${o.status || 'Новый'})</span>
+                        <span style="color: #6b7280; font-weight: normal;">${o.date}</span>
                     </div>
-                    <p class="text-xs text-gray-700 mb-1"><strong>Клиент:</strong> ${o.name} (${o.phone})</p>
-                    <p class="text-xs text-gray-700 mb-2"><strong>Адрес:</strong> ${o.address}</p>
-                    <div class="text-xs bg-white p-2.5 rounded border border-gray-200 space-y-1 mb-2">
+                    <p style="font-size: 13px; margin-bottom: 4px;"><strong>Клиент:</strong> ${o.name} (${o.phone})</p>
+                    <p style="font-size: 13px; margin-bottom: 8px;"><strong>Адрес:</strong> ${o.address}</p>
+                    <div style="background: white; padding: 8px; border-radius: 8px; font-size: 12px; margin-bottom: 8px; border: 1px solid #e5e7eb;">
                         ${o.items.map(i => `<div>• ${i.name} (x${i.qty})</div>`).join('')}
                     </div>
-                    <div class="flex justify-between items-center text-xs font-bold text-gray-900 mb-3">
-                        <span>Сумма:</span>
-                        <span class="text-amber-600">${o.total}</span>
-                    </div>
-                    <!-- Кнопки управления администратора -->
-                    <div class="flex flex-wrap gap-2 pt-2 border-t border-gray-200">
-                        <button onclick="acceptOrder('${o.id}')" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold px-3 py-1.5 rounded-lg shadow-sm">
-                            <i class="fa-solid fa-check mr-1"></i> Принять
-                        </button>
-                        <button onclick="deleteOrder('${o.id}')" class="bg-rose-600 hover:bg-rose-700 text-white text-xs font-semibold px-3 py-1.5 rounded-lg shadow-sm">
-                            <i class="fa-solid fa-trash mr-1"></i> Удалить
-                        </button>
-                        ${o.userId ? `
-                        <button onclick="blockUser('${o.userId}')" class="bg-gray-800 hover:bg-black text-white text-xs font-semibold px-3 py-1.5 rounded-lg shadow-sm">
-                            <i class="fa-solid fa-ban mr-1"></i> Заблокировать клиента
-                        </button>` : ''}
+                    <div style="display: flex; justify-content: space-between; align-items: center; font-size: 13px; font-weight: bold;">
+                        <span>Сумма: <span class="text-amber">${o.total}</span></span>
+                        <div style="display: flex; gap: 8px;">
+                            <button onclick="acceptOrder('${o.id}')" style="background: #059669; color: white; border: none; padding: 6px 10px; border-radius: 6px; cursor: pointer; font-size: 11px;">Принять</button>
+                            <button onclick="deleteOrder('${o.id}')" style="background: #dc2626; color: white; border: none; padding: 6px 10px; border-radius: 6px; cursor: pointer; font-size: 11px;">Удалить</button>
+                        </div>
                     </div>
                 </div>
             `).join('');
         }
 
-        // Действия администратора
-        window.acceptOrder = async function(orderId) {
-            try {
-                await setDoc(doc(db, "orders", orderId), { status: "Принят в обработку" }, { merge: true });
-                alert("Заказ принят!");
-            } catch(e) { alert("Ошибка: " + e.message); }
-        }
+        window.acceptOrder = async (id) => { await setDoc(doc(db, "orders", id), { status: "Принят" }, { merge: true }); };
+        window.deleteOrder = async (id) => { if(confirm("Удалить заказ?")) await deleteDoc(doc(db, "orders", id)); };
 
-        window.deleteOrder = async function(orderId) {
-            if (confirm("Удалить эту заявку?")) {
-                try {
-                    await deleteDoc(doc(db, "orders", orderId));
-                } catch(e) { alert("Ошибка удаления: " + e.message); }
-            }
-        }
-
-        window.blockUser = async function(userId) {
-            if (confirm("Заблокировать этого пользователя? Он больше не сможет оформлять заказы.")) {
-                try {
-                    await setDoc(doc(db, "blocked_users", userId), { blockedAt: new Date().toISOString() });
-                    alert("Пользователь заблокирован!");
-                } catch(e) { alert("Ошибка: " + e.message); }
-            }
-        }
+        // Делаем функции глобальными для HTML
+        window.openModal = (id) => document.getElementById(id).classList.add('open');
+        window.closeModal = (id) => document.getElementById(id).classList.remove('open');
     </script>
 
-    <!-- ОСНОВНЫЕ СКРИПТЫ МАГАЗИНА -->
+    <!-- Основные быстрые скрипты магазина -->
     <script>
-        const translations = {
-            ru: {
-                langLabel: "Язык:", currLabel: "Валюта:", navHome: "Главная", navCatalog: "Каталог", navCompare: "Сравнение", navReviews: "Отзывы", navArticles: "Статьи",
-                heroBadge: "Официальный дилер в Таджикистане", heroTitle1: "Элегантность", heroTitle2: "в каждой", heroTitle3: "секунде", heroDesc: "Эксклюзивная коллекция швейцарских и японских часов.",
-                btnCatalog: "Смотреть каталог", hitSeason: "Хит сезона", popularModels: "Популярные модели", hitsTitle: "Хиты продаж B-Time",
-                catalogTitle: "Каталог часов", filtersTitle: "Фильтры", catLabel: "Категория", optAllCat: "Все категории", sortLabel: "Сортировка:",
-                compareTitle: "Сравнение часов", reviewsTitle: "Отзывы клиентов", articlesTitle: "Часовой журнал", footerDesc: "Официальный дилер элитных часов."
-            },
-            en: {
-                langLabel: "Language:", currLabel: "Currency:", navHome: "Home", navCatalog: "Catalog", navCompare: "Compare", navReviews: "Reviews", navArticles: "Articles",
-                heroBadge: "Official Dealer in Tajikistan", heroTitle1: "Elegance", heroTitle2: "in every", heroTitle3: "second", heroDesc: "Exclusive collection of premium watches.",
-                btnCatalog: "View Catalog", hitSeason: "Season Hit", popularModels: "Popular Models", hitsTitle: "B-Time Best Sellers",
-                catalogTitle: "Watch Catalog", filtersTitle: "Filters", catLabel: "Category", optAllCat: "All Categories", sortLabel: "Sort by:",
-                compareTitle: "Watch Comparison", reviewsTitle: "Customer Reviews", articlesTitle: "Watch Journal", footerDesc: "Official dealer of luxury watches."
-            }
-        };
-
-        function changeLanguage(lang) {
-            document.querySelectorAll('[data-i18n]').forEach(el => {
-                const key = el.getAttribute('data-i18n');
-                if (translations[lang][key]) el.innerText = translations[lang][key];
-            });
-        }
-
         const products = [
-            { id: 1, name: "Rolex Submariner Date", brand: "Rolex", category: "Мужские", movement: "Механика", priceTJS: 98000, rating: 5, image: "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=600&auto=format&fit=crop&q=80", badge: "Хит", specs: { diameter: "41 мм", glass: "Сапфировое", water: "300 м" } },
-            { id: 2, name: "Omega Seamaster Diver", brand: "Omega", category: "Мужские", movement: "Механика", priceTJS: 75000, rating: 5, image: "https://images.unsplash.com/photo-1547996160-81dfa63595aa?w=600&auto=format&fit=crop&q=80", badge: "Премиум", specs: { diameter: "42 мм", glass: "Сапфировое", water: "300 м" } },
-            { id: 3, name: "Tissot Gentleman", brand: "Tissot", category: "Мужские", movement: "Механика", priceTJS: 9500, rating: 4, image: "https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?w=600&auto=format&fit=crop&q=80", badge: "Хит", specs: { diameter: "40 мм", glass: "Сапфировое", water: "100 м" } },
-            { id: 4, name: "Casio G-Shock", brand: "Casio", category: "Кварцевые", movement: "Электронные", priceTJS: 1800, rating: 5, image: "https://images.unsplash.com/photo-1533139502658-0198f920d8e8?w=600&auto=format&fit=crop&q=80", badge: "Хит", specs: { diameter: "45 мм", glass: "Минеральное", water: "200 м" } }
+            { id: 1, name: "Rolex Submariner Date", brand: "Rolex", price: 98000, image: "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=600&auto=format&fit=crop&q=80", badge: "Хит" },
+            { id: 2, name: "Omega Seamaster Diver", brand: "Omega", price: 75000, image: "https://images.unsplash.com/photo-1547996160-81dfa63595aa?w=600&auto=format&fit=crop&q=80", badge: "Премиум" },
+            { id: 3, name: "Tissot Gentleman", brand: "Tissot", price: 9500, image: "https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?w=600&auto=format&fit=crop&q=80", badge: "Хит" },
+            { id: 4, name: "Casio G-Shock", brand: "Casio", price: 1800, image: "https://images.unsplash.com/photo-1533139502658-0198f920d8e8?w=600&auto=format&fit=crop&q=80", badge: "Хит" }
         ];
 
-        let reviews = [
-            { author: "Алишер Р.", rating: 5, date: "Сегодня", text: "Отличный магазин, всё оригинальное!" }
-        ];
-
-        let currentCurrency = 'TJS';
-        let currencyRates = { TJS: 1, USD: 0.091, RUB: 8.5 };
         let cart = [];
 
-        window.addEventListener('DOMContentLoaded', () => {
-            renderHomeFeatured();
-            renderCatalog(products);
-            renderReviews();
-            updateCounters();
-        });
-
-        function switchTab(tabId) {
-            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
-            document.getElementById(`tab-${tabId}`).classList.remove('hidden');
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        }
-
-        function toggleMobileMenu() {
-            document.getElementById('mobileMenu').classList.toggle('hidden');
-        }
-
-        function changeCurrency(val) {
-            currentCurrency = val;
-            renderHomeFeatured();
-            renderCatalog(products);
-            document.getElementById('heroPrice').innerText = formatPrice(98000);
-        }
-
-        function formatPrice(priceInTJS) {
-            let converted = priceInTJS * currencyRates[currentCurrency];
-            if (currentCurrency === 'USD') return `$${Math.round(converted).toLocaleString()}`;
-            if (currentCurrency === 'RUB') return `${Math.round(converted).toLocaleString()} ₽`;
-            return `${Math.round(converted).toLocaleString()} ЅM`;
-        }
-
-        function renderHomeFeatured() {
-            document.getElementById('homeFeaturedGrid').innerHTML = products.map(p => createCard(p)).join('');
-        }
-
-        function createCard(p) {
-            return `
-                <div class="bg-white border border-blue-100 rounded-2xl overflow-hidden shadow-sm flex flex-col text-gray-900">
-                    <div class="relative bg-gray-50 p-6 flex justify-center items-center h-64">
-                        <span class="absolute top-3 left-3 bg-gold-500 text-black text-[10px] font-bold px-2.5 py-1 rounded-full uppercase">${p.badge}</span>
-                        <img src="${p.image}" class="h-48 object-cover">
+        function renderProducts() {
+            const html = products.map(p => `
+                <div class="card">
+                    <div class="card-img">
+                        <span style="position: absolute; top: 10px; left: 10px; background: #eab308; color: black; font-size: 10px; font-weight: bold; padding: 4px 8px; border-radius: 20px; text-transform: uppercase;">${p.badge}</span>
+                        <img src="${p.image}" alt="${p.name}">
                     </div>
-                    <div class="p-5 flex flex-col flex-grow justify-between">
+                    <div class="card-body">
                         <div>
-                            <span class="text-xs text-gray-500 uppercase">${p.brand}</span>
-                            <h3 class="font-bold text-gray-900 text-base mt-1 mb-2">${p.name}</h3>
+                            <span style="font-size: 11px; color: #6b7280; text-transform: uppercase;">${p.brand}</span>
+                            <h3 style="font-size: 15px; font-weight: bold; margin: 4px 0 12px;">${p.name}</h3>
                         </div>
-                        <div class="flex items-center justify-between mt-4 pt-4 border-t border-gray-100">
-                            <span class="text-lg font-black text-amber-600">${formatPrice(p.priceTJS)}</span>
-                            <button onclick="addToCart(${p.id})" class="p-2.5 bg-gold-500 hover:bg-gold-400 text-black rounded-xl font-bold">
-                                <i class="fa-solid fa-bag-shopping"></i>
-                            </button>
+                        <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #f3f4f6; pt: 12px;">
+                            <span style="font-size: 16px; font-weight: 900;" class="text-amber">${p.price.toLocaleString()} ЅM</span>
+                            <button onclick="addToCart(${p.id})" style="background: #eab308; border: none; width: 36px; height: 36px; border-radius: 10px; cursor: pointer; font-weight: bold;"><i class="fa-solid fa-bag-shopping"></i></button>
                         </div>
                     </div>
                 </div>
-            `;
+            `).join('');
+
+            document.getElementById('homeGrid').innerHTML = html;
+            document.getElementById('catalogGrid').innerHTML = html;
         }
 
-        function applyFilters() {
-            const cat = document.getElementById('filterCategory').value;
-            let list = cat ? products.filter(p => p.category === cat) : products;
-            renderCatalog(list);
-        }
-
-        function renderCatalog(list) {
-            document.getElementById('catalogGrid').innerHTML = list.map(p => createCard(p)).join('');
-        }
-
-        function handleSearch(q) {
-            const query = q.toLowerCase();
-            renderCatalog(products.filter(p => p.name.toLowerCase().includes(query)));
-            switchTab('catalog');
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-pane').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.nav-btn').forEach(el => el.classList.remove('active'));
+            document.getElementById(`tab-${tabId}`).classList.add('active');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
         function addToCart(id) {
             const item = cart.find(i => i.id === id);
             if (item) item.qty++;
             else cart.push({ id, qty: 1 });
-            updateCounters();
+            updateCartBadge();
             openCartModal();
         }
 
         function openCartModal() {
-            const list = document.getElementById('cartItemsList');
+            const list = document.getElementById('cartList');
             if (cart.length === 0) {
-                list.innerHTML = `<p class="text-gray-500 text-center py-8">Корзина пуста</p>`;
-                document.getElementById('cartTotalPrice').innerText = formatPrice(0);
+                list.innerHTML = `<p style="text-align: center; color: #6b7280;">Корзина пуста</p>`;
+                document.getElementById('cartTotal').innerText = "0 ЅM";
+                openModal('cartModal');
                 return;
             }
             let total = 0;
-            list.innerHTML = cart.map(item => {
-                const p = products.find(prod => prod.id === item.id);
-                total += p.priceTJS * item.qty;
-                return `<div class="flex justify-between items-center bg-gray-50 p-3 rounded-xl"><span>${p.name} (x${item.qty})</span><span class="font-bold text-amber-600">${formatPrice(p.priceTJS * item.qty)}</span></div>`;
+            list.innerHTML = cart.map(i => {
+                const p = products.find(prod => prod.id === i.id);
+                total += p.price * i.qty;
+                return `<div style="display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 14px;"><span>${p.name} (x${i.qty})</span><strong class="text-amber">${(p.price * i.qty).toLocaleString()} ЅM</strong></div>`;
             }).join('');
-            document.getElementById('cartTotalPrice').innerText = formatPrice(total);
-            document.getElementById('cartModal').classList.remove('hidden');
+            document.getElementById('cartTotal').innerText = total.toLocaleString() + " ЅM";
+            openModal('cartModal');
         }
-        function closeCartModal() { document.getElementById('cartModal').classList.add('hidden'); }
 
-        async function openCheckoutModal() {
-            const allowed = await window.checkAuthBeforeCheckout();
-            if (!allowed) return;
-            closeCartModal();
-            document.getElementById('checkoutModal').classList.remove('hidden');
+        function openCheckout() {
+            if (cart.length === 0) return;
+            closeModal('cartModal');
+            openModal('checkoutModal');
         }
-        function closeCheckoutModal() { document.getElementById('checkoutModal').classList.add('hidden'); }
-        
+
         function submitOrder(e) {
             e.preventDefault();
-            const name = sanitizeInput(document.getElementById('orderName').value);
-            const phone = sanitizeInput(document.getElementById('orderPhone').value);
-            const address = sanitizeInput(document.getElementById('orderAddress').value);
+            const name = document.getElementById('orderName').value;
+            const phone = document.getElementById('orderPhone').value;
+            const address = document.getElementById('orderAddress').value;
 
-            let totalTJS = cart.reduce((sum, item) => {
-                const p = products.find(prod => prod.id === item.id);
-                return sum + (p.priceTJS * item.qty);
-            }, 0);
+            let totalTJS = cart.reduce((sum, item) => sum + (products.find(p => p.id === item.id).price * item.qty), 0);
 
-            const orderDetails = {
-                userId: auth.currentUser ? auth.currentUser.uid : null,
-                userEmail: auth.currentUser ? auth.currentUser.email : null,
-                name,
-                phone,
-                address,
-                items: cart.map(i => {
-                    const p = products.find(prod => prod.id === i.id);
-                    return { name: p.name, qty: i.qty };
-                }),
-                total: formatPrice(totalTJS),
+            const order = {
+                name, phone, address,
+                items: cart.map(i => ({ name: products.find(p => p.id === i.id).name, qty: i.qty })),
+                total: totalTJS.toLocaleString() + " ЅM",
                 date: new Date().toLocaleString(),
                 timestamp: Date.now(),
                 status: "Новый"
             };
 
-            window.saveOrderToCloud(orderDetails);
-
-            alert(`Спасибо, ${name}! Заказ успешно оформлен и отправлен администраторам.`);
+            window.saveOrderToCloud(order);
+            alert("Заказ успешно оформлен!");
             cart = [];
-            updateCounters();
-            closeCheckoutModal();
+            updateCartBadge();
+            closeModal('checkoutModal');
         }
 
-        function openReviewModal() { document.getElementById('reviewModal').classList.remove('hidden'); }
-        function closeReviewModal() { document.getElementById('reviewModal').classList.add('hidden'); }
-        
-        function submitReview(e) {
-            e.preventDefault();
-            const text = sanitizeInput(document.getElementById('reviewText').value);
-            const rating = parseInt(document.getElementById('reviewRating').value);
-            reviews.unshift({ author: "Покупатель", rating, date: "Сегодня", text });
-            renderReviews();
-            closeReviewModal();
-            alert("Отзыв успешно добавлен!");
-        }
-
-        function renderReviews() {
-            document.getElementById('reviewsGrid').innerHTML = reviews.map(r => `
-                <div class="bg-white border border-blue-100 p-6 rounded-2xl shadow-sm text-gray-900">
-                    <div class="font-bold">${r.author}</div>
-                    <div class="text-amber-500 text-sm">${'★'.repeat(r.rating)}</div>
-                    <p class="text-gray-600 text-sm mt-2">"${r.text}"</p>
-                </div>
-            `).join('');
-        }
-
-        function sanitizeInput(str) {
-            const temp = document.createElement('div');
-            temp.textContent = str;
-            return temp.innerHTML;
-        }
-
-        function updateCounters() {
+        function updateCartBadge() {
             const count = cart.reduce((s, i) => s + i.qty, 0);
-            const badge = document.getElementById('cartCount');
+            const badge = document.getElementById('cartBadge');
             if (count > 0) { badge.innerText = count; badge.classList.remove('hidden'); }
             else badge.classList.add('hidden');
         }
+
+        window.addEventListener('DOMContentLoaded', renderProducts);
     </script>
 </body>
 </html>
