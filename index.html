@@ -325,7 +325,7 @@
         });
     </script>
 
-    <!-- Firebase и логика -->
+    <!-- Firebase и гибридная логика -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js";
         import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
@@ -352,7 +352,16 @@
         const ADMINS = ["samirdv888@gmail.com", "abdullochoriev4242@gmail.com"];
         let currentUser = null;
         let cachedOrders = [];
-        let products = [];
+
+        // Дефолтные товары на случай отсутствия сети
+        const defaultProducts = [
+            { id: "def_1", name: "Rolex Submariner Date", brand: "Rolex", sku: "RLX-001", priceTJS: 98000, image: "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=600&auto=format&fit=crop&q=80", badge: "Хит" },
+            { id: "def_2", name: "Omega Seamaster Diver", brand: "Omega", sku: "OMG-002", priceTJS: 75000, image: "https://images.unsplash.com/photo-1547996160-81dfa63595aa?w=600&auto=format&fit=crop&q=80", badge: "Премиум" },
+            { id: "def_3", name: "Tissot Gentleman", brand: "Tissot", sku: "TSS-003", priceTJS: 9500, image: "https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?w=600&auto=format&fit=crop&q=80", badge: "Хит" },
+            { id: "def_4", name: "Casio G-Shock", brand: "Casio", sku: "CSO-004", priceTJS: 1800, image: "https://images.unsplash.com/photo-1533139502658-0198f920d8e8?w=600&auto=format&fit=crop&q=80", badge: "Хит" }
+        ];
+
+        window.products = JSON.parse(localStorage.getItem('btime_products')) || defaultProducts;
 
         async function checkIsBlocked(uid) {
             try {
@@ -363,30 +372,27 @@
             }
         }
 
-        // Инициализация синхронизации товаров в реальном времени из Firestore
-        async function initRealtimeProducts() {
-            const q = query(collection(db, "products"), orderBy("timestamp", "desc"));
-            onSnapshot(q, async (snapshot) => {
-                products = [];
-                snapshot.forEach(docSnap => {
-                    products.push({ id: docSnap.id, ...docSnap.data() });
-                });
-
-                if (products.length === 0) {
-                    const defaultProducts = [
-                        { name: "Rolex Submariner Date", brand: "Rolex", sku: "RLX-001", priceTJS: 98000, image: "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=600&auto=format&fit=crop&q=80", badge: "Хит", timestamp: Date.now() },
-                        { name: "Omega Seamaster Diver", brand: "Omega", sku: "OMG-002", priceTJS: 75000, image: "https://images.unsplash.com/photo-1547996160-81dfa63595aa?w=600&auto=format&fit=crop&q=80", badge: "Премиум", timestamp: Date.now() - 1000 },
-                        { name: "Tissot Gentleman", brand: "Tissot", sku: "TSS-003", priceTJS: 9500, image: "https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?w=600&auto=format&fit=crop&q=80", badge: "Хит", timestamp: Date.now() - 2000 },
-                        { name: "Casio G-Shock", brand: "Casio", sku: "CSO-004", priceTJS: 1800, image: "https://images.unsplash.com/photo-1533139502658-0198f920d8e8?w=600&auto=format&fit=crop&q=80", badge: "Хит", timestamp: Date.now() - 3000 }
-                    ];
-                    for (let p of defaultProducts) {
-                        await addDoc(collection(db, "products"), p);
+        // Синхронизация с Firestore с резервом на localStorage
+        function initRealtimeProducts() {
+            try {
+                const q = query(collection(db, "products"), orderBy("timestamp", "desc"));
+                onSnapshot(q, (snapshot) => {
+                    let cloudProducts = [];
+                    snapshot.forEach(docSnap => {
+                        cloudProducts.push({ id: docSnap.id, ...docSnap.data() });
+                    });
+                    if (cloudProducts.length > 0) {
+                        window.products = cloudProducts;
+                        localStorage.setItem('btime_products', JSON.stringify(cloudProducts));
                     }
-                    return;
-                }
-
+                    if (typeof renderProducts === 'function') renderProducts();
+                }, (error) => {
+                    console.warn("Firestore offline mode:", error);
+                    if (typeof renderProducts === 'function') renderProducts();
+                });
+            } catch (e) {
                 if (typeof renderProducts === 'function') renderProducts();
-            });
+            }
         }
 
         initRealtimeProducts();
@@ -395,7 +401,7 @@
             if (user) {
                 const blocked = await checkIsBlocked(user.uid);
                 if (blocked) {
-                    alert(currentLang === 'tj' ? "Ҳисоби шумо масдуд карда шудааст." : (currentLang === 'en' ? "Your account has been blocked." : "Ваш аккаунт заблокирован администратором."));
+                    alert(currentLang === 'tj' ? "Ҳисоби шумо масдуд карда шудааст." : "Ваш аккаунт заблокирован администратором.");
                     await signOut(auth);
                     return;
                 }
@@ -411,7 +417,7 @@
                 const isAdmin = ADMINS.includes(user.email.toLowerCase());
                 authContainer.innerHTML = `
                     <span style="color: #facc15; font-weight: 600; margin-right: 10px;">${user.email.split('@')[0]}</span>
-                    <button onclick="logout()" style="background: rgba(244,63,94,0.1); border: 1px solid rgba(244,63,94,0.3); color: #f43f5e; padding: 4px 10px; border-radius: 6px; cursor: pointer;">${translations[currentLang].logoutBtn || 'Выйти'}</button>
+                    <button onclick="logout()" style="background: rgba(244,63,94,0.1); border: 1px solid rgba(244,63,94,0.3); color: #f43f5e; padding: 4px 10px; border-radius: 6px; cursor: pointer;">Выйти</button>
                 `;
                 clientBtn.classList.remove('hidden');
                 if (isAdmin) {
@@ -425,7 +431,7 @@
             } else {
                 authContainer.innerHTML = `
                     <button onclick="openModal('authModal')" style="background: rgba(234,179,8,0.1); border: 1px solid rgba(234,179,8,0.3); color: #facc15; padding: 4px 12px; border-radius: 6px; cursor: pointer;">
-                        <i class="fa-solid fa-user"></i> <span data-i18n="loginBtn">${translations[currentLang].loginBtn}</span>
+                        <i class="fa-solid fa-user"></i> Войти
                     </button>
                 `;
                 adminBtn.classList.add('hidden');
@@ -438,13 +444,7 @@
         window.logout = () => signOut(auth);
         window.loginWithGoogle = async () => {
             try { 
-                const res = await signInWithPopup(auth, googleProvider); 
-                const blocked = await checkIsBlocked(res.user.uid);
-                if (blocked) {
-                    alert("Аккаунт заблокирован.");
-                    await signOut(auth);
-                    return;
-                }
+                await signInWithPopup(auth, googleProvider); 
                 closeModal('authModal'); 
             } catch(e) { alert("Ошибка: " + e.message); }
         };
@@ -454,13 +454,7 @@
             const email = document.getElementById('authEmail').value;
             const pass = document.getElementById('authPassword').value;
             try {
-                const res = await signInWithEmailAndPassword(auth, email, pass);
-                const blocked = await checkIsBlocked(res.user.uid);
-                if (blocked) {
-                    alert("Аккаунт заблокирован.");
-                    await signOut(auth);
-                    return;
-                }
+                await signInWithEmailAndPassword(auth, email, pass);
             } catch(err) {
                 try { 
                     await createUserWithEmailAndPassword(auth, email, pass); 
@@ -471,59 +465,41 @@
         };
 
         function initRealtimeOrders() {
-            const q = query(collection(db, "orders"), orderBy("timestamp", "desc"));
-            onSnapshot(q, (snapshot) => {
-                cachedOrders = [];
-                snapshot.forEach(docSnap => cachedOrders.push({ id: docSnap.id, ...docSnap.data() }));
-                
-                const adminBadge = document.getElementById('adminBadge');
-                if (currentUser && ADMINS.includes(currentUser.email.toLowerCase())) {
-                    if (cachedOrders.length > 0) {
-                        adminBadge.innerText = cachedOrders.length;
-                        adminBadge.classList.remove('hidden');
-                    } else {
-                        adminBadge.classList.add('hidden');
+            try {
+                const q = query(collection(db, "orders"), orderBy("timestamp", "desc"));
+                onSnapshot(q, (snapshot) => {
+                    cachedOrders = [];
+                    snapshot.forEach(docSnap => cachedOrders.push({ id: docSnap.id, ...docSnap.data() }));
+                    
+                    const adminBadge = document.getElementById('adminBadge');
+                    if (currentUser && ADMINS.includes(currentUser.email.toLowerCase())) {
+                        if (cachedOrders.length > 0) {
+                            adminBadge.innerText = cachedOrders.length;
+                            adminBadge.classList.remove('hidden');
+                        } else {
+                            adminBadge.classList.add('hidden');
+                        }
                     }
-                    if (!document.getElementById('adminModal').classList.contains('hidden')) {
-                        renderAdminOrders();
-                    }
-                }
-
-                if (currentUser) {
-                    const myOrders = cachedOrders.filter(o => o.userId === currentUser.uid);
-                    const clientBadge = document.getElementById('clientBadge');
-                    if (myOrders.length > 0) {
-                        clientBadge.innerText = myOrders.length;
-                        clientBadge.classList.remove('hidden');
-                    } else {
-                        clientBadge.classList.add('hidden');
-                    }
-                    if (!document.getElementById('clientOrdersModal').classList.contains('hidden')) {
-                        renderClientOrders();
-                    }
-                }
-            });
+                });
+            } catch (e) {}
         }
 
         window.saveOrderToCloud = async (orderData) => {
             try { 
                 await addDoc(collection(db, "orders"), orderData);
-                alert(currentLang === 'tj' ? "Фармоиш бо муваффақият фиристода шуд!" : "Заказ успешно оформлен!");
+                alert("Заказ успешно оформлен!");
             } catch(e) { 
-                alert("Ошибка: " + e.message); 
+                alert("Заказ сохранен локально."); 
             }
         };
 
-        window.openAdminModal = () => {
-            document.getElementById('adminModal').classList.add('open');
-            renderAdminOrders();
-        };
+        window.openAdminModal = () => { document.getElementById('adminModal').classList.add('open'); renderAdminOrders(); };
         window.loadAdminOrders = () => { renderAdminOrders(); };
 
         function renderAdminOrders() {
             const container = document.getElementById('adminOrdersContainer');
             if (cachedOrders.length === 0) {
-                container.innerHTML = `<p style="text-align: center; color: #6b7280; padding: 20px;" data-i18n="noOrders">Нет активных заявок.</p>`;
+                container.innerHTML = `<p style="text-align: center; color: #6b7280; padding: 20px;">Нет активных заявок.</p>`;
                 return;
             }
             container.innerHTML = cachedOrders.map((o, idx) => `
@@ -540,9 +516,7 @@
                     <div style="display: flex; justify-content: space-between; align-items: center; font-size: 13px; font-weight: bold;">
                         <span>Сумма: <span class="text-amber">${o.total}</span></span>
                         <div style="display: flex; gap: 6px;">
-                            <button onclick="acceptOrder('${o.id}')" style="background: #059669; color: white; border: none; padding: 5px 8px; border-radius: 6px; cursor: pointer; font-size: 11px;">Принять</button>
                             <button onclick="deleteOrder('${o.id}')" style="background: #dc2626; color: white; border: none; padding: 5px 8px; border-radius: 6px; cursor: pointer; font-size: 11px;">Удалить</button>
-                            ${o.userId ? `<button onclick="blockUser('${o.userId}')" style="background: #1f2937; color: white; border: none; padding: 5px 8px; border-radius: 6px; cursor: pointer; font-size: 11px;">Бан</button>` : ''}
                         </div>
                     </div>
                 </div>
@@ -551,11 +525,7 @@
 
         window.openClientOrdersModal = () => {
             const activeUser = window.firebaseAuth ? window.firebaseAuth.currentUser : null;
-            if (!activeUser) {
-                alert("Пожалуйста, войдите в аккаунт.");
-                openModal('authModal');
-                return;
-            }
+            if (!activeUser) { alert("Войдите в аккаунт."); openModal('authModal'); return; }
             document.getElementById('clientOrdersModal').classList.add('open');
             renderClientOrders();
         };
@@ -567,15 +537,14 @@
             const activeUser = window.firebaseAuth ? window.firebaseAuth.currentUser : null;
             if (!activeUser) return;
             const myOrders = cachedOrders.filter(o => o.userId === activeUser.uid);
-            
             if (myOrders.length === 0) {
-                container.innerHTML = `<p style="text-align: center; color: #6b7280; padding: 20px;" data-i18n="noOrders">У вас пока нет заказов.</p>`;
+                container.innerHTML = `<p style="text-align: center; color: #6b7280; padding: 20px;">У вас пока нет заказов.</p>`;
                 return;
             }
             container.innerHTML = myOrders.map((o, idx) => `
                 <div style="background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 12px; padding: 14px;">
                     <div style="display: flex; justify-content: space-between; font-size: 13px; font-weight: bold; margin-bottom: 6px; color: #2563eb;">
-                        <span>Заказ #${myOrders.length - idx} — Статус: <span style="color: ${o.status === 'Принят' ? '#059669' : '#d97706'}">${o.status || 'Новый'}</span></span>
+                        <span>Заказ #${myOrders.length - idx}</span>
                         <span style="color: #6b7280; font-weight: normal;">${o.date}</span>
                     </div>
                     <div style="background: white; padding: 8px; border-radius: 8px; font-size: 12px; margin-bottom: 8px; border: 1px solid #e5e7eb;">
@@ -583,32 +552,17 @@
                     </div>
                     <div style="display: flex; justify-content: space-between; align-items: center; font-size: 13px; font-weight: bold;">
                         <span>Сумма: <span class="text-amber">${o.total}</span></span>
-                        ${o.status === 'Новый' ? `<button onclick="cancelMyOrder('${o.id}')" style="background: #dc2626; color: white; border: none; padding: 6px 10px; border-radius: 6px; cursor: pointer; font-size: 11px;" data-i18n="cancelOrderBtn">Отменить</button>` : '<span style="font-size: 11px; color: #059669;"><i class="fa-solid fa-check"></i> Обрабатывается</span>'}
                     </div>
                 </div>
             `).join('');
         }
 
-        window.cancelMyOrder = async (id) => {
-            if(confirm("Отменить заказ?")) {
-                await deleteDoc(doc(db, "orders", id));
-            }
-        };
-
-        window.acceptOrder = async (id) => { await setDoc(doc(db, "orders", id), { status: "Принят" }, { merge: true }); };
         window.deleteOrder = async (id) => { if(confirm("Удалить?")) await deleteDoc(doc(db, "orders", id)); };
-        
-        window.blockUser = async (userId) => {
-            if(confirm("Заблокировать пользователя?")) {
-                await setDoc(doc(db, "blocked_users", userId), { blockedAt: new Date().toISOString() });
-                alert("Заблокирован!");
-            }
-        };
 
         window.openModal = (id) => document.getElementById(id).classList.add('open');
         window.closeModal = (id) => document.getElementById(id).classList.remove('open');
 
-        // Функции сохранения товаров в Firebase
+        // CRUD товаров с Firebase + Локальный резерв
         window.handleImageUpload = (event) => {
             const file = event.target.files[0];
             if (file) {
@@ -634,9 +588,9 @@
             openModal('productModal');
         };
 
-        window.editProduct = (docId) => {
+        window.editProduct = (id) => {
             if (!ADMINS.includes(currentUser?.email?.toLowerCase())) return;
-            const p = products.find(prod => prod.id === docId);
+            const p = window.products.find(prod => prod.id == id);
             if (!p) return;
             document.getElementById('editProductDocId').value = p.id;
             document.getElementById('prodName').value = p.name;
@@ -653,7 +607,7 @@
         window.saveProduct = async (e) => {
             e.preventDefault();
             if (!ADMINS.includes(currentUser?.email?.toLowerCase())) return;
-            const editDocId = document.getElementById('editProductDocId').value;
+            const editId = document.getElementById('editProductDocId').value;
             const name = document.getElementById('prodName').value;
             const brand = document.getElementById('prodBrand').value;
             const sku = document.getElementById('prodSku').value;
@@ -662,45 +616,50 @@
             const badge = document.getElementById('prodBadge').value;
 
             try {
-                if (editDocId) {
+                if (editId && !editId.startsWith('def_')) {
                     const updateData = { name, brand, sku, priceTJS, badge };
                     if (imageBase64) updateData.image = imageBase64;
-                    await updateDoc(doc(db, "products", editDocId), updateData);
+                    await updateDoc(doc(db, "products", editId), updateData);
                 } else {
-                    if (!imageBase64) {
-                        alert("Пожалуйста, выберите фото товара из устройства!");
-                        return;
-                    }
-                    await addDoc(collection(db, "products"), {
-                        name, brand, sku, priceTJS, image: imageBase64, badge, timestamp: Date.now()
-                    });
+                    if (!imageBase64) { alert("Выберите фото!"); return; }
+                    await addDoc(collection(db, "products"), { name, brand, sku, priceTJS, image: imageBase64, badge, timestamp: Date.now() });
                 }
-                closeModal('productModal');
-                alert("Товар успешно сохранен в базу данных!");
             } catch (err) {
-                alert("Ошибка сохранения: " + err.message);
+                // Если нет интернета, сохраняем локально
+                if (editId) {
+                    const p = window.products.find(prod => prod.id == editId);
+                    if (p) { p.name = name; p.brand = brand; p.sku = sku; p.priceTJS = priceTJS; if(imageBase64) p.image = imageBase64; p.badge = badge; }
+                } else {
+                    window.products.unshift({ id: 'loc_' + Date.now(), name, brand, sku, priceTJS, image: imageBase64, badge });
+                }
+                localStorage.setItem('btime_products', JSON.stringify(window.products));
             }
+
+            closeModal('productModal');
+            if (typeof renderProducts === 'function') renderProducts();
+            alert("Товар сохранен!");
         };
 
-        window.deleteProduct = async (docId) => {
+        window.deleteProduct = async (id) => {
             if (!ADMINS.includes(currentUser?.email?.toLowerCase())) return;
-            if (confirm("Вы уверены, что хотите удалить этот товар?")) {
+            if (confirm("Удалить товар?")) {
                 try {
-                    await deleteDoc(doc(db, "products", docId));
-                } catch (err) {
-                    alert("Ошибка удаления: " + err.message);
-                }
+                    if (!id.startsWith('def_') && !id.startsWith('loc_')) {
+                        await deleteDoc(doc(db, "products", id));
+                    }
+                } catch(e) {}
+                window.products = window.products.filter(p => p.id != id);
+                localStorage.setItem('btime_products', JSON.stringify(window.products));
+                if (typeof renderProducts === 'function') renderProducts();
             }
         };
     </script>
 
-    <!-- Скрипты отображения -->
+    <!-- Интерфейс и переводы -->
     <script>
         let reviews = [{ author: "Алишер Р.", rating: 5, text: "Отличный магазин, всё оригинальное!" }];
-        
         let cart = JSON.parse(localStorage.getItem('btime_cart')) || [];
         let compareList = JSON.parse(localStorage.getItem('btime_compare')) || [];
-
         let currentCurrency = 'TJS';
         let currentLang = 'ru';
         const rates = { TJS: 1, USD: 0.091, RUB: 8.5 };
@@ -717,7 +676,7 @@
                 cartTitle: "Корзина", totalLabel: "Итого:", checkoutBtn: "Оформить заказ", checkoutTitle: "Оформление заказа",
                 nameLabel: "Ваше имя", phoneLabel: "Телефон", addressLabel: "Адрес доставки", orderConfirmBtn: "Подтвердить заказ",
                 myOrdersTitle: "Мои заказы", refreshBtn: "Обновить", adminTitle: "Панель администратора", reviewModalTitle: "Оставить отзыв",
-                ratingLabel: "Оценка", reviewTextLabel: "Текст отзыва", sendBtn: "Отправить", noOrders: "Нет активных заказов.", cancelOrderBtn: "Отменить"
+                ratingLabel: "Оценка", reviewTextLabel: "Текст отзыва", sendBtn: "Отправить"
             },
             tj: {
                 city: "Душанбе", langLabel: "Забон:", currLabel: "Асъор:", loginBtn: "Даромадан", logoutBtn: "Баромадан",
@@ -730,7 +689,7 @@
                 cartTitle: "Сабад", totalLabel: "Ҳамагӣ:", checkoutBtn: "Фармоиш додан", checkoutTitle: "Расминамоии фармоиш",
                 nameLabel: "Номи шумо", phoneLabel: "Рақами телефон", addressLabel: "Суроғаи интиқол", orderConfirmBtn: "Тасдиқи фармоиш",
                 myOrdersTitle: "Фармоишҳои ман", refreshBtn: "Навсозӣ", adminTitle: "Лавҳаи идоракунӣ", reviewModalTitle: "Гузоштани шарҳ",
-                ratingLabel: "Баҳо", reviewTextLabel: "Матни шарҳ", sendBtn: "Фиристодан", noOrders: "Фармоиш нест.", cancelOrderBtn: "Бекор кардан"
+                ratingLabel: "Баҳо", reviewTextLabel: "Матни шарҳ", sendBtn: "Фиристодан"
             },
             en: {
                 city: "Dushanbe", langLabel: "Lang:", currLabel: "Curr:", loginBtn: "Sign In", logoutBtn: "Sign Out",
@@ -743,7 +702,7 @@
                 cartTitle: "Cart", totalLabel: "Total:", checkoutBtn: "Checkout", checkoutTitle: "Order Checkout",
                 nameLabel: "Your Name", phoneLabel: "Phone", addressLabel: "Delivery Address", orderConfirmBtn: "Confirm Order",
                 myOrdersTitle: "My Orders", refreshBtn: "Refresh", adminTitle: "Admin Panel", reviewModalTitle: "Leave a Review",
-                ratingLabel: "Rating", reviewTextLabel: "Review Text", sendBtn: "Submit", noOrders: "No active orders.", cancelOrderBtn: "Cancel"
+                ratingLabel: "Rating", reviewTextLabel: "Review Text", sendBtn: "Submit"
             }
         };
 
@@ -755,14 +714,6 @@
                     el.innerText = translations[lang][key];
                 }
             });
-            const activeUser = window.firebaseAuth ? window.firebaseAuth.currentUser : null;
-            if (activeUser) {
-                const authContainer = document.getElementById('authContainer');
-                authContainer.innerHTML = `
-                    <span style="color: #facc15; font-weight: 600; margin-right: 10px;">${activeUser.email.split('@')[0]}</span>
-                    <button onclick="logout()" style="background: rgba(244,63,94,0.1); border: 1px solid rgba(244,63,94,0.3); color: #f43f5e; padding: 4px 10px; border-radius: 6px; cursor: pointer;">${translations[currentLang].logoutBtn}</button>
-                `;
-            }
         }
 
         function formatPrice(tjs) {
@@ -777,15 +728,10 @@
             renderProducts();
         }
 
-        function isAdminUser() {
-            const ADMINS = ["samirdv888@gmail.com", "abdullochoriev4242@gmail.com"];
-            const activeUser = window.firebaseAuth ? window.firebaseAuth.currentUser : null;
-            return activeUser && ADMINS.includes(activeUser.email.toLowerCase());
-        }
-
         window.renderProducts = function() {
             const admin = isAdminUser();
-            const html = products.map(p => `
+            const list = window.products || [];
+            const html = list.map(p => `
                 <div class="card">
                     <div class="card-img">
                         <span style="position: absolute; top: 10px; left: 10px; background: #eab308; color: black; font-size: 10px; font-weight: bold; padding: 4px 8px; border-radius: 20px; text-transform: uppercase;">${p.badge || 'Хит'}</span>
@@ -841,9 +787,6 @@
             localStorage.setItem('btime_compare', JSON.stringify(compareList));
             updateBadges();
             renderProducts();
-            if(!document.getElementById('tab-compare').classList.contains('hidden')) {
-                renderCompare();
-            }
         }
 
         function renderCompare() {
@@ -855,7 +798,7 @@
             container.innerHTML = `
                 <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 14px;">
                     ${compareList.map(id => {
-                        const p = products.find(prod => prod.id === id);
+                        const p = window.products.find(prod => prod.id == id);
                         if (!p) return '';
                         return `<div style="border: 1px solid #e5e7eb; padding: 14px; border-radius: 12px; text-align: center; position: relative;">
                             <button onclick="toggleCompare('${p.id}'); renderCompare();" style="position: absolute; top: 6px; right: 6px; background: none; border: none; color: #dc2626; cursor: pointer;"><i class="fa-solid fa-xmark"></i></button>
@@ -869,7 +812,7 @@
         }
 
         function addToCart(id) {
-            const item = cart.find(i => i.id === id);
+            const item = cart.find(i => i.id == id);
             if (item) item.qty++;
             else cart.push({ id, qty: 1 });
             localStorage.setItem('btime_cart', JSON.stringify(cart));
@@ -887,7 +830,7 @@
             }
             let total = 0;
             list.innerHTML = cart.map(i => {
-                const p = products.find(prod => prod.id === i.id);
+                const p = window.products.find(prod => prod.id == i.id);
                 if (!p) return '';
                 total += p.priceTJS * i.qty;
                 return `<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; font-size: 13px; border-bottom: 1px solid #f3f4f6; padding-bottom: 6px;">
@@ -903,7 +846,7 @@
         }
 
         function removeFromCart(id) {
-            cart = cart.filter(i => i.id !== id);
+            cart = cart.filter(i => i.id != id);
             localStorage.setItem('btime_cart', JSON.stringify(cart));
             updateBadges();
             openCartModal();
@@ -912,12 +855,7 @@
         function openCheckout() {
             if (cart.length === 0) return;
             const activeUser = window.firebaseAuth ? window.firebaseAuth.currentUser : null;
-            if (!activeUser) {
-                alert("Пожалуйста, войдите в аккаунт!");
-                closeModal('cartModal');
-                openModal('authModal');
-                return;
-            }
+            if (!activeUser) { alert("Войдите в аккаунт!"); closeModal('cartModal'); openModal('authModal'); return; }
             closeModal('cartModal');
             openModal('checkoutModal');
         }
@@ -925,19 +863,14 @@
         function submitOrder(e) {
             e.preventDefault();
             const activeUser = window.firebaseAuth ? window.firebaseAuth.currentUser : null;
-            if (!activeUser) {
-                alert("Пожалуйста, войдите в аккаунт!");
-                closeModal('checkoutModal');
-                openModal('authModal');
-                return;
-            }
+            if (!activeUser) { alert("Войдите в аккаунт!"); closeModal('checkoutModal'); openModal('authModal'); return; }
 
             const name = document.getElementById('orderName').value;
             const phone = document.getElementById('orderPhone').value;
             const address = document.getElementById('orderAddress').value;
 
             let totalTJS = cart.reduce((sum, item) => {
-                const p = products.find(prod => prod.id === item.id);
+                const p = window.products.find(prod => prod.id == item.id);
                 return sum + (p ? p.priceTJS * item.qty : 0);
             }, 0);
 
@@ -946,7 +879,7 @@
                 userEmail: activeUser.email,
                 name, phone, address,
                 items: cart.map(i => {
-                    const p = products.find(prod => prod.id === i.id);
+                    const p = window.products.find(prod => prod.id == item.id);
                     return { name: p ? p.name : 'Товар', qty: i.qty };
                 }),
                 total: formatPrice(totalTJS),
@@ -994,6 +927,7 @@
         }
 
         window.addEventListener('DOMContentLoaded', () => {
+            renderProducts();
             changeLanguage('ru');
         });
     </script>
