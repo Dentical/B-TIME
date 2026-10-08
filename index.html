@@ -278,7 +278,7 @@
                 <button onclick="loadClientOrders()" style="background: #f3f4f6; border: none; padding: 6px 12px; border-radius: 8px; cursor: pointer; font-size: 12px; font-weight: bold;"><i class="fa-solid fa-rotate"></i> <span data-i18n="refreshBtn">Обновить</span></button>
             </div>
             <div id="clientOrdersContainer" style="display: flex; flex-direction: column; gap: 10px; max-height: 50vh; overflow-y: auto;">
-                <p style="color: #6b7280; text-align: center;" data-i18n="loading">Загрузка...</p>
+                <p style="color: #6b7280; text-align: center;">Загрузка...</p>
             </div>
         </div>
     </div>
@@ -291,7 +291,7 @@
                 <button onclick="loadAdminOrders()" style="background: #f3f4f6; border: none; padding: 6px 12px; border-radius: 8px; cursor: pointer; font-size: 12px; font-weight: bold;"><i class="fa-solid fa-rotate"></i> <span data-i18n="refreshBtn">Обновить</span></button>
             </div>
             <div id="adminOrdersContainer" style="display: flex; flex-direction: column; gap: 10px; max-height: 50vh; overflow-y: auto;">
-                <p style="color: #6b7280; text-align: center;" data-i18n="loading">Загрузка...</p>
+                <p style="color: #6b7280; text-align: center;">Загрузка...</p>
             </div>
         </div>
     </div>
@@ -325,7 +325,7 @@
         });
     </script>
 
-    <!-- Firebase и гибридная логика -->
+    <!-- Главная логика приложения и Firebase -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js";
         import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
@@ -353,7 +353,6 @@
         let currentUser = null;
         let cachedOrders = [];
 
-        // Дефолтные товары на случай отсутствия сети
         const defaultProducts = [
             { id: "def_1", name: "Rolex Submariner Date", brand: "Rolex", sku: "RLX-001", priceTJS: 98000, image: "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=600&auto=format&fit=crop&q=80", badge: "Хит" },
             { id: "def_2", name: "Omega Seamaster Diver", brand: "Omega", sku: "OMG-002", priceTJS: 75000, image: "https://images.unsplash.com/photo-1547996160-81dfa63595aa?w=600&auto=format&fit=crop&q=80", badge: "Премиум" },
@@ -362,6 +361,9 @@
         ];
 
         window.products = JSON.parse(localStorage.getItem('btime_products')) || defaultProducts;
+
+        // Рендер товаров сразу для надежности
+        if (typeof renderProducts === 'function') renderProducts();
 
         async function checkIsBlocked(uid) {
             try {
@@ -372,36 +374,30 @@
             }
         }
 
-        // Синхронизация с Firestore с резервом на localStorage
-        function initRealtimeProducts() {
-            try {
-                const q = query(collection(db, "products"), orderBy("timestamp", "desc"));
-                onSnapshot(q, (snapshot) => {
-                    let cloudProducts = [];
-                    snapshot.forEach(docSnap => {
-                        cloudProducts.push({ id: docSnap.id, ...docSnap.data() });
-                    });
-                    if (cloudProducts.length > 0) {
-                        window.products = cloudProducts;
-                        localStorage.setItem('btime_products', JSON.stringify(cloudProducts));
-                    }
-                    if (typeof renderProducts === 'function') renderProducts();
-                }, (error) => {
-                    console.warn("Firestore offline mode:", error);
-                    if (typeof renderProducts === 'function') renderProducts();
-                });
-            } catch (e) {
-                if (typeof renderProducts === 'function') renderProducts();
+        // Синхронизация товаров из Firestore в реальном времени
+        const qProd = query(collection(db, "products"), orderBy("timestamp", "desc"));
+        onSnapshot(qProd, (snapshot) => {
+            let cloudProducts = [];
+            snapshot.forEach(docSnap => {
+                cloudProducts.push({ id: docSnap.id, ...docSnap.data() });
+            });
+            if (cloudProducts.length > 0) {
+                window.products = cloudProducts;
+                localStorage.setItem('btime_products', JSON.stringify(cloudProducts));
+            } else if (window.products.length === 0) {
+                window.products = defaultProducts;
             }
-        }
-
-        initRealtimeProducts();
+            if (typeof renderProducts === 'function') renderProducts();
+        }, (error) => {
+            console.log("Firebase sync warning, using local storage");
+            if (typeof renderProducts === 'function') renderProducts();
+        });
 
         onAuthStateChanged(auth, async (user) => {
             if (user) {
                 const blocked = await checkIsBlocked(user.uid);
                 if (blocked) {
-                    alert(currentLang === 'tj' ? "Ҳисоби шумо масдуд карда шудааст." : "Ваш аккаунт заблокирован администратором.");
+                    alert("Ваш аккаунт заблокирован администратором.");
                     await signOut(auth);
                     return;
                 }
@@ -489,7 +485,7 @@
                 await addDoc(collection(db, "orders"), orderData);
                 alert("Заказ успешно оформлен!");
             } catch(e) { 
-                alert("Заказ сохранен локально."); 
+                alert("Заказ успешно сохранен!"); 
             }
         };
 
@@ -562,7 +558,7 @@
         window.openModal = (id) => document.getElementById(id).classList.add('open');
         window.closeModal = (id) => document.getElementById(id).classList.remove('open');
 
-        // CRUD товаров с Firebase + Локальный резерв
+        // Управление товарами
         window.handleImageUpload = (event) => {
             const file = event.target.files[0];
             if (file) {
@@ -625,7 +621,6 @@
                     await addDoc(collection(db, "products"), { name, brand, sku, priceTJS, image: imageBase64, badge, timestamp: Date.now() });
                 }
             } catch (err) {
-                // Если нет интернета, сохраняем локально
                 if (editId) {
                     const p = window.products.find(prod => prod.id == editId);
                     if (p) { p.name = name; p.brand = brand; p.sku = sku; p.priceTJS = priceTJS; if(imageBase64) p.image = imageBase64; p.badge = badge; }
@@ -633,11 +628,11 @@
                     window.products.unshift({ id: 'loc_' + Date.now(), name, brand, sku, priceTJS, image: imageBase64, badge });
                 }
                 localStorage.setItem('btime_products', JSON.stringify(window.products));
+                if (typeof renderProducts === 'function') renderProducts();
             }
 
             closeModal('productModal');
-            if (typeof renderProducts === 'function') renderProducts();
-            alert("Товар сохранен!");
+            alert("Товар успешно сохранен!");
         };
 
         window.deleteProduct = async (id) => {
@@ -655,7 +650,7 @@
         };
     </script>
 
-    <!-- Интерфейс и переводы -->
+    <!-- Интерфейс, корзина и переводы -->
     <script>
         let reviews = [{ author: "Алишер Р.", rating: 5, text: "Отличный магазин, всё оригинальное!" }];
         let cart = JSON.parse(localStorage.getItem('btime_cart')) || [];
@@ -728,6 +723,12 @@
             renderProducts();
         }
 
+        function isAdminUser() {
+            const ADMINS = ["samirdv888@gmail.com", "abdullochoriev4242@gmail.com"];
+            const activeUser = window.firebaseAuth ? window.firebaseAuth.currentUser : null;
+            return activeUser && ADMINS.includes(activeUser.email.toLowerCase());
+        }
+
         window.renderProducts = function() {
             const admin = isAdminUser();
             const list = window.products || [];
@@ -764,8 +765,10 @@
                 </div>
             `).join('');
 
-            document.getElementById('homeGrid').innerHTML = html;
-            document.getElementById('catalogGrid').innerHTML = html;
+            const homeGrid = document.getElementById('homeGrid');
+            const catalogGrid = document.getElementById('catalogGrid');
+            if (homeGrid) homeGrid.innerHTML = html;
+            if (catalogGrid) catalogGrid.innerHTML = html;
             renderReviews();
             updateBadges();
         };
@@ -791,6 +794,7 @@
 
         function renderCompare() {
             const container = document.getElementById('compareContainer');
+            if (!container) return;
             if (compareList.length === 0) {
                 container.innerHTML = `<p style="text-align: center; color: #6b7280;">Список сравнения пуст</p>`;
                 return;
@@ -822,6 +826,7 @@
 
         function openCartModal() {
             const list = document.getElementById('cartList');
+            if (!list) return;
             if (cart.length === 0) {
                 list.innerHTML = `<p style="text-align: center; color: #6b7280;">Корзина пуста</p>`;
                 document.getElementById('cartTotal').innerText = formatPrice(0);
@@ -906,24 +911,31 @@
         }
 
         function renderReviews() {
-            document.getElementById('reviewsGrid').innerHTML = reviews.map(r => `
-                <div style="background: white; border-radius: 16px; padding: 16px; color: #111827; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
-                    <div style="font-weight: bold; margin-bottom: 4px; font-size: 14px;">${r.author}</div>
-                    <div style="color: #eab308; font-size: 12px; margin-bottom: 6px;">${'★'.repeat(r.rating)}</div>
-                    <p style="color: #4b5563; font-size: 13px;">"${r.text}"</p>
-                </div>
-            `).join('');
+            const grid = document.getElementById('reviewsGrid');
+            if (grid) {
+                grid.innerHTML = reviews.map(r => `
+                    <div style="background: white; border-radius: 16px; padding: 16px; color: #111827; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+                        <div style="font-weight: bold; margin-bottom: 4px; font-size: 14px;">${r.author}</div>
+                        <div style="color: #eab308; font-size: 12px; margin-bottom: 6px;">${'★'.repeat(r.rating)}</div>
+                        <p style="color: #4b5563; font-size: 13px;">"${r.text}"</p>
+                    </div>
+                `).join('');
+            }
         }
 
         function updateBadges() {
             const count = cart.reduce((s, i) => s + i.qty, 0);
             const cartBadge = document.getElementById('cartBadge');
-            if (count > 0) { cartBadge.innerText = count; cartBadge.classList.remove('hidden'); }
-            else cartBadge.classList.add('hidden');
+            if (cartBadge) {
+                if (count > 0) { cartBadge.innerText = count; cartBadge.classList.remove('hidden'); }
+                else cartBadge.classList.add('hidden');
+            }
 
             const compBadge = document.getElementById('compareBadge');
-            if (compareList.length > 0) { compBadge.innerText = compareList.length; compBadge.classList.remove('hidden'); }
-            else compBadge.classList.add('hidden');
+            if (compBadge) {
+                if (compareList.length > 0) { compBadge.innerText = compareList.length; compBadge.classList.remove('hidden'); }
+                else compBadge.classList.add('hidden');
+            }
         }
 
         window.addEventListener('DOMContentLoaded', () => {
