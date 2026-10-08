@@ -36,7 +36,7 @@
         .tab-pane.active { display: block; }
 
         .grid-products { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 20px; }
-        .card { background: white; border-radius: 16px; overflow: hidden; color: #111827; box-shadow: 0 4px 6px rgba(0,0,0,0.1); display: flex; flex-direction: column; }
+        .card { background: white; border-radius: 16px; overflow: hidden; color: #111827; box-shadow: 0 4px 6px rgba(0,0,0,0.1); display: flex; flex-direction: column; position: relative; }
         .card-img { background: #f9fafb; height: 200px; display: flex; align-items: center; justify-content: center; position: relative; }
         .card-img img { height: 150px; object-fit: cover; }
         .card-body { padding: 16px; display: flex; flex-direction: column; flex-grow: 1; justify-content: space-between; }
@@ -122,6 +122,10 @@
             </nav>
 
             <div class="actions">
+                <!-- Кнопка Добавить товар (+) для админа -->
+                <button id="addProductBtn" onclick="openProductModal()" class="btn-icon hidden" title="Добавить товар" style="background: #eab308; color: black; border-color: #eab308; font-weight: bold;">
+                    <i class="fa-solid fa-plus"></i>
+                </button>
                 <button id="clientOrdersBtn" onclick="openClientOrdersModal()" class="btn-icon hidden" title="Мои заказы" style="color: #60a5fa; border-color: rgba(96,165,250,0.4);">
                     <i class="fa-solid fa-receipt"></i>
                     <span id="clientBadge" class="badge hidden" style="background:#60a5fa; color:white;">0</span>
@@ -215,6 +219,24 @@
                 <div><label data-i18n="emailLabel">Email</label><input type="email" id="authEmail" required></div>
                 <div><label data-i18n="passLabel">Пароль</label><input type="password" id="authPassword" required minlength="6"></div>
                 <button type="submit" class="btn-gold" data-i18n="authSubmit">Войти / Регистрация</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Модалка добавления/редактирования товара для админа -->
+    <div id="productModal" class="modal">
+        <div class="modal-box">
+            <button onclick="closeModal('productModal')" class="modal-close"><i class="fa-solid fa-xmark"></i></button>
+            <h3 id="productModalTitle" class="serif" style="font-size: 22px; margin-bottom: 16px;">Добавить товар</h3>
+            <form onsubmit="saveProduct(event)">
+                <input type="hidden" id="editProductId">
+                <div><label>Название</label><input type="text" id="prodName" required></div>
+                <div><label>Бренд</label><input type="text" id="prodBrand" required></div>
+                <div><label>Артикул (SKU) — виден только админу</label><input type="text" id="prodSku" required></div>
+                <div><label>Цена (в сомони TJS)</label><input type="number" id="prodPrice" required min="1"></div>
+                <div><label>Ссылка на фото (URL)</label><input type="url" id="prodImage" required></div>
+                <div><label>Бейдж (например: Хит, Премиум)</label><input type="text" id="prodBadge" value="Хит"></div>
+                <button type="submit" class="btn-gold">Сохранить товар</button>
             </form>
         </div>
     </div>
@@ -351,6 +373,7 @@
             const authContainer = document.getElementById('authContainer');
             const adminBtn = document.getElementById('adminOrdersBtn');
             const clientBtn = document.getElementById('clientOrdersBtn');
+            const addProductBtn = document.getElementById('addProductBtn');
 
             if (user) {
                 const isAdmin = ADMINS.includes(user.email.toLowerCase());
@@ -361,8 +384,10 @@
                 clientBtn.classList.remove('hidden');
                 if (isAdmin) {
                     adminBtn.classList.remove('hidden');
+                    addProductBtn.classList.remove('hidden');
                 } else {
                     adminBtn.classList.add('hidden');
+                    addProductBtn.classList.add('hidden');
                 }
                 initRealtimeOrders();
             } else {
@@ -373,7 +398,10 @@
                 `;
                 adminBtn.classList.add('hidden');
                 clientBtn.classList.add('hidden');
+                addProductBtn.classList.add('hidden');
             }
+            // Перерисовываем товары, чтобы показать/скрыть админские кнопки
+            if (typeof renderProducts === 'function') renderProducts();
         });
 
         window.logout = () => signOut(auth);
@@ -550,13 +578,13 @@
         window.closeModal = (id) => document.getElementById(id).classList.remove('open');
     </script>
 
-    <!-- Скрипты магазина и переводов -->
+    <!-- Скрипты магазина, товаров и админского управления -->
     <script>
-        const products = [
-            { id: 1, name: "Rolex Submariner Date", brand: "Rolex", priceTJS: 98000, image: "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=600&auto=format&fit=crop&q=80", badge: "Хит" },
-            { id: 2, name: "Omega Seamaster Diver", brand: "Omega", priceTJS: 75000, image: "https://images.unsplash.com/photo-1547996160-81dfa63595aa?w=600&auto=format&fit=crop&q=80", badge: "Премиум" },
-            { id: 3, name: "Tissot Gentleman", brand: "Tissot", priceTJS: 9500, image: "https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?w=600&auto=format&fit=crop&q=80", badge: "Хит" },
-            { id: 4, name: "Casio G-Shock", brand: "Casio", priceTJS: 1800, image: "https://images.unsplash.com/photo-1533139502658-0198f920d8e8?w=600&auto=format&fit=crop&q=80", badge: "Хит" }
+        let products = JSON.parse(localStorage.getItem('btime_products')) || [
+            { id: 1, name: "Rolex Submariner Date", brand: "Rolex", sku: "RLX-001", priceTJS: 98000, image: "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=600&auto=format&fit=crop&q=80", badge: "Хит" },
+            { id: 2, name: "Omega Seamaster Diver", brand: "Omega", sku: "OMG-002", priceTJS: 75000, image: "https://images.unsplash.com/photo-1547996160-81dfa63595aa?w=600&auto=format&fit=crop&q=80", badge: "Премиум" },
+            { id: 3, name: "Tissot Gentleman", brand: "Tissot", sku: "TSS-003", priceTJS: 9500, image: "https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?w=600&auto=format&fit=crop&q=80", badge: "Хит" },
+            { id: 4, name: "Casio G-Shock", brand: "Casio", sku: "CSO-004", priceTJS: 1800, image: "https://images.unsplash.com/photo-1533139502658-0198f920d8e8?w=600&auto=format&fit=crop&q=80", badge: "Хит" }
         ];
 
         let reviews = [{ author: "Алишер Р.", rating: 5, text: "Отличный магазин, всё оригинальное!" }];
@@ -618,7 +646,6 @@
                     el.innerText = translations[lang][key];
                 }
             });
-            // Обновляем текст кнопки выхода, если авторизован
             const activeUser = window.firebaseAuth ? window.firebaseAuth.currentUser : null;
             if (activeUser) {
                 const authContainer = document.getElementById('authContainer');
@@ -641,7 +668,14 @@
             renderProducts();
         }
 
+        function isAdminUser() {
+            const ADMINS = ["samirdv888@gmail.com", "abdullochoriev4242@gmail.com"];
+            const activeUser = window.firebaseAuth ? window.firebaseAuth.currentUser : null;
+            return activeUser && ADMINS.includes(activeUser.email.toLowerCase());
+        }
+
         function renderProducts() {
+            const admin = isAdminUser();
             const html = products.map(p => `
                 <div class="card">
                     <div class="card-img">
@@ -650,15 +684,26 @@
                     </div>
                     <div class="card-body">
                         <div>
-                            <span style="font-size: 11px; color: #6b7280; text-transform: uppercase;">${p.brand}</span>
+                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                <span style="font-size: 11px; color: #6b7280; text-transform: uppercase;">${p.brand}</span>
+                                ${admin ? `<span style="font-size: 10px; background: #1f2937; color: #facc15; padding: 2px 6px; border-radius: 4px;">SKU: ${p.sku || 'N/A'}</span>` : ''}
+                            </div>
                             <h3 style="font-size: 15px; font-weight: bold; margin: 4px 0 10px;">${p.name}</h3>
                         </div>
-                        <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #f3f4f6; padding-top: 10px;">
-                            <span style="font-size: 15px; font-weight: 900;" class="text-amber">${formatPrice(p.priceTJS)}</span>
-                            <div style="display: flex; gap: 6px;">
-                                <button onclick="toggleCompare(${p.id})" title="Сравнить" style="background: ${compareList.includes(p.id) ? '#eab308' : '#f3f4f6'}; color: ${compareList.includes(p.id) ? 'black' : 'inherit'}; border: none; width: 34px; height: 34px; border-radius: 10px; cursor: pointer;"><i class="fa-solid fa-scale-balanced"></i></button>
-                                <button onclick="addToCart(${p.id})" title="В корзину" style="background: #eab308; border: none; width: 34px; height: 34px; border-radius: 10px; cursor: pointer; font-weight: bold;"><i class="fa-solid fa-bag-shopping"></i></button>
+                        <div>
+                            <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #f3f4f6; padding-top: 10px; margin-bottom: 8px;">
+                                <span style="font-size: 15px; font-weight: 900;" class="text-amber">${formatPrice(p.priceTJS)}</span>
+                                <div style="display: flex; gap: 6px;">
+                                    <button onclick="toggleCompare(${p.id})" title="Сравнить" style="background: ${compareList.includes(p.id) ? '#eab308' : '#f3f4f6'}; color: ${compareList.includes(p.id) ? 'black' : 'inherit'}; border: none; width: 34px; height: 34px; border-radius: 10px; cursor: pointer;"><i class="fa-solid fa-scale-balanced"></i></button>
+                                    <button onclick="addToCart(${p.id})" title="В корзину" style="background: #eab308; border: none; width: 34px; height: 34px; border-radius: 10px; cursor: pointer; font-weight: bold;"><i class="fa-solid fa-bag-shopping"></i></button>
+                                </div>
                             </div>
+                            ${admin ? `
+                                <div style="display: flex; gap: 6px; border-top: 1px dashed #e5e7eb; padding-top: 6px;">
+                                    <button onclick="editProduct(${p.id})" style="flex: 1; background: #2563eb; color: white; border: none; padding: 6px; border-radius: 6px; font-size: 11px; cursor: pointer;"><i class="fa-solid fa-pen"></i> Ред.</button>
+                                    <button onclick="deleteProduct(${p.id})" style="flex: 1; background: #dc2626; color: white; border: none; padding: 6px; border-radius: 6px; font-size: 11px; cursor: pointer;"><i class="fa-solid fa-trash"></i> Уд.</button>
+                                </div>
+                            ` : ''}
                         </div>
                     </div>
                 </div>
@@ -669,6 +714,78 @@
             renderReviews();
             updateBadges();
         }
+
+        // Функции управления товарами для админа
+        window.openProductModal = () => {
+            if (!isAdminUser()) return;
+            document.getElementById('editProductId').value = '';
+            document.getElementById('prodName').value = '';
+            document.getElementById('prodBrand').value = '';
+            document.getElementById('prodSku').value = '';
+            document.getElementById('prodPrice').value = '';
+            document.getElementById('prodImage').value = '';
+            document.getElementById('prodBadge').value = 'Хит';
+            document.getElementById('productModalTitle').innerText = "Добавить товар";
+            openModal('productModal');
+        };
+
+        window.editProduct = (id) => {
+            if (!isAdminUser()) return;
+            const p = products.find(prod => prod.id === id);
+            if (!p) return;
+            document.getElementById('editProductId').value = p.id;
+            document.getElementById('prodName').value = p.name;
+            document.getElementById('prodBrand').value = p.brand;
+            document.getElementById('prodSku').value = p.sku || '';
+            document.getElementById('prodPrice').value = p.priceTJS;
+            document.getElementById('prodImage').value = p.image;
+            document.getElementById('prodBadge').value = p.badge || 'Хит';
+            document.getElementById('productModalTitle').innerText = "Редактировать товар";
+            openModal('productModal');
+        };
+
+        window.saveProduct = (e) => {
+            e.preventDefault();
+            if (!isAdminUser()) return;
+            const editId = document.getElementById('editProductId').value;
+            const name = document.getElementById('prodName').value;
+            const brand = document.getElementById('prodBrand').value;
+            const sku = document.getElementById('prodSku').value;
+            const priceTJS = parseFloat(document.getElementById('prodPrice').value);
+            const image = document.getElementById('prodImage').value;
+            const badge = document.getElementById('prodBadge').value;
+
+            if (editId) {
+                // Редактирование
+                const p = products.find(prod => prod.id == editId);
+                if (p) {
+                    p.name = name;
+                    p.brand = brand;
+                    p.sku = sku;
+                    p.priceTJS = priceTJS;
+                    p.image = image;
+                    p.badge = badge;
+                }
+            } else {
+                // Добавление нового
+                const newId = products.length > 0 ? Math.max(...products.map(p => p.id)) + 1 : 1;
+                products.unshift({ id: newId, name, brand, sku, priceTJS, image, badge });
+            }
+
+            localStorage.setItem('btime_products', JSON.stringify(products));
+            renderProducts();
+            closeModal('productModal');
+            alert("Товар успешно сохранен!");
+        };
+
+        window.deleteProduct = (id) => {
+            if (!isAdminUser()) return;
+            if (confirm("Вы уверены, что хотите удалить этот товар?")) {
+                products = products.filter(p => p.id !== id);
+                localStorage.setItem('btime_products', JSON.stringify(products));
+                renderProducts();
+            }
+        };
 
         function switchTab(tabId) {
             document.querySelectorAll('.tab-pane').forEach(el => el.classList.remove('active'));
@@ -702,6 +819,7 @@
                 <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 14px;">
                     ${compareList.map(id => {
                         const p = products.find(prod => prod.id === id);
+                        if (!p) return '';
                         return `<div style="border: 1px solid #e5e7eb; padding: 14px; border-radius: 12px; text-align: center; position: relative;">
                             <button onclick="toggleCompare(${p.id}); renderCompare();" style="position: absolute; top: 6px; right: 6px; background: none; border: none; color: #dc2626; cursor: pointer;"><i class="fa-solid fa-xmark"></i></button>
                             <img src="${p.image}" style="height: 100px; object-fit: cover; margin-bottom: 8px;">
@@ -733,6 +851,7 @@
             let total = 0;
             list.innerHTML = cart.map(i => {
                 const p = products.find(prod => prod.id === i.id);
+                if (!p) return '';
                 total += p.priceTJS * i.qty;
                 return `<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; font-size: 13px; border-bottom: 1px solid #f3f4f6; padding-bottom: 6px;">
                     <span>${p.name} (x${i.qty})</span>
