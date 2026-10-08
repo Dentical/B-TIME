@@ -364,7 +364,7 @@
         }
 
         // Инициализация синхронизации товаров в реальном времени из Firestore
-        function initRealtimeProducts() {
+        async function initRealtimeProducts() {
             const q = query(collection(db, "products"), orderBy("timestamp", "desc"));
             onSnapshot(q, async (snapshot) => {
                 products = [];
@@ -372,7 +372,6 @@
                     products.push({ id: docSnap.id, ...docSnap.data() });
                 });
 
-                // Если база товаров пуста, добавляем начальные демо-товары автоматически
                 if (products.length === 0) {
                     const defaultProducts = [
                         { name: "Rolex Submariner Date", brand: "Rolex", sku: "RLX-001", priceTJS: 98000, image: "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=600&auto=format&fit=crop&q=80", badge: "Хит", timestamp: Date.now() },
@@ -609,7 +608,7 @@
         window.openModal = (id) => document.getElementById(id).classList.add('open');
         window.closeModal = (id) => document.getElementById(id).classList.remove('open');
 
-        // Функции сохранения и редактирования товаров в Firebase
+        // Функции сохранения товаров в Firebase
         window.handleImageUpload = (event) => {
             const file = event.target.files[0];
             if (file) {
@@ -664,7 +663,6 @@
 
             try {
                 if (editDocId) {
-                    const p = products.find(prod => prod.id == editDocId);
                     const updateData = { name, brand, sku, priceTJS, badge };
                     if (imageBase64) updateData.image = imageBase64;
                     await updateDoc(doc(db, "products", editDocId), updateData);
@@ -696,7 +694,7 @@
         };
     </script>
 
-    <!-- Скрипты отображения и интерфейса -->
+    <!-- Скрипты отображения -->
     <script>
         let reviews = [{ author: "Алишер Р.", rating: 5, text: "Отличный магазин, всё оригинальное!" }];
         
@@ -790,7 +788,7 @@
             const html = products.map(p => `
                 <div class="card">
                     <div class="card-img">
-                        <span style="position: absolute; top: 10px; left: 10px; background: #eab308; color: black; font-size: 10px; font-weight: bold; padding: 4px 8px; border-radius: 20px; text-transform: uppercase;">${p.badge}</span>
+                        <span style="position: absolute; top: 10px; left: 10px; background: #eab308; color: black; font-size: 10px; font-weight: bold; padding: 4px 8px; border-radius: 20px; text-transform: uppercase;">${p.badge || 'Хит'}</span>
                         <img src="${p.image}" alt="${p.name}">
                     </div>
                     <div class="card-body">
