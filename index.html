@@ -8,7 +8,7 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
         
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', sans-serif; }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', sans-serif; user-select: none; /* Защита от выделения текста */ }
         body { background-color: #0b1329; color: #f3f4f6; min-height: 100vh; display: flex; flex-direction: column; }
         .serif { font-family: 'Playfair Display', serif; }
         
@@ -51,7 +51,7 @@
         
         form div { margin-bottom: 16px; }
         form label { display: block; font-size: 13px; font-weight: 600; margin-bottom: 6px; color: #374151; }
-        form input, form textarea, form select { width: 100%; padding: 10px 14px; border: 1px solid #d1d5db; border-radius: 10px; font-size: 14px; }
+        form input, form textarea, form select { width: 100%; padding: 10px 14px; border: 1px solid #d1d5db; border-radius: 10px; font-size: 14px; user-select: text; }
         
         footer { background: #070d1d; border-top: 1px solid rgba(30, 58, 138, 0.5); padding: 40px 16px; margin-top: 60px; color: #9ca3af; font-size: 14px; }
         .footer-inner { max-width: 1280px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 32px; }
@@ -115,12 +115,20 @@
             </nav>
 
             <div class="actions">
-                <button id="adminOrdersBtn" onclick="openAdminModal()" class="btn-icon hidden" title="Панель заявок" style="color: #facc15; border-color: rgba(234,179,8,0.4);">
+                <!-- Кнопка Мои заказы для клиента -->
+                <button id="clientOrdersBtn" onclick="openClientOrdersModal()" class="btn-icon hidden" title="Мои заказы" style="color: #60a5fa; border-color: rgba(96,165,250,0.4);">
+                    <i class="fa-solid fa-receipt"></i>
+                    <span id="clientBadge" class="badge hidden" style="background:#60a5fa; color:white;">0</span>
+                </button>
+
+                <!-- Панель администратора -->
+                <button id="adminOrdersBtn" onclick="openAdminModal()" class="btn-icon hidden" title="Панель администратора" style="color: #facc15; border-color: rgba(234,179,8,0.4);">
                     <i class="fa-solid fa-file-lines"></i>
                     <span id="adminBadge" class="badge hidden">0</span>
                 </button>
 
-                <button onclick="openCartModal()" class="btn-icon">
+                <!-- Корзина -->
+                <button onclick="openCartModal()" class="btn-icon" title="Корзина">
                     <i class="fa-solid fa-bag-shopping"></i>
                     <span id="cartBadge" class="badge hidden">0</span>
                 </button>
@@ -130,7 +138,6 @@
 
     <!-- Основной контент -->
     <main class="main-content">
-        <!-- Главная -->
         <div id="tab-home" class="tab-pane active">
             <div style="padding: 40px 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 40px; align-items: center;">
                 <div>
@@ -148,19 +155,16 @@
             <div id="homeGrid" class="grid-products"></div>
         </div>
 
-        <!-- Каталог -->
         <div id="tab-catalog" class="tab-pane">
             <h2 class="serif" style="font-size: 28px; margin-bottom: 24px;">Каталог часов</h2>
             <div id="catalogGrid" class="grid-products"></div>
         </div>
 
-        <!-- Сравнение -->
         <div id="tab-compare" class="tab-pane">
             <h2 class="serif" style="font-size: 28px; margin-bottom: 24px;">Сравнение товаров</h2>
             <div id="compareContainer" style="background: white; color: #111827; padding: 24px; border-radius: 16px;"></div>
         </div>
 
-        <!-- Отзывы -->
         <div id="tab-reviews" class="tab-pane">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
                 <h2 class="serif" style="font-size: 28px;">Отзывы клиентов</h2>
@@ -169,7 +173,6 @@
             <div id="reviewsGrid" class="grid-products"></div>
         </div>
 
-        <!-- Статьи -->
         <div id="tab-articles" class="tab-pane">
             <h2 class="serif" style="font-size: 28px; margin-bottom: 24px;">Часовой журнал</h2>
             <div style="background: white; color: #111827; padding: 24px; border-radius: 16px;">
@@ -240,11 +243,21 @@
         </div>
     </div>
 
+    <div id="clientOrdersModal" class="modal">
+        <div class="modal-box" style="max-width: 600px;">
+            <button onclick="closeModal('clientOrdersModal')" class="modal-close"><i class="fa-solid fa-xmark"></i></button>
+            <h3 class="serif" style="font-size: 24px; margin-bottom: 20px;"><i class="fa-solid fa-receipt text-amber"></i> Мои заказы</h3>
+            <div id="clientOrdersContainer" style="display: flex; flex-direction: column; gap: 12px; max-height: 60vh; overflow-y: auto;">
+                <p style="color: #6b7280; text-align: center;">Загрузка...</p>
+            </div>
+        </div>
+    </div>
+
     <div id="adminModal" class="modal">
         <div class="modal-box" style="max-width: 640px;">
             <button onclick="closeModal('adminModal')" class="modal-close"><i class="fa-solid fa-xmark"></i></button>
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-                <h3 class="serif" style="font-size: 24px;"><i class="fa-solid fa-file-lines text-amber"></i> Панель заявок</h3>
+                <h3 class="serif" style="font-size: 24px;"><i class="fa-solid fa-file-lines text-amber"></i> Панель администратора</h3>
                 <button onclick="loadAdminOrders()" style="background: #f3f4f6; border: none; padding: 6px 12px; border-radius: 8px; cursor: pointer; font-size: 12px; font-weight: bold;"><i class="fa-solid fa-rotate"></i> Обновить</button>
             </div>
             <div id="adminOrdersContainer" style="display: flex; flex-direction: column; gap: 12px; max-height: 60vh; overflow-y: auto;">
@@ -267,6 +280,21 @@
             </form>
         </div>
     </div>
+
+    <!-- Защита исходного кода от просмотра -->
+    <script>
+        document.addEventListener('contextmenu', e => e.preventDefault()); // Отключение ПКМ
+        document.addEventListener('keydown', e => {
+            if (e.key === 'F12' || 
+                (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'J' || e.key === 'C')) || 
+                (e.ctrlKey && e.key === 'U') || 
+                (e.ctrlKey && e.key === 'S')) {
+                e.preventDefault();
+                alert("Просмотр исходного кода заблокирован.");
+                return false;
+            }
+        });
+    </script>
 
     <!-- Firebase SDK и логика -->
     <script type="module">
@@ -297,6 +325,7 @@
             currentUser = user;
             const authContainer = document.getElementById('authContainer');
             const adminBtn = document.getElementById('adminOrdersBtn');
+            const clientBtn = document.getElementById('clientOrdersBtn');
 
             if (user) {
                 const isAdmin = ADMINS.includes(user.email.toLowerCase());
@@ -304,12 +333,13 @@
                     <span style="color: #facc15; font-weight: 600; margin-right: 10px;">${user.email.split('@')[0]}</span>
                     <button onclick="logout()" style="background: rgba(244,63,94,0.1); border: 1px solid rgba(244,63,94,0.3); color: #f43f5e; padding: 4px 10px; border-radius: 6px; cursor: pointer;">Выйти</button>
                 `;
+                clientBtn.classList.remove('hidden');
                 if (isAdmin) {
                     adminBtn.classList.remove('hidden');
-                    initRealtimeOrders();
                 } else {
                     adminBtn.classList.add('hidden');
                 }
+                initRealtimeOrders();
             } else {
                 authContainer.innerHTML = `
                     <button onclick="openModal('authModal')" style="background: rgba(234,179,8,0.1); border: 1px solid rgba(234,179,8,0.3); color: #facc15; padding: 4px 12px; border-radius: 6px; cursor: pointer;">
@@ -317,6 +347,7 @@
                     </button>
                 `;
                 adminBtn.classList.add('hidden');
+                clientBtn.classList.add('hidden');
             }
         });
 
@@ -358,16 +389,31 @@
                 cachedOrders = [];
                 snapshot.forEach(docSnap => cachedOrders.push({ id: docSnap.id, ...docSnap.data() }));
                 
-                const badge = document.getElementById('adminBadge');
-                if (cachedOrders.length > 0) {
-                    badge.innerText = cachedOrders.length;
-                    badge.classList.remove('hidden');
-                } else {
-                    badge.classList.add('hidden');
+                const adminBadge = document.getElementById('adminBadge');
+                if (currentUser && ADMINS.includes(currentUser.email.toLowerCase())) {
+                    if (cachedOrders.length > 0) {
+                        adminBadge.innerText = cachedOrders.length;
+                        adminBadge.classList.remove('hidden');
+                    } else {
+                        adminBadge.classList.add('hidden');
+                    }
+                    if (!document.getElementById('adminModal').classList.contains('hidden')) {
+                        renderAdminOrders();
+                    }
                 }
-                
-                if (!document.getElementById('adminModal').classList.contains('hidden')) {
-                    renderAdminOrders();
+
+                if (currentUser) {
+                    const myOrders = cachedOrders.filter(o => o.userId === currentUser.uid);
+                    const clientBadge = document.getElementById('clientBadge');
+                    if (myOrders.length > 0) {
+                        clientBadge.innerText = myOrders.length;
+                        clientBadge.classList.remove('hidden');
+                    } else {
+                        clientBadge.classList.add('hidden');
+                    }
+                    if (!document.getElementById('clientOrdersModal').classList.contains('hidden')) {
+                        renderClientOrders();
+                    }
                 }
             });
         }
@@ -380,7 +426,6 @@
             document.getElementById('adminModal').classList.add('open');
             renderAdminOrders();
         };
-
         window.loadAdminOrders = () => { renderAdminOrders(); };
 
         function renderAdminOrders() {
@@ -412,6 +457,48 @@
             `).join('');
         }
 
+        window.openClientOrdersModal = () => {
+            if (!currentUser) {
+                alert("Войдите в аккаунт, чтобы просмотреть свои заказы.");
+                openModal('authModal');
+                return;
+            }
+            document.getElementById('clientOrdersModal').classList.add('open');
+            renderClientOrders();
+        };
+
+        function renderClientOrders() {
+            const container = document.getElementById('clientOrdersContainer');
+            if (!currentUser) return;
+            const myOrders = cachedOrders.filter(o => o.userId === currentUser.uid);
+            if (myOrders.length === 0) {
+                container.innerHTML = `<p style="text-align: center; color: #6b7280; padding: 20px;">У вас пока нет оформленных заказов.</p>`;
+                return;
+            }
+            container.innerHTML = myOrders.map((o, idx) => `
+                <div style="background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 12px; padding: 16px;">
+                    <div style="display: flex; justify-content: space-between; font-size: 13px; font-weight: bold; margin-bottom: 8px; color: #2563eb;">
+                        <span>Заказ #${myOrders.length - idx} — Статус: <span style="color: ${o.status === 'Принят' ? '#059669' : '#d97706'}">${o.status || 'Новый'}</span></span>
+                        <span style="color: #6b7280; font-weight: normal;">${o.date}</span>
+                    </div>
+                    <div style="background: white; padding: 8px; border-radius: 8px; font-size: 12px; margin-bottom: 8px; border: 1px solid #e5e7eb;">
+                        ${o.items.map(i => `<div>• ${i.name} (x${i.qty})</div>`).join('')}
+                    </div>
+                    <div style="display: flex; justify-content: space-between; align-items: center; font-size: 13px; font-weight: bold;">
+                        <span>Итого: <span class="text-amber">${o.total}</span></span>
+                        ${o.status === 'Новый' ? `<button onclick="cancelMyOrder('${o.id}')" style="background: #dc2626; color: white; border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 12px;">Отменить заказ</button>` : '<span style="font-size: 11px; color: #059669;">Заказ уже в обработке</span>'}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        window.cancelMyOrder = async (id) => {
+            if(confirm("Вы действительно хотите отменить этот заказ?")) {
+                await deleteDoc(doc(db, "orders", id));
+                alert("Заказ успешно отменен.");
+            }
+        };
+
         window.acceptOrder = async (id) => { await setDoc(doc(db, "orders", id), { status: "Принят" }, { merge: true }); };
         window.deleteOrder = async (id) => { if(confirm("Удалить заказ?")) await deleteDoc(doc(db, "orders", id)); };
         window.blockUser = async (userId) => {
@@ -435,8 +522,10 @@
         ];
 
         let reviews = [{ author: "Алишер Р.", rating: 5, text: "Отличный магазин, всё оригинальное!" }];
-        let cart = [];
-        let compareList = [];
+        
+        let cart = JSON.parse(localStorage.getItem('btime_cart')) || [];
+        let compareList = JSON.parse(localStorage.getItem('btime_compare')) || [];
+
         let currentCurrency = 'TJS';
         const rates = { TJS: 1, USD: 0.091, RUB: 8.5 };
 
@@ -467,7 +556,7 @@
                         <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #f3f4f6; padding-top: 12px;">
                             <span style="font-size: 16px; font-weight: 900;" class="text-amber">${formatPrice(p.priceTJS)}</span>
                             <div style="display: flex; gap: 6px;">
-                                <button onclick="toggleCompare(${p.id})" title="Сравнить" style="background: #f3f4f6; border: none; width: 36px; height: 36px; border-radius: 10px; cursor: pointer;"><i class="fa-solid fa-scale-balanced"></i></button>
+                                <button onclick="toggleCompare(${p.id})" title="Сравнить" style="background: ${compareList.includes(p.id) ? '#eab308' : '#f3f4f6'}; color: ${compareList.includes(p.id) ? 'black' : 'inherit'}; border: none; width: 36px; height: 36px; border-radius: 10px; cursor: pointer;"><i class="fa-solid fa-scale-balanced"></i></button>
                                 <button onclick="addToCart(${p.id})" title="В корзину" style="background: #eab308; border: none; width: 36px; height: 36px; border-radius: 10px; cursor: pointer; font-weight: bold;"><i class="fa-solid fa-bag-shopping"></i></button>
                             </div>
                         </div>
@@ -478,6 +567,7 @@
             document.getElementById('homeGrid').innerHTML = html;
             document.getElementById('catalogGrid').innerHTML = html;
             renderReviews();
+            updateBadges();
         }
 
         function switchTab(tabId) {
@@ -491,14 +581,15 @@
         function toggleCompare(id) {
             if (compareList.includes(id)) {
                 compareList = compareList.filter(i => i !== id);
-                alert("Товар удален из сравнения");
             } else {
                 compareList.push(id);
-                alert("Товар добавлен в сравнение");
             }
-            const badge = document.getElementById('compareBadge');
-            if (compareList.length > 0) { badge.innerText = compareList.length; badge.classList.remove('hidden'); }
-            else badge.classList.add('hidden');
+            localStorage.setItem('btime_compare', JSON.stringify(compareList));
+            updateBadges();
+            renderProducts();
+            if(!document.getElementById('tab-compare').classList.contains('hidden')) {
+                renderCompare();
+            }
         }
 
         function renderCompare() {
@@ -511,7 +602,8 @@
                 <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px;">
                     ${compareList.map(id => {
                         const p = products.find(prod => prod.id === id);
-                        return `<div style="border: 1px solid #e5e7eb; padding: 16px; border-radius: 12px; text-align: center;">
+                        return `<div style="border: 1px solid #e5e7eb; padding: 16px; border-radius: 12px; text-align: center; position: relative;">
+                            <button onclick="toggleCompare(${p.id}); renderCompare();" style="position: absolute; top: 8px; right: 8px; background: none; border: none; color: #dc2626; cursor: pointer;"><i class="fa-solid fa-xmark"></i></button>
                             <img src="${p.image}" style="height: 120px; object-fit: cover; margin-bottom: 10px;">
                             <h4 style="font-weight: bold; margin-bottom: 6px;">${p.name}</h4>
                             <p class="text-amber" style="font-weight: bold;">${formatPrice(p.priceTJS)}</p>
@@ -525,7 +617,8 @@
             const item = cart.find(i => i.id === id);
             if (item) item.qty++;
             else cart.push({ id, qty: 1 });
-            updateCartBadge();
+            localStorage.setItem('btime_cart', JSON.stringify(cart));
+            updateBadges();
             openCartModal();
         }
 
@@ -541,16 +634,27 @@
             list.innerHTML = cart.map(i => {
                 const p = products.find(prod => prod.id === i.id);
                 total += p.priceTJS * i.qty;
-                return `<div style="display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 14px;"><span>${p.name} (x${i.qty})</span><strong class="text-amber">${formatPrice(p.priceTJS * i.qty)}</strong></div>`;
+                return `<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; font-size: 14px; border-bottom: 1px solid #f3f4f6; padding-bottom: 6px;">
+                    <span>${p.name} (x${i.qty})</span>
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <strong class="text-amber">${formatPrice(p.priceTJS * i.qty)}</strong>
+                        <button onclick="removeFromCart(${p.id})" style="background: none; border: none; color: #dc2626; cursor: pointer;"><i class="fa-solid fa-trash"></i></button>
+                    </div>
+                </div>`;
             }).join('');
             document.getElementById('cartTotal').innerText = formatPrice(total);
             openModal('cartModal');
         }
 
-        async function openCheckout() {
+        function removeFromCart(id) {
+            cart = cart.filter(i => i.id !== id);
+            localStorage.setItem('btime_cart', JSON.stringify(cart));
+            updateBadges();
+            openCartModal();
+        }
+
+        function openCheckout() {
             if (cart.length === 0) return;
-            const allowed = await window.checkBlocked();
-            if (!allowed) return;
             closeModal('cartModal');
             openModal('checkoutModal');
         }
@@ -564,8 +668,8 @@
             let totalTJS = cart.reduce((sum, item) => sum + (products.find(p => p.id === item.id).priceTJS * item.qty), 0);
 
             const order = {
-                userId: auth.currentUser ? auth.currentUser.uid : null,
-                userEmail: auth.currentUser ? auth.currentUser.email : null,
+                userId: window.auth && window.auth.currentUser ? window.auth.currentUser.uid : null,
+                userEmail: window.auth && window.auth.currentUser ? window.auth.currentUser.email : null,
                 name, phone, address,
                 items: cart.map(i => ({ name: products.find(p => p.id === i.id).name, qty: i.qty })),
                 total: formatPrice(totalTJS),
@@ -575,9 +679,10 @@
             };
 
             window.saveOrderToCloud(order);
-            alert("Заказ успешно оформлен и отправлен администраторам!");
+            alert("Заказ успешно оформлен и отправлен!");
             cart = [];
-            updateCartBadge();
+            localStorage.removeItem('btime_cart');
+            updateBadges();
             closeModal('checkoutModal');
         }
 
@@ -601,11 +706,15 @@
             `).join('');
         }
 
-        function updateCartBadge() {
+        function updateBadges() {
             const count = cart.reduce((s, i) => s + i.qty, 0);
-            const badge = document.getElementById('cartBadge');
-            if (count > 0) { badge.innerText = count; badge.classList.remove('hidden'); }
-            else badge.classList.add('hidden');
+            const cartBadge = document.getElementById('cartBadge');
+            if (count > 0) { cartBadge.innerText = count; cartBadge.classList.remove('hidden'); }
+            else cartBadge.classList.add('hidden');
+
+            const compBadge = document.getElementById('compareBadge');
+            if (compareList.length > 0) { compBadge.innerText = compareList.length; compBadge.classList.remove('hidden'); }
+            else compBadge.classList.add('hidden');
         }
 
         const translations = {
