@@ -122,7 +122,6 @@
             </nav>
 
             <div class="actions">
-                <!-- Кнопка Добавить товар (+) для админа -->
                 <button id="addProductBtn" onclick="openProductModal()" class="btn-icon hidden" title="Добавить товар" style="background: #eab308; color: black; border-color: #eab308; font-weight: bold;">
                     <i class="fa-solid fa-plus"></i>
                 </button>
@@ -223,18 +222,22 @@
         </div>
     </div>
 
-    <!-- Модалка добавления/редактирования товара для админа -->
+    <!-- Модалка добавления/редактирования товара с выбором файла -->
     <div id="productModal" class="modal">
         <div class="modal-box">
             <button onclick="closeModal('productModal')" class="modal-close"><i class="fa-solid fa-xmark"></i></button>
             <h3 id="productModalTitle" class="serif" style="font-size: 22px; margin-bottom: 16px;">Добавить товар</h3>
             <form onsubmit="saveProduct(event)">
                 <input type="hidden" id="editProductId">
+                <input type="hidden" id="prodImageBase64">
                 <div><label>Название</label><input type="text" id="prodName" required></div>
                 <div><label>Бренд</label><input type="text" id="prodBrand" required></div>
                 <div><label>Артикул (SKU) — виден только админу</label><input type="text" id="prodSku" required></div>
                 <div><label>Цена (в сомони TJS)</label><input type="number" id="prodPrice" required min="1"></div>
-                <div><label>Ссылка на фото (URL)</label><input type="url" id="prodImage" required></div>
+                <div>
+                    <label>Фото из устройства</label>
+                    <input type="file" id="prodImageFile" accept="image/*" onchange="handleImageUpload(event)">
+                </div>
                 <div><label>Бейдж (например: Хит, Премиум)</label><input type="text" id="prodBadge" value="Хит"></div>
                 <button type="submit" class="btn-gold">Сохранить товар</button>
             </form>
@@ -400,7 +403,6 @@
                 clientBtn.classList.add('hidden');
                 addProductBtn.classList.add('hidden');
             }
-            // Перерисовываем товары, чтобы показать/скрыть админские кнопки
             if (typeof renderProducts === 'function') renderProducts();
         });
 
@@ -578,7 +580,7 @@
         window.closeModal = (id) => document.getElementById(id).classList.remove('open');
     </script>
 
-    <!-- Скрипты магазина, товаров и админского управления -->
+    <!-- Скрипты магазина и загрузки файлов -->
     <script>
         let products = JSON.parse(localStorage.getItem('btime_products')) || [
             { id: 1, name: "Rolex Submariner Date", brand: "Rolex", sku: "RLX-001", priceTJS: 98000, image: "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=600&auto=format&fit=crop&q=80", badge: "Хит" },
@@ -715,7 +717,18 @@
             updateBadges();
         }
 
-        // Функции управления товарами для админа
+        // Обработка загрузки файла фото
+        window.handleImageUpload = (event) => {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('prodImageBase64').value = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            }
+        };
+
         window.openProductModal = () => {
             if (!isAdminUser()) return;
             document.getElementById('editProductId').value = '';
@@ -723,7 +736,8 @@
             document.getElementById('prodBrand').value = '';
             document.getElementById('prodSku').value = '';
             document.getElementById('prodPrice').value = '';
-            document.getElementById('prodImage').value = '';
+            document.getElementById('prodImageFile').value = '';
+            document.getElementById('prodImageBase64').value = '';
             document.getElementById('prodBadge').value = 'Хит';
             document.getElementById('productModalTitle').innerText = "Добавить товар";
             openModal('productModal');
@@ -738,7 +752,8 @@
             document.getElementById('prodBrand').value = p.brand;
             document.getElementById('prodSku').value = p.sku || '';
             document.getElementById('prodPrice').value = p.priceTJS;
-            document.getElementById('prodImage').value = p.image;
+            document.getElementById('prodImageFile').value = '';
+            document.getElementById('prodImageBase64').value = p.image; // сохраняем текущее фото
             document.getElementById('prodBadge').value = p.badge || 'Хит';
             document.getElementById('productModalTitle').innerText = "Редактировать товар";
             openModal('productModal');
@@ -752,24 +767,26 @@
             const brand = document.getElementById('prodBrand').value;
             const sku = document.getElementById('prodSku').value;
             const priceTJS = parseFloat(document.getElementById('prodPrice').value);
-            const image = document.getElementById('prodImage').value;
+            const imageBase64 = document.getElementById('prodImageBase64').value;
             const badge = document.getElementById('prodBadge').value;
 
             if (editId) {
-                // Редактирование
                 const p = products.find(prod => prod.id == editId);
                 if (p) {
                     p.name = name;
                     p.brand = brand;
                     p.sku = sku;
                     p.priceTJS = priceTJS;
-                    p.image = image;
+                    if (imageBase64) p.image = imageBase64; // обновляем фото только если выбрали новое
                     p.badge = badge;
                 }
             } else {
-                // Добавление нового
+                if (!imageBase64) {
+                    alert("Пожалуйста, выберите фото товара из устройства!");
+                    return;
+                }
                 const newId = products.length > 0 ? Math.max(...products.map(p => p.id)) + 1 : 1;
-                products.unshift({ id: newId, name, brand, sku, priceTJS, image, badge });
+                products.unshift({ id: newId, name, brand, sku, priceTJS, image: imageBase64, badge });
             }
 
             localStorage.setItem('btime_products', JSON.stringify(products));
