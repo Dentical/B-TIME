@@ -362,7 +362,6 @@
 
         window.products = JSON.parse(localStorage.getItem('btime_products')) || defaultProducts;
 
-        // Рендер товаров сразу для надежности
         if (typeof renderProducts === 'function') renderProducts();
 
         async function checkIsBlocked(uid) {
@@ -374,7 +373,6 @@
             }
         }
 
-        // Синхронизация товаров из Firestore в реальном времени
         const qProd = query(collection(db, "products"), orderBy("timestamp", "desc"));
         onSnapshot(qProd, (snapshot) => {
             let cloudProducts = [];
@@ -389,7 +387,6 @@
             }
             if (typeof renderProducts === 'function') renderProducts();
         }, (error) => {
-            console.log("Firebase sync warning, using local storage");
             if (typeof renderProducts === 'function') renderProducts();
         });
 
@@ -603,6 +600,7 @@
         window.saveProduct = async (e) => {
             e.preventDefault();
             if (!ADMINS.includes(currentUser?.email?.toLowerCase())) return;
+            
             const editId = document.getElementById('editProductDocId').value;
             const name = document.getElementById('prodName').value;
             const brand = document.getElementById('prodBrand').value;
@@ -611,13 +609,19 @@
             const imageBase64 = document.getElementById('prodImageBase64').value;
             const badge = document.getElementById('prodBadge').value;
 
+            closeModal('productModal');
+
             try {
                 if (editId && !editId.startsWith('def_')) {
                     const updateData = { name, brand, sku, priceTJS, badge };
                     if (imageBase64) updateData.image = imageBase64;
                     await updateDoc(doc(db, "products", editId), updateData);
                 } else {
-                    if (!imageBase64) { alert("Выберите фото!"); return; }
+                    if (!imageBase64) { 
+                        alert("Выберите фото!"); 
+                        openModal('productModal');
+                        return; 
+                    }
                     await addDoc(collection(db, "products"), { name, brand, sku, priceTJS, image: imageBase64, badge, timestamp: Date.now() });
                 }
             } catch (err) {
@@ -630,9 +634,6 @@
                 localStorage.setItem('btime_products', JSON.stringify(window.products));
                 if (typeof renderProducts === 'function') renderProducts();
             }
-
-            closeModal('productModal');
-            alert("Товар успешно сохранен!");
         };
 
         window.deleteProduct = async (id) => {
