@@ -115,19 +115,14 @@
             </nav>
 
             <div class="actions">
-                <!-- Кнопка Мои заказы (клиент) -->
                 <button id="clientOrdersBtn" onclick="openClientOrdersModal()" class="btn-icon hidden" title="Мои заказы" style="color: #60a5fa; border-color: rgba(96,165,250,0.4);">
                     <i class="fa-solid fa-receipt"></i>
                     <span id="clientBadge" class="badge hidden" style="background:#60a5fa; color:white;">0</span>
                 </button>
-
-                <!-- Панель администратора -->
                 <button id="adminOrdersBtn" onclick="openAdminModal()" class="btn-icon hidden" title="Панель администратора" style="color: #facc15; border-color: rgba(234,179,8,0.4);">
                     <i class="fa-solid fa-file-lines"></i>
                     <span id="adminBadge" class="badge hidden">0</span>
                 </button>
-
-                <!-- Корзина -->
                 <button onclick="openCartModal()" class="btn-icon" title="Корзина">
                     <i class="fa-solid fa-bag-shopping"></i>
                     <span id="cartBadge" class="badge hidden">0</span>
@@ -243,7 +238,6 @@
         </div>
     </div>
 
-    <!-- Модалка: Мои заказы (клиент) -->
     <div id="clientOrdersModal" class="modal">
         <div class="modal-box" style="max-width: 600px;">
             <button onclick="closeModal('clientOrdersModal')" class="modal-close"><i class="fa-solid fa-xmark"></i></button>
@@ -257,7 +251,6 @@
         </div>
     </div>
 
-    <!-- Модалка: Админ-панель -->
     <div id="adminModal" class="modal">
         <div class="modal-box" style="max-width: 640px;">
             <button onclick="closeModal('adminModal')" class="modal-close"><i class="fa-solid fa-xmark"></i></button>
@@ -320,6 +313,10 @@
         const auth = getAuth(app);
         const db = getFirestore(app);
         const googleProvider = new GoogleAuthProvider();
+
+        // Экспортируем auth глобально для доступа из других скриптов
+        window.firebaseAuth = auth;
+        window.firebaseDb = db;
 
         const ADMINS = ["samirdv888@gmail.com", "abdullochoriev4242@gmail.com"];
         let currentUser = null;
@@ -453,7 +450,8 @@
 
         // Заказы клиента
         window.openClientOrdersModal = () => {
-            if (!currentUser) {
+            const activeUser = window.firebaseAuth ? window.firebaseAuth.currentUser : null;
+            if (!activeUser) {
                 alert("Войдите в аккаунт, чтобы просмотреть свои заказы.");
                 openModal('authModal');
                 return;
@@ -466,8 +464,9 @@
 
         function renderClientOrders() {
             const container = document.getElementById('clientOrdersContainer');
-            if (!currentUser) return;
-            const myOrders = cachedOrders.filter(o => o.userId === currentUser.uid);
+            const activeUser = window.firebaseAuth ? window.firebaseAuth.currentUser : null;
+            if (!activeUser) return;
+            const myOrders = cachedOrders.filter(o => o.userId === activeUser.uid);
             
             if (myOrders.length === 0) {
                 container.innerHTML = `<p style="text-align: center; color: #6b7280; padding: 20px;">У вас пока нет оформленных заказов.</p>`;
@@ -657,8 +656,8 @@
 
         function openCheckout() {
             if (cart.length === 0) return;
-            // Проверка авторизации
-            if (!window.auth || !window.auth.currentUser) {
+            const activeUser = window.firebaseAuth ? window.firebaseAuth.currentUser : null;
+            if (!activeUser) {
                 alert("Пожалуйста, войдите в аккаунт для оформления заказа!");
                 closeModal('cartModal');
                 openModal('authModal');
@@ -670,6 +669,14 @@
 
         function submitOrder(e) {
             e.preventDefault();
+            const activeUser = window.firebaseAuth ? window.firebaseAuth.currentUser : null;
+            if (!activeUser) {
+                alert("Пожалуйста, войдите в аккаунт для оформления заказа!");
+                closeModal('checkoutModal');
+                openModal('authModal');
+                return;
+            }
+
             const name = document.getElementById('orderName').value;
             const phone = document.getElementById('orderPhone').value;
             const address = document.getElementById('orderAddress').value;
@@ -677,8 +684,8 @@
             let totalTJS = cart.reduce((sum, item) => sum + (products.find(p => p.id === item.id).priceTJS * item.qty), 0);
 
             const order = {
-                userId: window.auth && window.auth.currentUser ? window.auth.currentUser.uid : null,
-                userEmail: window.auth && window.auth.currentUser ? window.auth.currentUser.email : null,
+                userId: activeUser.uid,
+                userEmail: activeUser.email,
                 name, phone, address,
                 items: cart.map(i => ({ name: products.find(p => p.id === i.id).name, qty: i.qty })),
                 total: formatPrice(totalTJS),
