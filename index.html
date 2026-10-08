@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>B-Time — Официальный интернет-магазин часов</title>
+    <title id="pageTitle">B-Time — Официальный интернет-магазин часов</title>
     <!-- FontAwesome для иконок -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
@@ -13,9 +13,8 @@
         body { background-color: #0b1329; color: #f3f4f6; min-height: 100vh; display: flex; flex-direction: column; }
         .serif { font-family: 'Playfair Display', serif; }
         
-        /* Быстрые и легкие стили интерфейса */
         .top-bar { background: #070d1d; border-bottom: 1px solid rgba(30, 58, 138, 0.5); font-size: 12px; color: #d1d5db; padding: 8px 16px; }
-        .top-bar-inner { max-width: 1280px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; }
+        .top-bar-inner { max-width: 1280px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; }
         
         header { position: sticky; top: 0; z-index: 40; background: rgba(11, 19, 41, 0.95); backdrop-filter: blur(10px); border-bottom: 1px solid rgba(30, 58, 138, 0.6); height: 80px; display: flex; align-items: center; }
         .header-inner { max-width: 1280px; margin: 0 auto; width: 100%; padding: 0 16px; display: flex; justify-content: space-between; align-items: center; }
@@ -23,22 +22,20 @@
         .logo { display: flex; align-items: center; gap: 12px; cursor: pointer; text-decoration: none; color: white; }
         .logo-icon { width: 40px; height: 40px; border-radius: 12px; background: linear-gradient(135deg, #ca8a04, #facc15); display: flex; align-items: center; justify-content: center; color: black; font-size: 18px; }
         
-        nav { display: flex; gap: 24px; font-size: 14px; font-weight: 500; }
+        nav { display: flex; gap: 20px; font-size: 14px; font-weight: 500; }
         nav button { background: none; border: none; color: #e5e7eb; cursor: pointer; transition: color 0.2s; }
         nav button:hover, nav button.active { color: #facc15; }
 
-        .actions { display: flex; align-items: center; gap: 12px; }
+        .actions { display: flex; align-items: center; gap: 10px; }
         .btn-icon { background: rgba(255, 255, 255, 0.1); border: 1px solid #1e3a8a; color: #e5e7eb; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; position: relative; transition: 0.2s; }
         .btn-icon:hover { border-color: #facc15; color: #facc15; }
         
         .badge { position: absolute; top: -4px; right: -4px; background: #eab308; color: black; font-size: 10px; font-weight: bold; width: 18px; height: 18px; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
-        .badge-rose { background: #f43f5e; color: white; }
         
         .main-content { flex-grow: 1; max-width: 1280px; margin: 0 auto; width: 100%; padding: 32px 16px; }
         .tab-pane { display: none; }
         .tab-pane.active { display: block; }
 
-        /* Сетка товаров */
         .grid-products { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 24px; }
         .card { background: white; border-radius: 16px; overflow: hidden; color: #111827; box-shadow: 0 4px 6px rgba(0,0,0,0.1); display: flex; flex-direction: column; }
         .card-img { background: #f9fafb; height: 220px; display: flex; align-items: center; justify-content: center; position: relative; }
@@ -48,19 +45,19 @@
         .btn-gold { background: linear-gradient(135deg, #eab308, #facc15); color: black; font-weight: bold; border: none; padding: 12px 20px; border-radius: 12px; cursor: pointer; width: 100%; transition: opacity 0.2s; }
         .btn-gold:hover { opacity: 0.9; }
 
-        /* Модальные окна */
         .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(5px); z-index: 100; display: none; align-items: center; justify-content: center; padding: 16px; }
         .modal.open { display: flex; }
-        .modal-box { background: white; color: #111827; width: 100%; max-width: 480px; border-radius: 24px; padding: 32px; position: relative; max-height: 90vh; overflow-y: auto; }
+        .modal-box { background: white; color: #111827; width: 100%; max-width: 500px; border-radius: 24px; padding: 32px; position: relative; max-height: 90vh; overflow-y: auto; }
         .modal-close { position: absolute; top: 20px; right: 20px; background: none; border: none; font-size: 20px; cursor: pointer; color: #6b7280; }
         
         form div { margin-bottom: 16px; }
         form label { display: block; font-size: 13px; font-weight: 600; margin-bottom: 6px; color: #374151; }
         form input, form textarea, form select { width: 100%; padding: 10px 14px; border: 1px solid #d1d5db; border-radius: 10px; font-size: 14px; }
         
-        .hidden { display: none !important; }
+        footer { background: #070d1d; border-top: 1px solid rgba(30, 58, 138, 0.5); padding: 40px 16px; margin-top: 60px; color: #9ca3af; font-size: 14px; }
+        .footer-inner { max-width: 1280px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 32px; }
         
-        /* Специфичные цвета */
+        .hidden { display: none !important; }
         .text-gold { color: #facc15; }
         .text-amber { color: #d97706; }
     </style>
@@ -70,11 +67,36 @@
     <!-- Верхняя панель -->
     <div class="top-bar">
         <div class="top-bar-inner">
-            <div><i class="fa-solid fa-location-dot text-gold"></i> Душанбе | <i class="fa-solid fa-phone text-gold ml-2"></i> +992 (90) 000-00-00</div>
-            <div id="authContainer">
-                <button onclick="openAuthModal()" style="background: rgba(234,179,8,0.1); border: 1px solid rgba(234,179,8,0.3); color: #facc15; padding: 4px 12px; border-radius: 6px; cursor: pointer;">
-                    <i class="fa-solid fa-user"></i> Войти
-                </button>
+            <div style="display: flex; gap: 16px; align-items: center;">
+                <span><i class="fa-solid fa-location-dot text-gold"></i> 
+                    <select id="citySelect" style="background: transparent; color: white; border: none; cursor: pointer; font-size: 12px;">
+                        <option value="dushanbe" style="background:#0b1329;">Душанбе</option>
+                        <option value="khujand" style="background:#0b1329;">Худжанд</option>
+                    </select>
+                </span>
+                <span><i class="fa-solid fa-phone text-gold"></i> +992 (90) 000-00-00</span>
+            </div>
+            <div style="display: flex; gap: 12px; align-items: center;">
+                <div>
+                    <span>Язык:</span>
+                    <select id="langSelect" onchange="changeLanguage(this.value)" style="background: #1e3a8a; color: #facc15; border: none; padding: 2px 6px; border-radius: 4px; font-weight: bold;">
+                        <option value="ru" style="background:#0b1329;">RU</option>
+                        <option value="en" style="background:#0b1329;">EN</option>
+                    </select>
+                </div>
+                <div>
+                    <span>Валюта:</span>
+                    <select id="currencySelect" onchange="changeCurrency(this.value)" style="background: #1e3a8a; color: #facc15; border: none; padding: 2px 6px; border-radius: 4px; font-weight: bold;">
+                        <option value="TJS" style="background:#0b1329;">TJS (ЅM)</option>
+                        <option value="USD" style="background:#0b1329;">USD ($)</option>
+                        <option value="RUB" style="background:#0b1329;">RUB (₽)</option>
+                    </select>
+                </div>
+                <div id="authContainer">
+                    <button onclick="openModal('authModal')" style="background: rgba(234,179,8,0.1); border: 1px solid rgba(234,179,8,0.3); color: #facc15; padding: 4px 12px; border-radius: 6px; cursor: pointer;">
+                        <i class="fa-solid fa-user"></i> Войти
+                    </button>
+                </div>
             </div>
         </div>
     </div>
@@ -90,13 +112,15 @@
                 </div>
             </div>
 
-            <nav>
-                <button onclick="switchTab('home')" class="nav-btn active" data-tab="home">Главная</button>
-                <button onclick="switchTab('catalog')" class="nav-btn" data-tab="catalog">Каталог</button>
+            <nav style="display: none; @media(min-width: 768px){display:flex;}">
+                <button onclick="switchTab('home')" class="nav-btn active" data-tab="home" data-i18n="navHome">Главная</button>
+                <button onclick="switchTab('catalog')" class="nav-btn" data-tab="catalog" data-i18n="navCatalog">Каталог</button>
+                <button onclick="switchTab('compare')" class="nav-btn" data-tab="compare">Сравнение <span id="compareBadge" style="background:#eab308; color:black; padding:1px 6px; border-radius:10px; font-size:10px;" class="hidden">0</span></button>
+                <button onclick="switchTab('reviews')" class="nav-btn" data-tab="reviews" data-i18n="navReviews">Отзывы</button>
+                <button onclick="switchTab('articles')" class="nav-btn" data-tab="articles" data-i18n="navArticles">Статьи</button>
             </nav>
 
             <div class="actions">
-                <!-- Кнопка админа (Заявки) -->
                 <button id="adminOrdersBtn" onclick="openAdminModal()" class="btn-icon hidden" title="Панель заявок" style="color: #facc15; border-color: rgba(234,179,8,0.4);">
                     <i class="fa-solid fa-file-lines"></i>
                     <span id="adminBadge" class="badge hidden">0</span>
@@ -114,11 +138,11 @@
     <main class="main-content">
         <!-- Главная -->
         <div id="tab-home" class="tab-pane active">
-            <div style="padding: 40px 0; display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: center;">
+            <div style="padding: 40px 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 40px; align-items: center;">
                 <div>
-                    <span style="background: rgba(234,179,8,0.1); border: 1px solid rgba(234,179,8,0.3); color: #facc15; padding: 6px 12px; border-radius: 20px; font-size: 11px; font-weight: 600; text-transform: uppercase;">Официальный дилер</span>
-                    <h1 class="serif" style="font-size: 48px; line-height: 1.1; margin: 20px 0;">Элегантность в каждой секунде</h1>
-                    <p style="color: #9ca3af; margin-bottom: 24px; font-size: 15px;">Эксклюзивная коллекция швейцарских и мировых брендов с гарантией качества и быстрой доставкой.</p>
+                    <span style="background: rgba(234,179,8,0.1); border: 1px solid rgba(234,179,8,0.3); color: #facc15; padding: 6px 12px; border-radius: 20px; font-size: 11px; font-weight: 600; text-transform: uppercase;" data-i18n="heroBadge">Официальный дилер</span>
+                    <h1 class="serif" style="font-size: 42px; line-height: 1.1; margin: 20px 0;">Элегантность в каждой секунде</h1>
+                    <p style="color: #9ca3af; margin-bottom: 24px; font-size: 15px;">Эксклюзивная коллекция швейцарских и мировых брендов с гарантией качества.</p>
                     <button onclick="switchTab('catalog')" class="btn-gold" style="width: auto; padding: 14px 28px;">Перейти в каталог</button>
                 </div>
                 <div style="text-align: center;">
@@ -126,7 +150,7 @@
                 </div>
             </div>
 
-            <h2 class="serif" style="font-size: 28px; margin: 40px 0 20px;">Популярные модели</h2>
+            <h2 class="serif" style="font-size: 28px; margin: 40px 0 20px;">Хиты продаж</h2>
             <div id="homeGrid" class="grid-products"></div>
         </div>
 
@@ -135,34 +159,67 @@
             <h2 class="serif" style="font-size: 28px; margin-bottom: 24px;">Каталог часов</h2>
             <div id="catalogGrid" class="grid-products"></div>
         </div>
+
+        <!-- Сравнение -->
+        <div id="tab-compare" class="tab-pane">
+            <h2 class="serif" style="font-size: 28px; margin-bottom: 24px;">Сравнение товаров</h2>
+            <div id="compareContainer" style="background: white; color: #111827; padding: 24px; border-radius: 16px;"></div>
+        </div>
+
+        <!-- Отзывы -->
+        <div id="tab-reviews" class="tab-pane">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+                <h2 class="serif" style="font-size: 28px;">Отзывы клиентов</h2>
+                <button onclick="openModal('reviewModal')" class="btn-gold" style="width: auto; padding: 10px 20px;">Оставить отзыв</button>
+            </div>
+            <div id="reviewsGrid" class="grid-products"></div>
+        </div>
+
+        <!-- Статьи -->
+        <div id="tab-articles" class="tab-pane">
+            <h2 class="serif" style="font-size: 28px; margin-bottom: 24px;">Часовой журнал</h2>
+            <div style="background: white; color: #111827; padding: 24px; border-radius: 16px;">
+                <h3 class="serif" style="font-size: 20px; margin-bottom: 10px;">Как выбрать механические часы?</h3>
+                <p style="color: #4b5563; font-size: 14px; line-height: 1.6;">Механические часы — это не просто прибор для измерения времени, а статусный аксессуар и настоящее произведение инженерного искусства...</p>
+            </div>
+        </div>
     </main>
 
-    <!-- Модальное окно Авторизации -->
+    <!-- Футер -->
+    <footer>
+        <div class="footer-inner">
+            <div>
+                <div class="logo" style="margin-bottom: 12px;">
+                    <div class="logo-icon"><i class="fa-solid fa-clock"></i></div>
+                    <span style="font-size: 20px; font-weight: 900; color: white;" class="serif">B-TIME</span>
+                </div>
+                <p>Официальный дилер элитных часов в Таджикистане. Безупречное качество и премиальный сервис.</p>
+            </div>
+            <div>
+                <h4 style="color: white; font-weight: bold; margin-bottom: 12px;">Контакты</h4>
+                <p><i class="fa-solid fa-phone text-gold"></i> +992 (90) 000-00-00</p>
+                <p><i class="fa-solid fa-envelope text-gold"></i> info@b-time.tj</p>
+                <p><i class="fa-solid fa-location-dot text-gold"></i> г. Душанбе, пр. Рудаки</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Модалки -->
     <div id="authModal" class="modal">
         <div class="modal-box">
             <button onclick="closeModal('authModal')" class="modal-close"><i class="fa-solid fa-xmark"></i></button>
             <h3 class="serif" style="font-size: 24px; margin-bottom: 20px;">Вход в аккаунт</h3>
-            <div id="authError" style="color: #ef4444; font-size: 12px; margin-bottom: 12px;" class="hidden"></div>
-            
             <button onclick="loginWithGoogle()" style="width: 100%; background: white; border: 1px solid #d1d5db; padding: 12px; border-radius: 10px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 16px;">
-                <i class="fa-brands fa-google" style="color: #ea4335;">}</i> Войти через Google
+                <i class="fa-brands fa-google" style="color: #ea4335;"></i> Войти через Google
             </button>
-
             <form onsubmit="handleEmailAuth(event)">
-                <div>
-                    <label>Email</label>
-                    <input type="email" id="authEmail" required placeholder="name@example.com">
-                </div>
-                <div>
-                    <label>Пароль</label>
-                    <input type="password" id="authPassword" required placeholder="••••••••">
-                </div>
-                <button type="submit" class="btn-gold">Войти</button>
+                <div><label>Email</label><input type="email" id="authEmail" required></div>
+                <div><label>Пароль</label><input type="password" id="authPassword" required minlength="6"></div>
+                <button type="submit" class="btn-gold">Войти / Регистрация</button>
             </form>
         </div>
     </div>
 
-    <!-- Модальное окно Корзины -->
     <div id="cartModal" class="modal">
         <div class="modal-box">
             <button onclick="closeModal('cartModal')" class="modal-close"><i class="fa-solid fa-xmark"></i></button>
@@ -176,35 +233,24 @@
         </div>
     </div>
 
-    <!-- Модальное окно Оформления заказа -->
     <div id="checkoutModal" class="modal">
         <div class="modal-box">
             <button onclick="closeModal('checkoutModal')" class="modal-close"><i class="fa-solid fa-xmark"></i></button>
             <h3 class="serif" style="font-size: 24px; margin-bottom: 20px;">Оформление заказа</h3>
             <form onsubmit="submitOrder(event)">
-                <div>
-                    <label>Ваше имя</label>
-                    <input type="text" id="orderName" required>
-                </div>
-                <div>
-                    <label>Номер телефона</label>
-                    <input type="tel" id="orderPhone" required placeholder="+992 XX XXX XX XX">
-                </div>
-                <div>
-                    <label>Адрес доставки</label>
-                    <textarea id="orderAddress" required rows="2"></textarea>
-                </div>
+                <div><label>Ваше имя</label><input type="text" id="orderName" required></div>
+                <div><label>Телефон</label><input type="tel" id="orderPhone" required></div>
+                <div><label>Адрес</label><textarea id="orderAddress" required rows="2"></textarea></div>
                 <button type="submit" class="btn-gold">Подтвердить заказ</button>
             </form>
         </div>
     </div>
 
-    <!-- Модальное окно Админ-панели (Заявки) -->
     <div id="adminModal" class="modal">
         <div class="modal-box" style="max-width: 640px;">
             <button onclick="closeModal('adminModal')" class="modal-close"><i class="fa-solid fa-xmark"></i></button>
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-                <h3 class="serif" style="font-size: 24px;"><i class="fa-solid fa-file-lines text-amber"></i> Заявки клиентов</h3>
+                <h3 class="serif" style="font-size: 24px;"><i class="fa-solid fa-file-lines text-amber"></i> Панель заявок</h3>
                 <button onclick="loadAdminOrders()" style="background: #f3f4f6; border: none; padding: 6px 12px; border-radius: 8px; cursor: pointer; font-size: 12px; font-weight: bold;"><i class="fa-solid fa-rotate"></i> Обновить</button>
             </div>
             <div id="adminOrdersContainer" style="display: flex; flex-direction: column; gap: 12px; max-height: 60vh; overflow-y: auto;">
@@ -213,30 +259,26 @@
         </div>
     </div>
 
-    <!-- Быстрые скрипты Firebase и Логика -->
+    <div id="reviewModal" class="modal">
+        <div class="modal-box">
+            <button onclick="closeModal('reviewModal')" class="modal-close"><i class="fa-solid fa-xmark"></i></button>
+            <h3 class="serif" style="font-size: 24px; margin-bottom: 20px;">Оставить отзыв</h3>
+            <form onsubmit="submitReview(event)">
+                <div>
+                    <label>Оценка</label>
+                    <select id="reviewRating"><option value="5">★★★★★ (5/5)</option><option value="4">★★★★☆ (4/5)</option></select>
+                </div>
+                <div><label>Текст отзыва</label><textarea id="reviewText" required rows="3"></textarea></div>
+                <button type="submit" class="btn-gold">Отправить</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Firebase SDK и логика -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js";
-        import { 
-            getAuth, 
-            signInWithEmailAndPassword, 
-            signInWithPopup,
-            GoogleAuthProvider,
-            signOut, 
-            onAuthStateChanged 
-        } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
-        import { 
-            getFirestore, 
-            collection, 
-            addDoc, 
-            getDocs, 
-            doc,
-            deleteDoc,
-            setDoc,
-            getDoc,
-            onSnapshot,
-            query, 
-            orderBy 
-        } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
+        import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
+        import { getFirestore, collection, addDoc, getDocs, doc, deleteDoc, setDoc, onSnapshot, query, orderBy } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyDCyzNeJt0Fi67LALJljFjjeQWJ9uqC2io",
@@ -254,12 +296,9 @@
         const googleProvider = new GoogleAuthProvider();
 
         const ADMINS = ["samirdv888@gmail.com", "abdullochoriev4242@gmail.com"];
-        let currentUser = null;
         let cachedOrders = [];
 
-        // Слушатель авторизации (работает мгновенно)
         onAuthStateChanged(auth, (user) => {
-            currentUser = user;
             const authContainer = document.getElementById('authContainer');
             const adminBtn = document.getElementById('adminOrdersBtn');
 
@@ -285,27 +324,22 @@
             }
         });
 
-        window.logout = () => { signOut(auth); };
+        window.logout = () => signOut(auth);
         window.loginWithGoogle = async () => {
-            try { await signInWithPopup(auth, googleProvider); closeModal('authModal'); } 
-            catch(e) { showAuthError(e.message); }
+            try { await signInWithPopup(auth, googleProvider); closeModal('authModal'); } catch(e) { alert("Ошибка: " + e.message); }
         };
-
         window.handleEmailAuth = async (e) => {
             e.preventDefault();
             const email = document.getElementById('authEmail').value;
             const pass = document.getElementById('authPassword').value;
-            try { await signInWithEmailAndPassword(auth, email, pass); closeModal('authModal'); }
-            catch(err) { showAuthError(err.message); }
+            try {
+                await signInWithEmailAndPassword(auth, email, pass);
+            } catch(err) {
+                try { await createUserWithEmailAndPassword(auth, email, pass); alert("Регистрация успешна!"); } catch(e2) { alert(e2.message); return; }
+            }
+            closeModal('authModal');
         };
 
-        function showAuthError(msg) {
-            const err = document.getElementById('authError');
-            err.innerText = msg;
-            err.classList.remove('hidden');
-        }
-
-        // Live обновление заявок без задержек
         function initRealtimeOrders() {
             const q = query(collection(db, "orders"), orderBy("timestamp", "desc"));
             onSnapshot(q, (snapshot) => {
@@ -327,7 +361,7 @@
         }
 
         window.saveOrderToCloud = async (orderData) => {
-            try { await addDoc(collection(db, "orders"), orderData); } catch(e) { console.error(e); }
+            try { await addDoc(collection(db, "orders"), orderData); } catch(e) { alert("Ошибка отправки заказа в базу: " + e.message); }
         };
 
         window.openAdminModal = () => {
@@ -368,21 +402,36 @@
         window.acceptOrder = async (id) => { await setDoc(doc(db, "orders", id), { status: "Принят" }, { merge: true }); };
         window.deleteOrder = async (id) => { if(confirm("Удалить заказ?")) await deleteDoc(doc(db, "orders", id)); };
 
-        // Делаем функции глобальными для HTML
         window.openModal = (id) => document.getElementById(id).classList.add('open');
         window.closeModal = (id) => document.getElementById(id).classList.remove('open');
     </script>
 
-    <!-- Основные быстрые скрипты магазина -->
+    <!-- Скрипты каталога, сравнения и валют -->
     <script>
         const products = [
-            { id: 1, name: "Rolex Submariner Date", brand: "Rolex", price: 98000, image: "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=600&auto=format&fit=crop&q=80", badge: "Хит" },
-            { id: 2, name: "Omega Seamaster Diver", brand: "Omega", price: 75000, image: "https://images.unsplash.com/photo-1547996160-81dfa63595aa?w=600&auto=format&fit=crop&q=80", badge: "Премиум" },
-            { id: 3, name: "Tissot Gentleman", brand: "Tissot", price: 9500, image: "https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?w=600&auto=format&fit=crop&q=80", badge: "Хит" },
-            { id: 4, name: "Casio G-Shock", brand: "Casio", price: 1800, image: "https://images.unsplash.com/photo-1533139502658-0198f920d8e8?w=600&auto=format&fit=crop&q=80", badge: "Хит" }
+            { id: 1, name: "Rolex Submariner Date", brand: "Rolex", priceTJS: 98000, image: "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=600&auto=format&fit=crop&q=80", badge: "Хит" },
+            { id: 2, name: "Omega Seamaster Diver", brand: "Omega", priceTJS: 75000, image: "https://images.unsplash.com/photo-1547996160-81dfa63595aa?w=600&auto=format&fit=crop&q=80", badge: "Премиум" },
+            { id: 3, name: "Tissot Gentleman", brand: "Tissot", priceTJS: 9500, image: "https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?w=600&auto=format&fit=crop&q=80", badge: "Хит" },
+            { id: 4, name: "Casio G-Shock", brand: "Casio", priceTJS: 1800, image: "https://images.unsplash.com/photo-1533139502658-0198f920d8e8?w=600&auto=format&fit=crop&q=80", badge: "Хит" }
         ];
 
+        let reviews = [{ author: "Алишер Р.", rating: 5, text: "Отличный магазин, всё оригинальное!" }];
         let cart = [];
+        let compareList = [];
+        let currentCurrency = 'TJS';
+        const rates = { TJS: 1, USD: 0.091, RUB: 8.5 };
+
+        function formatPrice(tjs) {
+            let val = tjs * rates[currentCurrency];
+            if (currentCurrency === 'USD') return `$${Math.round(val).toLocaleString()}`;
+            if (currentCurrency === 'RUB') return `${Math.round(val).toLocaleString()} ₽`;
+            return `${Math.round(val).toLocaleString()} ЅM`;
+        }
+
+        function changeCurrency(val) {
+            currentCurrency = val;
+            renderProducts();
+        }
 
         function renderProducts() {
             const html = products.map(p => `
@@ -397,8 +446,11 @@
                             <h3 style="font-size: 15px; font-weight: bold; margin: 4px 0 12px;">${p.name}</h3>
                         </div>
                         <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #f3f4f6; pt: 12px;">
-                            <span style="font-size: 16px; font-weight: 900;" class="text-amber">${p.price.toLocaleString()} ЅM</span>
-                            <button onclick="addToCart(${p.id})" style="background: #eab308; border: none; width: 36px; height: 36px; border-radius: 10px; cursor: pointer; font-weight: bold;"><i class="fa-solid fa-bag-shopping"></i></button>
+                            <span style="font-size: 16px; font-weight: 900;" class="text-amber">${formatPrice(p.priceTJS)}</span>
+                            <div style="display: flex; gap: 6px;">
+                                <button onclick="toggleCompare(${p.id})" title="Сравнить" style="background: #f3f4f6; border: none; width: 36px; height: 36px; border-radius: 10px; cursor: pointer;"><i class="fa-solid fa-scale-balanced"></i></button>
+                                <button onclick="addToCart(${p.id})" title="В корзину" style="background: #eab308; border: none; width: 36px; height: 36px; border-radius: 10px; cursor: pointer; font-weight: bold;"><i class="fa-solid fa-bag-shopping"></i></button>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -406,13 +458,48 @@
 
             document.getElementById('homeGrid').innerHTML = html;
             document.getElementById('catalogGrid').innerHTML = html;
+            renderReviews();
         }
 
         function switchTab(tabId) {
             document.querySelectorAll('.tab-pane').forEach(el => el.classList.remove('active'));
             document.querySelectorAll('.nav-btn').forEach(el => el.classList.remove('active'));
             document.getElementById(`tab-${tabId}`).classList.add('active');
+            if (tabId === 'compare') renderCompare();
             window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function toggleCompare(id) {
+            if (compareList.includes(id)) {
+                compareList = compareList.filter(i => i !== id);
+                alert("Товар удален из сравнения");
+            } else {
+                compareList.push(id);
+                alert("Товар добавлен в сравнение");
+            }
+            const badge = document.getElementById('compareBadge');
+            if (compareList.length > 0) { badge.innerText = compareList.length; badge.classList.remove('hidden'); }
+            else badge.classList.add('hidden');
+        }
+
+        function renderCompare() {
+            const container = document.getElementById('compareContainer');
+            if (compareList.length === 0) {
+                container.innerHTML = `<p style="text-align: center; color: #6b7280;">Список сравнения пуст</p>`;
+                return;
+            }
+            container.innerHTML = `
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px;">
+                    ${compareList.map(id => {
+                        const p = products.find(prod => prod.id === id);
+                        return `<div style="border: 1px solid #e5e7eb; padding: 16px; border-radius: 12px; text-align: center;">
+                            <img src="${p.image}" style="height: 120px; object-fit: cover; margin-bottom: 10px;">
+                            <h4 style="font-weight: bold; margin-bottom: 6px;">${p.name}</h4>
+                            <p class="text-amber" style="font-weight: bold;">${formatPrice(p.priceTJS)}</p>
+                        </div>`;
+                    }).join('')}
+                </div>
+            `;
         }
 
         function addToCart(id) {
@@ -427,17 +514,17 @@
             const list = document.getElementById('cartList');
             if (cart.length === 0) {
                 list.innerHTML = `<p style="text-align: center; color: #6b7280;">Корзина пуста</p>`;
-                document.getElementById('cartTotal').innerText = "0 ЅM";
+                document.getElementById('cartTotal').innerText = formatPrice(0);
                 openModal('cartModal');
                 return;
             }
             let total = 0;
             list.innerHTML = cart.map(i => {
                 const p = products.find(prod => prod.id === i.id);
-                total += p.price * i.qty;
-                return `<div style="display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 14px;"><span>${p.name} (x${i.qty})</span><strong class="text-amber">${(p.price * i.qty).toLocaleString()} ЅM</strong></div>`;
+                total += p.priceTJS * i.qty;
+                return `<div style="display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 14px;"><span>${p.name} (x${i.qty})</span><strong class="text-amber">${formatPrice(p.priceTJS * i.qty)}</strong></div>`;
             }).join('');
-            document.getElementById('cartTotal').innerText = total.toLocaleString() + " ЅM";
+            document.getElementById('cartTotal').innerText = formatPrice(total);
             openModal('cartModal');
         }
 
@@ -453,22 +540,42 @@
             const phone = document.getElementById('orderPhone').value;
             const address = document.getElementById('orderAddress').value;
 
-            let totalTJS = cart.reduce((sum, item) => sum + (products.find(p => p.id === item.id).price * item.qty), 0);
+            let totalTJS = cart.reduce((sum, item) => sum + (products.find(p => p.id === item.id).priceTJS * item.qty), 0);
 
             const order = {
                 name, phone, address,
                 items: cart.map(i => ({ name: products.find(p => p.id === i.id).name, qty: i.qty })),
-                total: totalTJS.toLocaleString() + " ЅM",
+                total: formatPrice(totalTJS),
                 date: new Date().toLocaleString(),
                 timestamp: Date.now(),
                 status: "Новый"
             };
 
             window.saveOrderToCloud(order);
-            alert("Заказ успешно оформлен!");
+            alert("Заказ успешно оформлен и отправлен администраторам!");
             cart = [];
             updateCartBadge();
             closeModal('checkoutModal');
+        }
+
+        function submitReview(e) {
+            e.preventDefault();
+            const text = document.getElementById('reviewText').value;
+            const rating = parseInt(document.getElementById('reviewRating').value);
+            reviews.unshift({ author: "Покупатель", rating, text });
+            renderReviews();
+            closeModal('reviewModal');
+            alert("Спасибо за отзыв!");
+        }
+
+        function renderReviews() {
+            document.getElementById('reviewsGrid').innerHTML = reviews.map(r => `
+                <div style="background: white; border-radius: 16px; padding: 20px; color: #111827; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+                    <div style="font-weight: bold; margin-bottom: 4px;">${r.author}</div>
+                    <div style="color: #eab308; font-size: 13px; margin-bottom: 8px;">${'★'.repeat(r.rating)}</div>
+                    <p style="color: #4b5563; font-size: 14px;">"${r.text}"</p>
+                </div>
+            `).join('');
         }
 
         function updateCartBadge() {
@@ -476,6 +583,17 @@
             const badge = document.getElementById('cartBadge');
             if (count > 0) { badge.innerText = count; badge.classList.remove('hidden'); }
             else badge.classList.add('hidden');
+        }
+
+        const translations = {
+            ru: { navHome: "Главная", navCatalog: "Каталог", navReviews: "Отзывы", navArticles: "Статьи", heroBadge: "Официальный дилер" },
+            en: { navHome: "Home", navCatalog: "Catalog", navReviews: "Reviews", navArticles: "Articles", heroBadge: "Official Dealer" }
+        };
+        function changeLanguage(lang) {
+            document.querySelectorAll('[data-i18n]').forEach(el => {
+                const key = el.getAttribute('data-i18n');
+                if (translations[lang] && translations[lang][key]) el.innerText = translations[lang][key];
+            });
         }
 
         window.addEventListener('DOMContentLoaded', renderProducts);
