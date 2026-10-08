@@ -314,7 +314,6 @@
         const db = getFirestore(app);
         const googleProvider = new GoogleAuthProvider();
 
-        // Экспортируем auth глобально для доступа из других скриптов
         window.firebaseAuth = auth;
         window.firebaseDb = db;
 
@@ -322,7 +321,26 @@
         let currentUser = null;
         let cachedOrders = [];
 
+        // Функция проверки бана
+        async function checkIsBlocked(uid) {
+            try {
+                const docSnap = await getDoc(doc(db, "blocked_users", uid));
+                return docSnap.exists();
+            } catch (e) {
+                return false;
+            }
+        }
+
         onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                const blocked = await checkIsBlocked(user.uid);
+                if (blocked) {
+                    alert("Ваш аккаунт заблокирован администратором.");
+                    await signOut(auth);
+                    return;
+                }
+            }
+
             currentUser = user;
             const authContainer = document.getElementById('authContainer');
             const adminBtn = document.getElementById('adminOrdersBtn');
@@ -354,16 +372,35 @@
 
         window.logout = () => signOut(auth);
         window.loginWithGoogle = async () => {
-            try { await signInWithPopup(auth, googleProvider); closeModal('authModal'); } catch(e) { alert("Ошибка: " + e.message); }
+            try { 
+                const res = await signInWithPopup(auth, googleProvider); 
+                const blocked = await checkIsBlocked(res.user.uid);
+                if (blocked) {
+                    alert("Ваш аккаунт заблокирован.");
+                    await signOut(auth);
+                    return;
+                }
+                closeModal('authModal'); 
+            } catch(e) { alert("Ошибка: " + e.message); }
         };
+
         window.handleEmailAuth = async (e) => {
             e.preventDefault();
             const email = document.getElementById('authEmail').value;
             const pass = document.getElementById('authPassword').value;
             try {
-                await signInWithEmailAndPassword(auth, email, pass);
+                const res = await signInWithEmailAndPassword(auth, email, pass);
+                const blocked = await checkIsBlocked(res.user.uid);
+                if (blocked) {
+                    alert("Ваш аккаунт заблокирован.");
+                    await signOut(auth);
+                    return;
+                }
             } catch(err) {
-                try { await createUserWithEmailAndPassword(auth, email, pass); alert("Регистрация успешна!"); } catch(e2) { alert(e2.message); return; }
+                try { 
+                    const res2 = await createUserWithEmailAndPassword(auth, email, pass); 
+                    alert("Регистрация успешна!"); 
+                } catch(e2) { alert(e2.message); return; }
             }
             closeModal('authModal');
         };
@@ -502,10 +539,15 @@
 
         window.acceptOrder = async (id) => { await setDoc(doc(db, "orders", id), { status: "Принят" }, { merge: true }); };
         window.deleteOrder = async (id) => { if(confirm("Удалить заказ?")) await deleteDoc(doc(db, "orders", id)); };
+        
         window.blockUser = async (userId) => {
-            if(confirm("Заблокировать пользователя?")) {
-                await setDoc(doc(db, "blocked_users", userId), { blockedAt: new Date().toISOString() });
-                alert("Пользователь заблокирован!");
+            if(confirm("Вы действительно хотите заблокировать этого пользователя?")) {
+                try {
+                    await setDoc(doc(db, "blocked_users", userId), { blockedAt: new Date().toISOString() });
+                    alert("Пользователь успешно заблокирован!");
+                } catch(e) {
+                    alert("Ошибка при блокировке: " + e.message);
+                }
             }
         };
 
