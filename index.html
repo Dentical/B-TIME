@@ -222,13 +222,13 @@
         </div>
     </div>
 
-    <!-- Модалка добавления/редактирования товара с выбором файла -->
+    <!-- Модалка добавления/редактирования товара -->
     <div id="productModal" class="modal">
         <div class="modal-box">
             <button onclick="closeModal('productModal')" class="modal-close"><i class="fa-solid fa-xmark"></i></button>
             <h3 id="productModalTitle" class="serif" style="font-size: 22px; margin-bottom: 16px;">Добавить товар</h3>
             <form onsubmit="saveProduct(event)">
-                <input type="hidden" id="editProductId">
+                <input type="hidden" id="editProductDocId">
                 <input type="hidden" id="prodImageBase64">
                 <div><label>Название</label><input type="text" id="prodName" required></div>
                 <div><label>Бренд</label><input type="text" id="prodBrand" required></div>
@@ -329,7 +329,7 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js";
         import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
-        import { getFirestore, collection, addDoc, getDocs, doc, deleteDoc, setDoc, getDoc, onSnapshot, query, orderBy } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
+        import { getFirestore, collection, addDoc, getDocs, doc, deleteDoc, setDoc, getDoc, onSnapshot, query, orderBy, updateDoc } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyDCyzNeJt0Fi67LALJljFjjeQWJ9uqC2io",
@@ -352,6 +352,7 @@
         const ADMINS = ["samirdv888@gmail.com", "abdullochoriev4242@gmail.com"];
         let currentUser = null;
         let cachedOrders = [];
+        let products = [];
 
         async function checkIsBlocked(uid) {
             try {
@@ -361,6 +362,35 @@
                 return false;
             }
         }
+
+        // Инициализация синхронизации товаров в реальном времени из Firestore
+        function initRealtimeProducts() {
+            const q = query(collection(db, "products"), orderBy("timestamp", "desc"));
+            onSnapshot(q, async (snapshot) => {
+                products = [];
+                snapshot.forEach(docSnap => {
+                    products.push({ id: docSnap.id, ...docSnap.data() });
+                });
+
+                // Если база товаров пуста, добавляем начальные демо-товары автоматически
+                if (products.length === 0) {
+                    const defaultProducts = [
+                        { name: "Rolex Submariner Date", brand: "Rolex", sku: "RLX-001", priceTJS: 98000, image: "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=600&auto=format&fit=crop&q=80", badge: "Хит", timestamp: Date.now() },
+                        { name: "Omega Seamaster Diver", brand: "Omega", sku: "OMG-002", priceTJS: 75000, image: "https://images.unsplash.com/photo-1547996160-81dfa63595aa?w=600&auto=format&fit=crop&q=80", badge: "Премиум", timestamp: Date.now() - 1000 },
+                        { name: "Tissot Gentleman", brand: "Tissot", sku: "TSS-003", priceTJS: 9500, image: "https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?w=600&auto=format&fit=crop&q=80", badge: "Хит", timestamp: Date.now() - 2000 },
+                        { name: "Casio G-Shock", brand: "Casio", sku: "CSO-004", priceTJS: 1800, image: "https://images.unsplash.com/photo-1533139502658-0198f920d8e8?w=600&auto=format&fit=crop&q=80", badge: "Хит", timestamp: Date.now() - 3000 }
+                    ];
+                    for (let p of defaultProducts) {
+                        await addDoc(collection(db, "products"), p);
+                    }
+                    return;
+                }
+
+                if (typeof renderProducts === 'function') renderProducts();
+            });
+        }
+
+        initRealtimeProducts();
 
         onAuthStateChanged(auth, async (user) => {
             if (user) {
@@ -578,17 +608,96 @@
 
         window.openModal = (id) => document.getElementById(id).classList.add('open');
         window.closeModal = (id) => document.getElementById(id).classList.remove('open');
+
+        // Функции сохранения и редактирования товаров в Firebase
+        window.handleImageUpload = (event) => {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('prodImageBase64').value = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            }
+        };
+
+        window.openProductModal = () => {
+            if (!ADMINS.includes(currentUser?.email?.toLowerCase())) return;
+            document.getElementById('editProductDocId').value = '';
+            document.getElementById('prodName').value = '';
+            document.getElementById('prodBrand').value = '';
+            document.getElementById('prodSku').value = '';
+            document.getElementById('prodPrice').value = '';
+            document.getElementById('prodImageFile').value = '';
+            document.getElementById('prodImageBase64').value = '';
+            document.getElementById('prodBadge').value = 'Хит';
+            document.getElementById('productModalTitle').innerText = "Добавить товар";
+            openModal('productModal');
+        };
+
+        window.editProduct = (docId) => {
+            if (!ADMINS.includes(currentUser?.email?.toLowerCase())) return;
+            const p = products.find(prod => prod.id === docId);
+            if (!p) return;
+            document.getElementById('editProductDocId').value = p.id;
+            document.getElementById('prodName').value = p.name;
+            document.getElementById('prodBrand').value = p.brand;
+            document.getElementById('prodSku').value = p.sku || '';
+            document.getElementById('prodPrice').value = p.priceTJS;
+            document.getElementById('prodImageFile').value = '';
+            document.getElementById('prodImageBase64').value = p.image;
+            document.getElementById('prodBadge').value = p.badge || 'Хит';
+            document.getElementById('productModalTitle').innerText = "Редактировать товар";
+            openModal('productModal');
+        };
+
+        window.saveProduct = async (e) => {
+            e.preventDefault();
+            if (!ADMINS.includes(currentUser?.email?.toLowerCase())) return;
+            const editDocId = document.getElementById('editProductDocId').value;
+            const name = document.getElementById('prodName').value;
+            const brand = document.getElementById('prodBrand').value;
+            const sku = document.getElementById('prodSku').value;
+            const priceTJS = parseFloat(document.getElementById('prodPrice').value);
+            const imageBase64 = document.getElementById('prodImageBase64').value;
+            const badge = document.getElementById('prodBadge').value;
+
+            try {
+                if (editDocId) {
+                    const p = products.find(prod => prod.id == editDocId);
+                    const updateData = { name, brand, sku, priceTJS, badge };
+                    if (imageBase64) updateData.image = imageBase64;
+                    await updateDoc(doc(db, "products", editDocId), updateData);
+                } else {
+                    if (!imageBase64) {
+                        alert("Пожалуйста, выберите фото товара из устройства!");
+                        return;
+                    }
+                    await addDoc(collection(db, "products"), {
+                        name, brand, sku, priceTJS, image: imageBase64, badge, timestamp: Date.now()
+                    });
+                }
+                closeModal('productModal');
+                alert("Товар успешно сохранен в базу данных!");
+            } catch (err) {
+                alert("Ошибка сохранения: " + err.message);
+            }
+        };
+
+        window.deleteProduct = async (docId) => {
+            if (!ADMINS.includes(currentUser?.email?.toLowerCase())) return;
+            if (confirm("Вы уверены, что хотите удалить этот товар?")) {
+                try {
+                    await deleteDoc(doc(db, "products", docId));
+                } catch (err) {
+                    alert("Ошибка удаления: " + err.message);
+                }
+            }
+        };
     </script>
 
-    <!-- Скрипты магазина и загрузки файлов -->
+    <!-- Скрипты отображения и интерфейса -->
     <script>
-        let products = JSON.parse(localStorage.getItem('btime_products')) || [
-            { id: 1, name: "Rolex Submariner Date", brand: "Rolex", sku: "RLX-001", priceTJS: 98000, image: "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=600&auto=format&fit=crop&q=80", badge: "Хит" },
-            { id: 2, name: "Omega Seamaster Diver", brand: "Omega", sku: "OMG-002", priceTJS: 75000, image: "https://images.unsplash.com/photo-1547996160-81dfa63595aa?w=600&auto=format&fit=crop&q=80", badge: "Премиум" },
-            { id: 3, name: "Tissot Gentleman", brand: "Tissot", sku: "TSS-003", priceTJS: 9500, image: "https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?w=600&auto=format&fit=crop&q=80", badge: "Хит" },
-            { id: 4, name: "Casio G-Shock", brand: "Casio", sku: "CSO-004", priceTJS: 1800, image: "https://images.unsplash.com/photo-1533139502658-0198f920d8e8?w=600&auto=format&fit=crop&q=80", badge: "Хит" }
-        ];
-
         let reviews = [{ author: "Алишер Р.", rating: 5, text: "Отличный магазин, всё оригинальное!" }];
         
         let cart = JSON.parse(localStorage.getItem('btime_cart')) || [];
@@ -676,7 +785,7 @@
             return activeUser && ADMINS.includes(activeUser.email.toLowerCase());
         }
 
-        function renderProducts() {
+        window.renderProducts = function() {
             const admin = isAdminUser();
             const html = products.map(p => `
                 <div class="card">
@@ -696,14 +805,14 @@
                             <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #f3f4f6; padding-top: 10px; margin-bottom: 8px;">
                                 <span style="font-size: 15px; font-weight: 900;" class="text-amber">${formatPrice(p.priceTJS)}</span>
                                 <div style="display: flex; gap: 6px;">
-                                    <button onclick="toggleCompare(${p.id})" title="Сравнить" style="background: ${compareList.includes(p.id) ? '#eab308' : '#f3f4f6'}; color: ${compareList.includes(p.id) ? 'black' : 'inherit'}; border: none; width: 34px; height: 34px; border-radius: 10px; cursor: pointer;"><i class="fa-solid fa-scale-balanced"></i></button>
-                                    <button onclick="addToCart(${p.id})" title="В корзину" style="background: #eab308; border: none; width: 34px; height: 34px; border-radius: 10px; cursor: pointer; font-weight: bold;"><i class="fa-solid fa-bag-shopping"></i></button>
+                                    <button onclick="toggleCompare('${p.id}')" title="Сравнить" style="background: ${compareList.includes(p.id) ? '#eab308' : '#f3f4f6'}; color: ${compareList.includes(p.id) ? 'black' : 'inherit'}; border: none; width: 34px; height: 34px; border-radius: 10px; cursor: pointer;"><i class="fa-solid fa-scale-balanced"></i></button>
+                                    <button onclick="addToCart('${p.id}')" title="В корзину" style="background: #eab308; border: none; width: 34px; height: 34px; border-radius: 10px; cursor: pointer; font-weight: bold;"><i class="fa-solid fa-bag-shopping"></i></button>
                                 </div>
                             </div>
                             ${admin ? `
                                 <div style="display: flex; gap: 6px; border-top: 1px dashed #e5e7eb; padding-top: 6px;">
-                                    <button onclick="editProduct(${p.id})" style="flex: 1; background: #2563eb; color: white; border: none; padding: 6px; border-radius: 6px; font-size: 11px; cursor: pointer;"><i class="fa-solid fa-pen"></i> Ред.</button>
-                                    <button onclick="deleteProduct(${p.id})" style="flex: 1; background: #dc2626; color: white; border: none; padding: 6px; border-radius: 6px; font-size: 11px; cursor: pointer;"><i class="fa-solid fa-trash"></i> Уд.</button>
+                                    <button onclick="editProduct('${p.id}')" style="flex: 1; background: #2563eb; color: white; border: none; padding: 6px; border-radius: 6px; font-size: 11px; cursor: pointer;"><i class="fa-solid fa-pen"></i> Ред.</button>
+                                    <button onclick="deleteProduct('${p.id}')" style="flex: 1; background: #dc2626; color: white; border: none; padding: 6px; border-radius: 6px; font-size: 11px; cursor: pointer;"><i class="fa-solid fa-trash"></i> Уд.</button>
                                 </div>
                             ` : ''}
                         </div>
@@ -715,93 +824,6 @@
             document.getElementById('catalogGrid').innerHTML = html;
             renderReviews();
             updateBadges();
-        }
-
-        // Обработка загрузки файла фото
-        window.handleImageUpload = (event) => {
-            const file = event.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    document.getElementById('prodImageBase64').value = e.target.result;
-                };
-                reader.readAsDataURL(file);
-            }
-        };
-
-        window.openProductModal = () => {
-            if (!isAdminUser()) return;
-            document.getElementById('editProductId').value = '';
-            document.getElementById('prodName').value = '';
-            document.getElementById('prodBrand').value = '';
-            document.getElementById('prodSku').value = '';
-            document.getElementById('prodPrice').value = '';
-            document.getElementById('prodImageFile').value = '';
-            document.getElementById('prodImageBase64').value = '';
-            document.getElementById('prodBadge').value = 'Хит';
-            document.getElementById('productModalTitle').innerText = "Добавить товар";
-            openModal('productModal');
-        };
-
-        window.editProduct = (id) => {
-            if (!isAdminUser()) return;
-            const p = products.find(prod => prod.id === id);
-            if (!p) return;
-            document.getElementById('editProductId').value = p.id;
-            document.getElementById('prodName').value = p.name;
-            document.getElementById('prodBrand').value = p.brand;
-            document.getElementById('prodSku').value = p.sku || '';
-            document.getElementById('prodPrice').value = p.priceTJS;
-            document.getElementById('prodImageFile').value = '';
-            document.getElementById('prodImageBase64').value = p.image; // сохраняем текущее фото
-            document.getElementById('prodBadge').value = p.badge || 'Хит';
-            document.getElementById('productModalTitle').innerText = "Редактировать товар";
-            openModal('productModal');
-        };
-
-        window.saveProduct = (e) => {
-            e.preventDefault();
-            if (!isAdminUser()) return;
-            const editId = document.getElementById('editProductId').value;
-            const name = document.getElementById('prodName').value;
-            const brand = document.getElementById('prodBrand').value;
-            const sku = document.getElementById('prodSku').value;
-            const priceTJS = parseFloat(document.getElementById('prodPrice').value);
-            const imageBase64 = document.getElementById('prodImageBase64').value;
-            const badge = document.getElementById('prodBadge').value;
-
-            if (editId) {
-                const p = products.find(prod => prod.id == editId);
-                if (p) {
-                    p.name = name;
-                    p.brand = brand;
-                    p.sku = sku;
-                    p.priceTJS = priceTJS;
-                    if (imageBase64) p.image = imageBase64; // обновляем фото только если выбрали новое
-                    p.badge = badge;
-                }
-            } else {
-                if (!imageBase64) {
-                    alert("Пожалуйста, выберите фото товара из устройства!");
-                    return;
-                }
-                const newId = products.length > 0 ? Math.max(...products.map(p => p.id)) + 1 : 1;
-                products.unshift({ id: newId, name, brand, sku, priceTJS, image: imageBase64, badge });
-            }
-
-            localStorage.setItem('btime_products', JSON.stringify(products));
-            renderProducts();
-            closeModal('productModal');
-            alert("Товар успешно сохранен!");
-        };
-
-        window.deleteProduct = (id) => {
-            if (!isAdminUser()) return;
-            if (confirm("Вы уверены, что хотите удалить этот товар?")) {
-                products = products.filter(p => p.id !== id);
-                localStorage.setItem('btime_products', JSON.stringify(products));
-                renderProducts();
-            }
         };
 
         function switchTab(tabId) {
@@ -838,7 +860,7 @@
                         const p = products.find(prod => prod.id === id);
                         if (!p) return '';
                         return `<div style="border: 1px solid #e5e7eb; padding: 14px; border-radius: 12px; text-align: center; position: relative;">
-                            <button onclick="toggleCompare(${p.id}); renderCompare();" style="position: absolute; top: 6px; right: 6px; background: none; border: none; color: #dc2626; cursor: pointer;"><i class="fa-solid fa-xmark"></i></button>
+                            <button onclick="toggleCompare('${p.id}'); renderCompare();" style="position: absolute; top: 6px; right: 6px; background: none; border: none; color: #dc2626; cursor: pointer;"><i class="fa-solid fa-xmark"></i></button>
                             <img src="${p.image}" style="height: 100px; object-fit: cover; margin-bottom: 8px;">
                             <h4 style="font-weight: bold; font-size: 14px; margin-bottom: 4px;">${p.name}</h4>
                             <p class="text-amber" style="font-weight: bold; font-size: 14px;">${formatPrice(p.priceTJS)}</p>
@@ -874,7 +896,7 @@
                     <span>${p.name} (x${i.qty})</span>
                     <div style="display: flex; align-items: center; gap: 8px;">
                         <strong class="text-amber">${formatPrice(p.priceTJS * i.qty)}</strong>
-                        <button onclick="removeFromCart(${p.id})" style="background: none; border: none; color: #dc2626; cursor: pointer;"><i class="fa-solid fa-trash"></i></button>
+                        <button onclick="removeFromCart('${p.id}')" style="background: none; border: none; color: #dc2626; cursor: pointer;"><i class="fa-solid fa-trash"></i></button>
                     </div>
                 </div>`;
             }).join('');
@@ -916,13 +938,19 @@
             const phone = document.getElementById('orderPhone').value;
             const address = document.getElementById('orderAddress').value;
 
-            let totalTJS = cart.reduce((sum, item) => sum + (products.find(p => p.id === item.id).priceTJS * item.qty), 0);
+            let totalTJS = cart.reduce((sum, item) => {
+                const p = products.find(prod => prod.id === item.id);
+                return sum + (p ? p.priceTJS * item.qty : 0);
+            }, 0);
 
             const order = {
                 userId: activeUser.uid,
                 userEmail: activeUser.email,
                 name, phone, address,
-                items: cart.map(i => ({ name: products.find(p => p.id === i.id).name, qty: i.qty })),
+                items: cart.map(i => {
+                    const p = products.find(prod => prod.id === i.id);
+                    return { name: p ? p.name : 'Товар', qty: i.qty };
+                }),
                 total: formatPrice(totalTJS),
                 date: new Date().toLocaleString(),
                 timestamp: Date.now(),
@@ -968,7 +996,6 @@
         }
 
         window.addEventListener('DOMContentLoaded', () => {
-            renderProducts();
             changeLanguage('ru');
         });
     </script>
