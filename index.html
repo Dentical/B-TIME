@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title id="pageTitle">B-Time — Официальный интернет-магазин часов</title>
-    <!-- FontAwesome для иконок -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
@@ -68,12 +67,7 @@
     <div class="top-bar">
         <div class="top-bar-inner">
             <div style="display: flex; gap: 16px; align-items: center;">
-                <span><i class="fa-solid fa-location-dot text-gold"></i> 
-                    <select id="citySelect" style="background: transparent; color: white; border: none; cursor: pointer; font-size: 12px;">
-                        <option value="dushanbe" style="background:#0b1329;">Душанбе</option>
-                        <option value="khujand" style="background:#0b1329;">Худжанд</option>
-                    </select>
-                </span>
+                <span><i class="fa-solid fa-location-dot text-gold"></i> Душанбе</span>
                 <span><i class="fa-solid fa-phone text-gold"></i> +992 (90) 000-00-00</span>
             </div>
             <div style="display: flex; gap: 12px; align-items: center;">
@@ -112,7 +106,7 @@
                 </div>
             </div>
 
-            <nav style="display: none; @media(min-width: 768px){display:flex;}">
+            <nav>
                 <button onclick="switchTab('home')" class="nav-btn active" data-tab="home" data-i18n="navHome">Главная</button>
                 <button onclick="switchTab('catalog')" class="nav-btn" data-tab="catalog" data-i18n="navCatalog">Каталог</button>
                 <button onclick="switchTab('compare')" class="nav-btn" data-tab="compare">Сравнение <span id="compareBadge" style="background:#eab308; color:black; padding:1px 6px; border-radius:10px; font-size:10px;" class="hidden">0</span></button>
@@ -278,7 +272,7 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js";
         import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
-        import { getFirestore, collection, addDoc, getDocs, doc, deleteDoc, setDoc, onSnapshot, query, orderBy } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
+        import { getFirestore, collection, addDoc, getDocs, doc, deleteDoc, setDoc, getDoc, onSnapshot, query, orderBy } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyDCyzNeJt0Fi67LALJljFjjeQWJ9uqC2io",
@@ -296,9 +290,11 @@
         const googleProvider = new GoogleAuthProvider();
 
         const ADMINS = ["samirdv888@gmail.com", "abdullochoriev4242@gmail.com"];
+        let currentUser = null;
         let cachedOrders = [];
 
-        onAuthStateChanged(auth, (user) => {
+        onAuthStateChanged(auth, async (user) => {
+            currentUser = user;
             const authContainer = document.getElementById('authContainer');
             const adminBtn = document.getElementById('adminOrdersBtn');
 
@@ -340,6 +336,22 @@
             closeModal('authModal');
         };
 
+        window.checkBlocked = async () => {
+            if (!currentUser) {
+                alert("Пожалуйста, войдите в аккаунт для оформления заказа!");
+                openModal('authModal');
+                return false;
+            }
+            try {
+                const docSnap = await getDoc(doc(db, "blocked_users", currentUser.uid));
+                if (docSnap.exists()) {
+                    alert("Ваш аккаунт заблокирован администратором.");
+                    return false;
+                }
+            } catch(e) {}
+            return true;
+        }
+
         function initRealtimeOrders() {
             const q = query(collection(db, "orders"), orderBy("timestamp", "desc"));
             onSnapshot(q, (snapshot) => {
@@ -361,7 +373,7 @@
         }
 
         window.saveOrderToCloud = async (orderData) => {
-            try { await addDoc(collection(db, "orders"), orderData); } catch(e) { alert("Ошибка отправки заказа в базу: " + e.message); }
+            try { await addDoc(collection(db, "orders"), orderData); } catch(e) { alert("Ошибка отправки заказа: " + e.message); }
         };
 
         window.openAdminModal = () => {
@@ -393,6 +405,7 @@
                         <div style="display: flex; gap: 8px;">
                             <button onclick="acceptOrder('${o.id}')" style="background: #059669; color: white; border: none; padding: 6px 10px; border-radius: 6px; cursor: pointer; font-size: 11px;">Принять</button>
                             <button onclick="deleteOrder('${o.id}')" style="background: #dc2626; color: white; border: none; padding: 6px 10px; border-radius: 6px; cursor: pointer; font-size: 11px;">Удалить</button>
+                            ${o.userId ? `<button onclick="blockUser('${o.userId}')" style="background: #1f2937; color: white; border: none; padding: 6px 10px; border-radius: 6px; cursor: pointer; font-size: 11px;">Бан</button>` : ''}
                         </div>
                     </div>
                 </div>
@@ -401,12 +414,18 @@
 
         window.acceptOrder = async (id) => { await setDoc(doc(db, "orders", id), { status: "Принят" }, { merge: true }); };
         window.deleteOrder = async (id) => { if(confirm("Удалить заказ?")) await deleteDoc(doc(db, "orders", id)); };
+        window.blockUser = async (userId) => {
+            if(confirm("Заблокировать пользователя?")) {
+                await setDoc(doc(db, "blocked_users", userId), { blockedAt: new Date().toISOString() });
+                alert("Пользователь заблокирован!");
+            }
+        };
 
         window.openModal = (id) => document.getElementById(id).classList.add('open');
         window.closeModal = (id) => document.getElementById(id).classList.remove('open');
     </script>
 
-    <!-- Скрипты каталога, сравнения и валют -->
+    <!-- Скрипты магазина -->
     <script>
         const products = [
             { id: 1, name: "Rolex Submariner Date", brand: "Rolex", priceTJS: 98000, image: "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=600&auto=format&fit=crop&q=80", badge: "Хит" },
@@ -445,7 +464,7 @@
                             <span style="font-size: 11px; color: #6b7280; text-transform: uppercase;">${p.brand}</span>
                             <h3 style="font-size: 15px; font-weight: bold; margin: 4px 0 12px;">${p.name}</h3>
                         </div>
-                        <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #f3f4f6; pt: 12px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #f3f4f6; padding-top: 12px;">
                             <span style="font-size: 16px; font-weight: 900;" class="text-amber">${formatPrice(p.priceTJS)}</span>
                             <div style="display: flex; gap: 6px;">
                                 <button onclick="toggleCompare(${p.id})" title="Сравнить" style="background: #f3f4f6; border: none; width: 36px; height: 36px; border-radius: 10px; cursor: pointer;"><i class="fa-solid fa-scale-balanced"></i></button>
@@ -528,8 +547,10 @@
             openModal('cartModal');
         }
 
-        function openCheckout() {
+        async function openCheckout() {
             if (cart.length === 0) return;
+            const allowed = await window.checkBlocked();
+            if (!allowed) return;
             closeModal('cartModal');
             openModal('checkoutModal');
         }
@@ -543,6 +564,8 @@
             let totalTJS = cart.reduce((sum, item) => sum + (products.find(p => p.id === item.id).priceTJS * item.qty), 0);
 
             const order = {
+                userId: auth.currentUser ? auth.currentUser.uid : null,
+                userEmail: auth.currentUser ? auth.currentUser.email : null,
                 name, phone, address,
                 items: cart.map(i => ({ name: products.find(p => p.id === i.id).name, qty: i.qty })),
                 total: formatPrice(totalTJS),
