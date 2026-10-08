@@ -8,7 +8,7 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
         
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', sans-serif; user-select: none; /* Защита от выделения текста */ }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', sans-serif; user-select: none; }
         body { background-color: #0b1329; color: #f3f4f6; min-height: 100vh; display: flex; flex-direction: column; }
         .serif { font-family: 'Playfair Display', serif; }
         
@@ -46,7 +46,7 @@
 
         .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(5px); z-index: 100; display: none; align-items: center; justify-content: center; padding: 16px; }
         .modal.open { display: flex; }
-        .modal-box { background: white; color: #111827; width: 100%; max-width: 500px; border-radius: 24px; padding: 32px; position: relative; max-height: 90vh; overflow-y: auto; }
+        .modal-box { background: white; color: #111827; width: 100%; max-width: 520px; border-radius: 24px; padding: 32px; position: relative; max-height: 90vh; overflow-y: auto; }
         .modal-close { position: absolute; top: 20px; right: 20px; background: none; border: none; font-size: 20px; cursor: pointer; color: #6b7280; }
         
         form div { margin-bottom: 16px; }
@@ -115,7 +115,7 @@
             </nav>
 
             <div class="actions">
-                <!-- Кнопка Мои заказы для клиента -->
+                <!-- Кнопка Мои заказы (для клиентов) -->
                 <button id="clientOrdersBtn" onclick="openClientOrdersModal()" class="btn-icon hidden" title="Мои заказы" style="color: #60a5fa; border-color: rgba(96,165,250,0.4);">
                     <i class="fa-solid fa-receipt"></i>
                     <span id="clientBadge" class="badge hidden" style="background:#60a5fa; color:white;">0</span>
@@ -237,22 +237,27 @@
             <form onsubmit="submitOrder(event)">
                 <div><label>Ваше имя</label><input type="text" id="orderName" required></div>
                 <div><label>Телефон</label><input type="tel" id="orderPhone" required></div>
-                <div><label>Адрес</label><textarea id="orderAddress" required rows="2"></textarea></div>
+                <div><label>Адрес доставки</label><textarea id="orderAddress" required rows="2"></textarea></div>
                 <button type="submit" class="btn-gold">Подтвердить заказ</button>
             </form>
         </div>
     </div>
 
+    <!-- Модалка: Мои заказы (клиент) -->
     <div id="clientOrdersModal" class="modal">
         <div class="modal-box" style="max-width: 600px;">
             <button onclick="closeModal('clientOrdersModal')" class="modal-close"><i class="fa-solid fa-xmark"></i></button>
-            <h3 class="serif" style="font-size: 24px; margin-bottom: 20px;"><i class="fa-solid fa-receipt text-amber"></i> Мои заказы</h3>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <h3 class="serif" style="font-size: 24px;"><i class="fa-solid fa-receipt text-amber"></i> Мои заказы</h3>
+                <button onclick="loadClientOrders()" style="background: #f3f4f6; border: none; padding: 6px 12px; border-radius: 8px; cursor: pointer; font-size: 12px; font-weight: bold;"><i class="fa-solid fa-rotate"></i> Обновить</button>
+            </div>
             <div id="clientOrdersContainer" style="display: flex; flex-direction: column; gap: 12px; max-height: 60vh; overflow-y: auto;">
                 <p style="color: #6b7280; text-align: center;">Загрузка...</p>
             </div>
         </div>
     </div>
 
+    <!-- Модалка: Админ-панель -->
     <div id="adminModal" class="modal">
         <div class="modal-box" style="max-width: 640px;">
             <button onclick="closeModal('adminModal')" class="modal-close"><i class="fa-solid fa-xmark"></i></button>
@@ -281,16 +286,15 @@
         </div>
     </div>
 
-    <!-- Защита исходного кода от просмотра -->
+    <!-- Защита исходного кода -->
     <script>
-        document.addEventListener('contextmenu', e => e.preventDefault()); // Отключение ПКМ
+        document.addEventListener('contextmenu', e => e.preventDefault());
         document.addEventListener('keydown', e => {
             if (e.key === 'F12' || 
                 (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'J' || e.key === 'C')) || 
                 (e.ctrlKey && e.key === 'U') || 
                 (e.ctrlKey && e.key === 'S')) {
                 e.preventDefault();
-                alert("Просмотр исходного кода заблокирован.");
                 return false;
             }
         });
@@ -389,6 +393,7 @@
                 cachedOrders = [];
                 snapshot.forEach(docSnap => cachedOrders.push({ id: docSnap.id, ...docSnap.data() }));
                 
+                // Админ бейдж
                 const adminBadge = document.getElementById('adminBadge');
                 if (currentUser && ADMINS.includes(currentUser.email.toLowerCase())) {
                     if (cachedOrders.length > 0) {
@@ -402,6 +407,7 @@
                     }
                 }
 
+                // Клиент бейдж
                 if (currentUser) {
                     const myOrders = cachedOrders.filter(o => o.userId === currentUser.uid);
                     const clientBadge = document.getElementById('clientBadge');
@@ -419,9 +425,15 @@
         }
 
         window.saveOrderToCloud = async (orderData) => {
-            try { await addDoc(collection(db, "orders"), orderData); } catch(e) { alert("Ошибка отправки заказа: " + e.message); }
+            try { 
+                await addDoc(collection(db, "orders"), orderData);
+                alert("Заказ успешно оформлен! Вы можете отслеживать его в разделе 'Мои заказы'.");
+            } catch(e) { 
+                alert("Ошибка отправки заказа: " + e.message); 
+            }
         };
 
+        // Админка функции
         window.openAdminModal = () => {
             document.getElementById('adminModal').classList.add('open');
             renderAdminOrders();
@@ -457,6 +469,7 @@
             `).join('');
         }
 
+        // Клиентские заказы функции
         window.openClientOrdersModal = () => {
             if (!currentUser) {
                 alert("Войдите в аккаунт, чтобы просмотреть свои заказы.");
@@ -467,10 +480,13 @@
             renderClientOrders();
         };
 
+        window.loadClientOrders = () => { renderClientOrders(); };
+
         function renderClientOrders() {
             const container = document.getElementById('clientOrdersContainer');
             if (!currentUser) return;
             const myOrders = cachedOrders.filter(o => o.userId === currentUser.uid);
+            
             if (myOrders.length === 0) {
                 container.innerHTML = `<p style="text-align: center; color: #6b7280; padding: 20px;">У вас пока нет оформленных заказов.</p>`;
                 return;
@@ -485,8 +501,8 @@
                         ${o.items.map(i => `<div>• ${i.name} (x${i.qty})</div>`).join('')}
                     </div>
                     <div style="display: flex; justify-content: space-between; align-items: center; font-size: 13px; font-weight: bold;">
-                        <span>Итого: <span class="text-amber">${o.total}</span></span>
-                        ${o.status === 'Новый' ? `<button onclick="cancelMyOrder('${o.id}')" style="background: #dc2626; color: white; border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 12px;">Отменить заказ</button>` : '<span style="font-size: 11px; color: #059669;">Заказ уже в обработке</span>'}
+                        <span>Сумма: <span class="text-amber">${o.total}</span></span>
+                        ${o.status === 'Новый' ? `<button onclick="cancelMyOrder('${o.id}')" style="background: #dc2626; color: white; border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 12px;">Отменить заказ</button>` : '<span style="font-size: 11px; color: #059669;"><i class="fa-solid fa-check"></i> Заказ принят в обработку</span>'}
                     </div>
                 </div>
             `).join('');
@@ -494,8 +510,12 @@
 
         window.cancelMyOrder = async (id) => {
             if(confirm("Вы действительно хотите отменить этот заказ?")) {
-                await deleteDoc(doc(db, "orders", id));
-                alert("Заказ успешно отменен.");
+                try {
+                    await deleteDoc(doc(db, "orders", id));
+                    alert("Заказ успешно отменен.");
+                } catch(e) {
+                    alert("Ошибка при отмене: " + e.message);
+                }
             }
         };
 
@@ -512,7 +532,7 @@
         window.closeModal = (id) => document.getElementById(id).classList.remove('open');
     </script>
 
-    <!-- Скрипты магазина -->
+    <!-- Скрипты каталога и корзины -->
     <script>
         const products = [
             { id: 1, name: "Rolex Submariner Date", brand: "Rolex", priceTJS: 98000, image: "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=600&auto=format&fit=crop&q=80", badge: "Хит" },
@@ -653,8 +673,10 @@
             openCartModal();
         }
 
-        function openCheckout() {
+        async function openCheckout() {
             if (cart.length === 0) return;
+            const allowed = await window.checkBlocked();
+            if (!allowed) return;
             closeModal('cartModal');
             openModal('checkoutModal');
         }
@@ -668,8 +690,8 @@
             let totalTJS = cart.reduce((sum, item) => sum + (products.find(p => p.id === item.id).priceTJS * item.qty), 0);
 
             const order = {
-                userId: window.auth && window.auth.currentUser ? window.auth.currentUser.uid : null,
-                userEmail: window.auth && window.auth.currentUser ? window.auth.currentUser.email : null,
+                userId: auth.currentUser ? auth.currentUser.uid : null,
+                userEmail: auth.currentUser ? auth.currentUser.email : null,
                 name, phone, address,
                 items: cart.map(i => ({ name: products.find(p => p.id === i.id).name, qty: i.qty })),
                 total: formatPrice(totalTJS),
@@ -679,7 +701,6 @@
             };
 
             window.saveOrderToCloud(order);
-            alert("Заказ успешно оформлен и отправлен!");
             cart = [];
             localStorage.removeItem('btime_cart');
             updateBadges();
