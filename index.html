@@ -9,7 +9,7 @@
         @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
         
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', sans-serif; user-select: none; -webkit-tap-highlight-color: transparent; }
-        body { background-color: #0b1329; color: #f3f4f6; min-height: 100vh; display: flex; flex-direction: column; overflow-x: hidden; }
+        body { background-color: var(--bg-color, #0b1329); color: var(--text-color, #f3f4f6); min-height: 100vh; display: flex; flex-direction: column; overflow-x: hidden; transition: background 0.3s, color 0.3s; }
         .serif { font-family: 'Playfair Display', serif; }
         
         .top-bar { background: #070d1d; border-bottom: 1px solid rgba(30, 58, 138, 0.5); font-size: 12px; color: #d1d5db; padding: 8px 16px; }
@@ -46,7 +46,7 @@
 
         .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(5px); z-index: 100; display: none; align-items: center; justify-content: center; padding: 16px; }
         .modal.open { display: flex; }
-        .modal-box { background: white; color: #111827; width: 100%; max-width: 500px; border-radius: 24px; padding: 24px; position: relative; max-height: 90vh; overflow-y: auto; }
+        .modal-box { background: white; color: #111827; width: 100%; max-width: 550px; border-radius: 24px; padding: 24px; position: relative; max-height: 90vh; overflow-y: auto; }
         .modal-close { position: absolute; top: 16px; right: 16px; background: none; border: none; font-size: 20px; cursor: pointer; color: #6b7280; }
         
         form div { margin-bottom: 14px; }
@@ -72,7 +72,7 @@
     <!-- Верхняя панель -->
     <div class="top-bar">
         <div class="top-bar-inner">
-            <div style="display: flex; gap: 16px; align-items: center;">
+            <div style="display: flex; gap: 16px; align-items: center;" id="topBarDynamicContacts">
                 <span><i class="fa-solid fa-location-dot text-gold"></i> <span id="siteCity">Душанбе</span></span>
                 <span><i class="fa-solid fa-phone text-gold"></i> <span id="sitePhone">+992 (90) 000-00-00</span></span>
             </div>
@@ -122,7 +122,7 @@
             </nav>
 
             <div class="actions">
-                <button id="siteConfigBtn" onclick="openSiteConfigModal()" class="btn-icon hidden" title="Настройки сайта" style="background: #2563eb; color: white; border-color: #2563eb; font-weight: bold;">
+                <button id="siteConfigBtn" onclick="openSiteConfigModal()" class="btn-icon hidden" title="Настройки дизайна и контента" style="background: #2563eb; color: white; border-color: #2563eb; font-weight: bold;">
                     <i class="fa-solid fa-gear"></i>
                 </button>
                 <button id="addProductBtn" onclick="openProductModal()" class="btn-icon hidden" title="Добавить товар" style="background: #eab308; color: black; border-color: #eab308; font-weight: bold;">
@@ -151,7 +151,7 @@
                 <div>
                     <span id="homeBadgeText" style="background: rgba(234,179,8,0.1); border: 1px solid rgba(234,179,8,0.3); color: #facc15; padding: 6px 12px; border-radius: 20px; font-size: 11px; font-weight: 600; text-transform: uppercase;">Официальный дилер</span>
                     <h1 id="homeTitleText" class="serif" style="font-size: 36px; line-height: 1.1; margin: 16px 0;">Элегантность в каждой секунде</h1>
-                    <p id="homeDescText" style="color: #9ca3af; margin-bottom: 20px; font-size: 14px;">Эксклюзивная коллекция швейцарских и мировых брендов с гарантией качества.</p>
+                    <p id="homeDescText" style="opacity: 0.8; margin-bottom: 20px; font-size: 14px;">Эксклюзивная коллекция швейцарских и мировых брендов с гарантией качества.</p>
                     <button onclick="switchTab('catalog')" class="btn-gold" style="width: auto; padding: 12px 24px;">Перейти в каталог</button>
                 </div>
                 <div style="text-align: center;">
@@ -202,29 +202,40 @@
             </div>
             <div>
                 <h4 style="color: white; font-weight: bold; margin-bottom: 10px;">Контакты</h4>
-                <p><i class="fa-solid fa-phone text-gold"></i> <span id="footerPhoneText">+992 (90) 000-00-00</span></p>
-                <p><i class="fa-solid fa-envelope text-gold"></i> <span id="footerEmailText">info@b-time.tj</span></p>
-                <p><i class="fa-solid fa-location-dot text-gold"></i> <span id="footerAddressText">г. Душанбе, пр. Рудаки</span></p>
+                <div id="footerContactsContainer" style="display: flex; flex-direction: column; gap: 6px;">
+                    <p><i class="fa-solid fa-phone text-gold"></i> <span id="footerPhoneText">+992 (90) 000-00-00</span></p>
+                    <p><i class="fa-solid fa-envelope text-gold"></i> <span id="footerEmailText">info@b-time.tj</span></p>
+                    <p><i class="fa-solid fa-location-dot text-gold"></i> <span id="footerAddressText">г. Душанбе, пр. Рудаки</span></p>
+                </div>
             </div>
         </div>
     </footer>
 
-    <!-- Модалка настроек контента сайта (доступна только админу) -->
+    <!-- Модалка настроек дизайна и контента сайта (только для админа) -->
     <div id="siteConfigModal" class="modal">
-        <div class="modal-box" style="max-width: 550px;">
+        <div class="modal-box" style="max-width: 600px;">
             <button onclick="closeModal('siteConfigModal')" class="modal-close"><i class="fa-solid fa-xmark"></i></button>
-            <h3 class="serif" style="font-size: 22px; margin-bottom: 16px;"><i class="fa-solid fa-gear text-amber"></i> Управление текстами и сайтом</h3>
+            <h3 class="serif" style="font-size: 22px; margin-bottom: 16px;"><i class="fa-solid fa-gear text-amber"></i> Настройка дизайна и контента</h3>
             <form onsubmit="saveSiteConfig(event)">
-                <div><label>Название бренда (в шапке)</label><input type="text" id="cfgBrandName" required></div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                    <div><label>Цвет фона сайта</label><input type="color" id="cfgBgColor" value="#0b1329" style="height: 40px; padding: 2px;"></div>
+                    <div><label>Цвет текста</label><input type="color" id="cfgTextColor" value="#f3f4f6" style="height: 40px; padding: 2px;"></div>
+                </div>
+                <div><label>Название бренда</label><input type="text" id="cfgBrandName" required></div>
                 <div><label>Подзаголовок бренда</label><input type="text" id="cfgBrandSub" required></div>
-                <div><label>Телефон (в шапке и футере)</label><input type="text" id="cfgPhone" required></div>
-                <div><label>Email (в футере)</label><input type="text" id="cfgEmail" required></div>
-                <div><label>Город (в шапке)</label><input type="text" id="cfgCity" required></div>
-                <div><label>Адрес (в футере)</label><input type="text" id="cfgAddress" required></div>
-                <div><label>Описание в футере</label><textarea id="cfgFooterDesc" rows="2" required></textarea></div>
                 <div><label>Главный заголовок (Hero H1)</label><input type="text" id="cfgHeroTitle" required></div>
-                <div><label>Описание под главным заголовком</label><textarea id="cfgHeroDesc" rows="2" required></textarea></div>
-                <div><label>Текст бейджа на главной</label><input type="text" id="cfgHeroBadge" required></div>
+                <div><label>Описание под заголовком</label><textarea id="cfgHeroDesc" rows="2" required></textarea></div>
+                <div><label>Бейдж на главной</label><input type="text" id="cfgHeroBadge" required></div>
+                <div><label>Описание в футере</label><textarea id="cfgFooterDesc" rows="2" required></textarea></div>
+                
+                <hr style="margin: 16px 0; border: 0; border-top: 1px solid #e5e7eb;">
+                <label style="font-weight: bold; font-size: 14px; margin-bottom: 8px; color: #111827;">Динамические контакты (кнопки с иконками)</label>
+                <p style="font-size: 11px; color: #6b7280; margin-bottom: 10px;">Формат для каждого контакта: Иконка (например fa-phone, fa-envelope, fa-location-dot, fa-brands fa-whatsapp, fa-brands fa-telegram) | Текст | Ссылка (опционально, например tel:+992..., mailto:..., https://...)</p>
+                <div id="dynamicContactsInputsContainer" style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 14px;">
+                    <!-- Динамические поля ввода контактов будут здесь -->
+                </div>
+                <button type="button" onclick="addContactField('fa-phone', '', '')" style="background: #f3f4f6; border: 1px dashed #d1d5db; padding: 8px; border-radius: 8px; width: 100%; cursor: pointer; font-weight: bold; font-size: 12px; margin-bottom: 14px;">+ Добавить контакт</button>
+
                 <button type="submit" class="btn-gold">Сохранить изменения сайта</button>
             </form>
         </div>
@@ -376,18 +387,20 @@
         let currentUser = null;
         let cachedOrders = [];
 
-        // Конфигурация сайта по умолчанию
         const defaultConfig = {
+            bgColor: "#0b1329",
+            textColor: "#f3f4f6",
             brandName: "B-TIME",
             brandSub: "LUXURY WATCHES",
-            phone: "+992 (90) 000-00-00",
-            email: "info@b-time.tj",
-            city: "Душанбе",
-            address: "г. Душанбе, пр. Рудаки",
             footerDesc: "Официальный дилер элитных часов в Таджикистане. Безупречное качество и премиальный сервис.",
             heroTitle: "Элегантность в каждой секунде",
             heroDesc: "Эксклюзивная коллекция швейцарских и мировых брендов с гарантией качества.",
-            heroBadge: "Официальный дилер"
+            heroBadge: "Официальный дилер",
+            contacts: [
+                { icon: "fa-location-dot", text: "Душанбе", link: "" },
+                { icon: "fa-phone", text: "+992 (90) 000-00-00", link: "tel:+992900000000" },
+                { icon: "fa-envelope", text: "info@b-time.tj", link: "mailto:info@b-time.tj" }
+            ]
         };
 
         window.siteConfig = JSON.parse(localStorage.getItem('btime_site_config')) || defaultConfig;
@@ -401,7 +414,6 @@
 
         window.products = JSON.parse(localStorage.getItem('btime_products')) || defaultProducts;
 
-        // Синхронизация текстов сайта в реальном времени из Firestore
         function initRealtimeConfig() {
             try {
                 onSnapshot(doc(db, "settings", "main"), (docSnap) => {
@@ -420,32 +432,56 @@
 
         function applySiteConfig() {
             const cfg = window.siteConfig || defaultConfig;
+            document.documentElement.style.setProperty('--bg-color', cfg.bgColor || '#0b1329');
+            document.documentElement.style.setProperty('--text-color', cfg.textColor || '#f3f4f6');
+            document.body.style.backgroundColor = cfg.bgColor || '#0b1329';
+            document.body.style.color = cfg.textColor || '#f3f4f6';
+
             document.getElementById('siteBrandName').innerText = cfg.brandName;
             document.getElementById('siteBrandSub').innerText = cfg.brandSub;
-            document.getElementById('siteCity').innerText = cfg.city;
-            document.getElementById('sitePhone').innerText = cfg.phone;
-            document.getElementById('footerPhoneText').innerText = cfg.phone;
-            document.getElementById('footerEmailText').innerText = cfg.email;
-            document.getElementById('footerAddressText').innerText = cfg.address;
             document.getElementById('footerDescText').innerText = cfg.footerDesc;
             document.getElementById('homeTitleText').innerText = cfg.heroTitle;
             document.getElementById('homeDescText').innerText = cfg.heroDesc;
             document.getElementById('homeBadgeText').innerText = cfg.heroBadge;
+
+            // Рендер динамических контактов сверху и в футере
+            const contactsList = cfg.contacts || [];
+            const topBarHtml = contactsList.map(c => `
+                <span><i class="fa-solid ${c.icon} text-gold"></i> ${c.link ? `<a href="${c.link}" style="color:inherit; text-decoration:none;">${c.text}</a>` : c.text}</span>
+            `).join('');
+            document.getElementById('topBarDynamicContacts').innerHTML = topBarHtml;
+            document.getElementById('footerContactsContainer').innerHTML = topBarHtml;
         }
+
+        window.addContactField = (icon = 'fa-phone', text = '', link = '') => {
+            const container = document.getElementById('dynamicContactsInputsContainer');
+            const div = document.createElement('div');
+            div.style.cssText = "display: flex; gap: 6px; align-items: center;";
+            div.innerHTML = `
+                <input type="text" placeholder="Иконка (fa-phone)" value="${icon}" style="flex: 1;" class="contact-icon-input">
+                <input type="text" placeholder="Текст контакта" value="${text}" style="flex: 2;" class="contact-text-input">
+                <input type="text" placeholder="Ссылка (tel:, mailto:, https://)" value="${link}" style="flex: 2;" class="contact-link-input">
+                <button type="button" onclick="this.parentElement.remove()" style="background: #dc2626; color: white; border: none; padding: 10px; border-radius: 8px; cursor: pointer;"><i class="fa-solid fa-trash"></i></button>
+            `;
+            container.appendChild(div);
+        };
 
         window.openSiteConfigModal = () => {
             if (!ADMINS.includes(currentUser?.email?.toLowerCase())) return;
             const cfg = window.siteConfig || defaultConfig;
+            document.getElementById('cfgBgColor').value = cfg.bgColor || '#0b1329';
+            document.getElementById('cfgTextColor').value = cfg.textColor || '#f3f4f6';
             document.getElementById('cfgBrandName').value = cfg.brandName;
             document.getElementById('cfgBrandSub').value = cfg.brandSub;
-            document.getElementById('cfgPhone').value = cfg.phone;
-            document.getElementById('cfgEmail').value = cfg.email;
-            document.getElementById('cfgCity').value = cfg.city;
-            document.getElementById('cfgAddress').value = cfg.address;
             document.getElementById('cfgFooterDesc').value = cfg.footerDesc;
             document.getElementById('cfgHeroTitle').value = cfg.heroTitle;
             document.getElementById('cfgHeroDesc').value = cfg.heroDesc;
             document.getElementById('cfgHeroBadge').value = cfg.heroBadge;
+
+            const container = document.getElementById('dynamicContactsInputsContainer');
+            container.innerHTML = '';
+            (cfg.contacts || []).forEach(c => addContactField(c.icon, c.text, c.link));
+
             openModal('siteConfigModal');
         };
 
@@ -453,31 +489,43 @@
             e.preventDefault();
             if (!ADMINS.includes(currentUser?.email?.toLowerCase())) return;
 
+            const iconInputs = document.querySelectorAll('.contact-icon-input');
+            const textInputs = document.querySelectorAll('.contact-text-input');
+            const linkInputs = document.querySelectorAll('.contact-link-input');
+            
+            let newContacts = [];
+            for(let i=0; i<iconInputs.length; i++) {
+                if(textInputs[i].value.trim() !== '') {
+                    newContacts.push({
+                        icon: iconInputs[i].value.trim(),
+                        text: textInputs[i].value.trim(),
+                        link: linkInputs[i].value.trim()
+                    });
+                }
+            }
+
             const newCfg = {
+                bgColor: document.getElementById('cfgBgColor').value,
+                textColor: document.getElementById('cfgTextColor').value,
                 brandName: document.getElementById('cfgBrandName').value,
                 brandSub: document.getElementById('cfgBrandSub').value,
-                phone: document.getElementById('cfgPhone').value,
-                email: document.getElementById('cfgEmail').value,
-                city: document.getElementById('cfgCity').value,
-                address: document.getElementById('cfgAddress').value,
                 footerDesc: document.getElementById('cfgFooterDesc').value,
                 heroTitle: document.getElementById('cfgHeroTitle').value,
                 heroDesc: document.getElementById('cfgHeroDesc').value,
-                heroBadge: document.getElementById('cfgHeroBadge').value
+                heroBadge: document.getElementById('cfgHeroBadge').value,
+                contacts: newContacts
             };
 
             closeModal('siteConfigModal');
 
             try {
                 await setDoc(doc(db, "settings", "main"), newCfg);
-            } catch (err) {
-                console.warn("Cloud config save warning");
-            }
+            } catch (err) {}
 
             window.siteConfig = newCfg;
             localStorage.setItem('btime_site_config', JSON.stringify(newCfg));
             applySiteConfig();
-            alert("Настройки сайта успешно обновлены!");
+            alert("Дизайн и контент сайта успешно обновлены!");
         };
 
         initRealtimeConfig();
@@ -488,17 +536,13 @@
             try {
                 const docSnap = await getDoc(doc(db, "blocked_users", uid));
                 return docSnap.exists();
-            } catch (e) {
-                return false;
-            }
+            } catch (e) { return false; }
         }
 
         const qProd = query(collection(db, "products"), orderBy("timestamp", "desc"));
         onSnapshot(qProd, (snapshot) => {
             let cloudProducts = [];
-            snapshot.forEach(docSnap => {
-                cloudProducts.push({ id: docSnap.id, ...docSnap.data() });
-            });
+            snapshot.forEach(docSnap => cloudProducts.push({ id: docSnap.id, ...docSnap.data() }));
             if (cloudProducts.length > 0) {
                 window.products = cloudProducts;
                 localStorage.setItem('btime_products', JSON.stringify(cloudProducts));
@@ -560,10 +604,7 @@
 
         window.logout = () => signOut(auth);
         window.loginWithGoogle = async () => {
-            try { 
-                await signInWithPopup(auth, googleProvider); 
-                closeModal('authModal'); 
-            } catch(e) { alert("Ошибка: " + e.message); }
+            try { await signInWithPopup(auth, googleProvider); closeModal('authModal'); } catch(e) { alert("Ошибка: " + e.message); }
         };
 
         window.handleEmailAuth = async (e) => {
@@ -573,10 +614,7 @@
             try {
                 await signInWithEmailAndPassword(auth, email, pass);
             } catch(err) {
-                try { 
-                    await createUserWithEmailAndPassword(auth, email, pass); 
-                    alert("Успешно!"); 
-                } catch(e2) { alert(e2.message); return; }
+                try { await createUserWithEmailAndPassword(auth, email, pass); alert("Успешно!"); } catch(e2) { alert(e2.message); return; }
             }
             closeModal('authModal');
         };
@@ -602,12 +640,7 @@
         }
 
         window.saveOrderToCloud = async (orderData) => {
-            try { 
-                await addDoc(collection(db, "orders"), orderData);
-                alert("Заказ успешно оформлен!");
-            } catch(e) { 
-                alert("Заказ успешно сохранен!"); 
-            }
+            try { await addDoc(collection(db, "orders"), orderData); alert("Заказ успешно оформлен!"); } catch(e) { alert("Заказ успешно сохранен!"); }
         };
 
         window.openAdminModal = () => { document.getElementById('adminModal').classList.add('open'); renderAdminOrders(); };
@@ -620,7 +653,7 @@
                 return;
             }
             container.innerHTML = cachedOrders.map((o, idx) => `
-                <div style="background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 12px; padding: 14px;">
+                <div style="background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 12px; padding: 14px; color: #111827;">
                     <div style="display: flex; justify-content: space-between; font-size: 13px; font-weight: bold; margin-bottom: 6px; color: #d97706;">
                         <span>Заказ #${cachedOrders.length - idx} (${o.status || 'Новый'})</span>
                         <span style="color: #6b7280; font-weight: normal;">${o.date}</span>
@@ -659,7 +692,7 @@
                 return;
             }
             container.innerHTML = myOrders.map((o, idx) => `
-                <div style="background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 12px; padding: 14px;">
+                <div style="background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 12px; padding: 14px; color: #111827;">
                     <div style="display: flex; justify-content: space-between; font-size: 13px; font-weight: bold; margin-bottom: 6px; color: #2563eb;">
                         <span>Заказ #${myOrders.length - idx}</span>
                         <span style="color: #6b7280; font-weight: normal;">${o.date}</span>
@@ -679,14 +712,11 @@
         window.openModal = (id) => document.getElementById(id).classList.add('open');
         window.closeModal = (id) => document.getElementById(id).classList.remove('open');
 
-        // Управление товарами
         window.handleImageUpload = (event) => {
             const file = event.target.files[0];
             if (file) {
                 const reader = new FileReader();
-                reader.onload = function(e) {
-                    document.getElementById('prodImageBase64').value = e.target.result;
-                };
+                reader.onload = function(e) { document.getElementById('prodImageBase64').value = e.target.result; };
                 reader.readAsDataURL(file);
             }
         };
@@ -724,7 +754,6 @@
         window.saveProduct = async (e) => {
             e.preventDefault();
             if (!ADMINS.includes(currentUser?.email?.toLowerCase())) return;
-            
             const editId = document.getElementById('editProductDocId').value;
             const name = document.getElementById('prodName').value;
             const brand = document.getElementById('prodBrand').value;
@@ -741,11 +770,7 @@
                     if (imageBase64) updateData.image = imageBase64;
                     await updateDoc(doc(db, "products", editId), updateData);
                 } else {
-                    if (!imageBase64) { 
-                        alert("Выберите фото!"); 
-                        openModal('productModal');
-                        return; 
-                    }
+                    if (!imageBase64) { alert("Выберите фото!"); openModal('productModal'); return; }
                     await addDoc(collection(db, "products"), { name, brand, sku, priceTJS, image: imageBase64, badge, timestamp: Date.now() });
                 }
             } catch (err) {
@@ -763,11 +788,7 @@
         window.deleteProduct = async (id) => {
             if (!ADMINS.includes(currentUser?.email?.toLowerCase())) return;
             if (confirm("Удалить товар?")) {
-                try {
-                    if (!id.startsWith('def_') && !id.startsWith('loc_')) {
-                        await deleteDoc(doc(db, "products", id));
-                    }
-                } catch(e) {}
+                try { if (!id.startsWith('def_') && !id.startsWith('loc_')) await deleteDoc(doc(db, "products", id)); } catch(e) {}
                 window.products = window.products.filter(p => p.id != id);
                 localStorage.setItem('btime_products', JSON.stringify(window.products));
                 if (typeof renderProducts === 'function') renderProducts();
@@ -775,7 +796,7 @@
         };
     </script>
 
-    <!-- Интерфейс, корзина и переводы -->
+    <!-- Интерфейс и корзина -->
     <script>
         let reviews = [{ author: "Алишер Р.", rating: 5, text: "Отличный магазин, всё оригинальное!" }];
         let cart = JSON.parse(localStorage.getItem('btime_cart')) || [];
@@ -784,9 +805,7 @@
         let currentLang = 'ru';
         const rates = { TJS: 1, USD: 0.091, RUB: 8.5 };
 
-        function changeLanguage(lang) {
-            currentLang = lang;
-        }
+        function changeLanguage(lang) { currentLang = lang; }
 
         function formatPrice(tjs) {
             let val = tjs * rates[currentCurrency];
@@ -795,10 +814,7 @@
             return `${Math.round(val).toLocaleString()} ЅM`;
         }
 
-        function changeCurrency(val) {
-            currentCurrency = val;
-            renderProducts();
-        }
+        function changeCurrency(val) { currentCurrency = val; renderProducts(); }
 
         function isAdminUser() {
             const ADMINS = ["samirdv888@gmail.com", "abdullochoriev4242@gmail.com"];
@@ -859,11 +875,8 @@
         }
 
         function toggleCompare(id) {
-            if (compareList.includes(id)) {
-                compareList = compareList.filter(i => i !== id);
-            } else {
-                compareList.push(id);
-            }
+            if (compareList.includes(id)) compareList = compareList.filter(i => i !== id);
+            else compareList.push(id);
             localStorage.setItem('btime_compare', JSON.stringify(compareList));
             updateBadges();
             renderProducts();
@@ -894,8 +907,7 @@
 
         function addToCart(id) {
             const item = cart.find(i => i.id == id);
-            if (item) item.qty++;
-            else cart.push({ id, qty: 1 });
+            if (item) item.qty++; else cart.push({ id, qty: 1 });
             localStorage.setItem('btime_cart', JSON.stringify(cart));
             updateBadges();
             openCartModal();
