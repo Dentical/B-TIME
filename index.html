@@ -12,10 +12,10 @@
         body { background-color: var(--bg-color, #0b1329); color: var(--text-color, #f3f4f6); min-height: 100vh; display: flex; flex-direction: column; overflow-x: hidden; transition: background 0.3s, color 0.3s; }
         .serif { font-family: 'Playfair Display', serif; }
         
-        .top-bar { background: #070d1d; border-bottom: 1px solid rgba(30, 58, 138, 0.5); font-size: 12px; color: #d1d5db; padding: 8px 16px; }
+        .top-bar { background: var(--topbar-color, #070d1d); border-bottom: 1px solid rgba(30, 58, 138, 0.5); font-size: 12px; color: #d1d5db; padding: 8px 16px; transition: background 0.3s; }
         .top-bar-inner { max-width: 1280px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; }
         
-        header { position: sticky; top: 0; z-index: 40; background: rgba(11, 19, 41, 0.95); backdrop-filter: blur(10px); border-bottom: 1px solid rgba(30, 58, 138, 0.6); min-height: 70px; display: flex; align-items: center; }
+        header { position: sticky; top: 0; z-index: 40; background: var(--header-color, rgba(11, 19, 41, 0.95)); backdrop-filter: blur(10px); border-bottom: 1px solid rgba(30, 58, 138, 0.6); min-height: 70px; display: flex; align-items: center; transition: background 0.3s; }
         .header-inner { max-width: 1280px; margin: 0 auto; width: 100%; padding: 10px 16px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; }
         
         .logo { display: flex; align-items: center; gap: 10px; cursor: pointer; text-decoration: none; color: white; }
@@ -53,7 +53,7 @@
         form label { display: block; font-size: 13px; font-weight: 600; margin-bottom: 6px; color: #374151; }
         form input, form textarea, form select { width: 100%; padding: 10px 14px; border: 1px solid #d1d5db; border-radius: 10px; font-size: 14px; user-select: text; }
         
-        footer { background: #070d1d; border-top: 1px solid rgba(30, 58, 138, 0.5); padding: 32px 16px; margin-top: 40px; color: #9ca3af; font-size: 13px; }
+        footer { background: var(--footer-color, #070d1d); border-top: 1px solid rgba(30, 58, 138, 0.5); padding: 32px 16px; margin-top: 40px; color: #9ca3af; font-size: 13px; transition: background 0.3s; }
         .footer-inner { max-width: 1280px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 24px; }
         
         .hidden { display: none !important; }
@@ -73,8 +73,8 @@
     <div class="top-bar">
         <div class="top-bar-inner">
             <div style="display: flex; gap: 16px; align-items: center;" id="topBarDynamicContacts">
-                <span><i class="fa-solid fa-location-dot text-gold"></i> <span id="siteCity">Душанбе</span></span>
-                <span><i class="fa-solid fa-phone text-gold"></i> <span id="sitePhone">+992 (90) 000-00-00</span></span>
+                <span><i class="fa-solid fa-location-dot text-gold"></i> Душанбе</span>
+                <span><i class="fa-solid fa-phone text-gold"></i> +992 (90) 000-00-00</span>
             </div>
             <div style="display: flex; gap: 12px; align-items: center;">
                 <div>
@@ -203,23 +203,23 @@
             <div>
                 <h4 style="color: white; font-weight: bold; margin-bottom: 10px;">Контакты</h4>
                 <div id="footerContactsContainer" style="display: flex; flex-direction: column; gap: 6px;">
-                    <p><i class="fa-solid fa-phone text-gold"></i> <span id="footerPhoneText">+992 (90) 000-00-00</span></p>
-                    <p><i class="fa-solid fa-envelope text-gold"></i> <span id="footerEmailText">info@b-time.tj</span></p>
-                    <p><i class="fa-solid fa-location-dot text-gold"></i> <span id="footerAddressText">г. Душанбе, пр. Рудаки</span></p>
+                    <span><i class="fa-solid fa-phone text-gold"></i> +992 (90) 000-00-00</span>
                 </div>
             </div>
         </div>
     </footer>
 
-    <!-- Модалка настроек дизайна и контента сайта (только для админа) -->
+    <!-- Модалка настроек дизайна и контента -->
     <div id="siteConfigModal" class="modal">
         <div class="modal-box" style="max-width: 600px;">
             <button onclick="closeModal('siteConfigModal')" class="modal-close"><i class="fa-solid fa-xmark"></i></button>
-            <h3 class="serif" style="font-size: 22px; margin-bottom: 16px;"><i class="fa-solid fa-gear text-amber"></i> Настройка дизайна и контента</h3>
+            <h3 class="serif" style="font-size: 22px; margin-bottom: 16px;"><i class="fa-solid fa-gear text-amber"></i> Абсолютное управление сайтом</h3>
             <form onsubmit="saveSiteConfig(event)">
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
-                    <div><label>Цвет фона сайта</label><input type="color" id="cfgBgColor" value="#0b1329" style="height: 40px; padding: 2px;"></div>
+                    <div><label>Фон сайта</label><input type="color" id="cfgBgColor" value="#0b1329" style="height: 40px; padding: 2px;"></div>
                     <div><label>Цвет текста</label><input type="color" id="cfgTextColor" value="#f3f4f6" style="height: 40px; padding: 2px;"></div>
+                    <div><label>Фон шапки (Header)</label><input type="color" id="cfgHeaderColor" value="#0b1329" style="height: 40px; padding: 2px;"></div>
+                    <div><label>Фон футера (Footer)</label><input type="color" id="cfgFooterColor" value="#070d1d" style="height: 40px; padding: 2px;"></div>
                 </div>
                 <div><label>Название бренда</label><input type="text" id="cfgBrandName" required></div>
                 <div><label>Подзаголовок бренда</label><input type="text" id="cfgBrandSub" required></div>
@@ -229,14 +229,11 @@
                 <div><label>Описание в футере</label><textarea id="cfgFooterDesc" rows="2" required></textarea></div>
                 
                 <hr style="margin: 16px 0; border: 0; border-top: 1px solid #e5e7eb;">
-                <label style="font-weight: bold; font-size: 14px; margin-bottom: 8px; color: #111827;">Динамические контакты (кнопки с иконками)</label>
-                <p style="font-size: 11px; color: #6b7280; margin-bottom: 10px;">Формат для каждого контакта: Иконка (например fa-phone, fa-envelope, fa-location-dot, fa-brands fa-whatsapp, fa-brands fa-telegram) | Текст | Ссылка (опционально, например tel:+992..., mailto:..., https://...)</p>
-                <div id="dynamicContactsInputsContainer" style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 14px;">
-                    <!-- Динамические поля ввода контактов будут здесь -->
-                </div>
+                <label style="font-weight: bold; font-size: 14px; margin-bottom: 8px; color: #111827;">Контакты и кнопки</label>
+                <div id="dynamicContactsInputsContainer" style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 14px;"></div>
                 <button type="button" onclick="addContactField('fa-phone', '', '')" style="background: #f3f4f6; border: 1px dashed #d1d5db; padding: 8px; border-radius: 8px; width: 100%; cursor: pointer; font-weight: bold; font-size: 12px; margin-bottom: 14px;">+ Добавить контакт</button>
 
-                <button type="submit" class="btn-gold">Сохранить изменения сайта</button>
+                <button type="submit" class="btn-gold">Сохранить всё</button>
             </form>
         </div>
     </div>
@@ -390,6 +387,8 @@
         const defaultConfig = {
             bgColor: "#0b1329",
             textColor: "#f3f4f6",
+            headerColor: "#0b1329",
+            footerColor: "#070d1d",
             brandName: "B-TIME",
             brandSub: "LUXURY WATCHES",
             footerDesc: "Официальный дилер элитных часов в Таджикистане. Безупречное качество и премиальный сервис.",
@@ -434,6 +433,9 @@
             const cfg = window.siteConfig || defaultConfig;
             document.documentElement.style.setProperty('--bg-color', cfg.bgColor || '#0b1329');
             document.documentElement.style.setProperty('--text-color', cfg.textColor || '#f3f4f6');
+            document.documentElement.style.setProperty('--header-color', cfg.headerColor || '#0b1329');
+            document.documentElement.style.setProperty('--footer-color', cfg.footerColor || '#070d1d');
+            
             document.body.style.backgroundColor = cfg.bgColor || '#0b1329';
             document.body.style.color = cfg.textColor || '#f3f4f6';
 
@@ -444,7 +446,6 @@
             document.getElementById('homeDescText').innerText = cfg.heroDesc;
             document.getElementById('homeBadgeText').innerText = cfg.heroBadge;
 
-            // Рендер динамических контактов сверху и в футере
             const contactsList = cfg.contacts || [];
             const topBarHtml = contactsList.map(c => `
                 <span><i class="fa-solid ${c.icon} text-gold"></i> ${c.link ? `<a href="${c.link}" style="color:inherit; text-decoration:none;">${c.text}</a>` : c.text}</span>
@@ -471,6 +472,8 @@
             const cfg = window.siteConfig || defaultConfig;
             document.getElementById('cfgBgColor').value = cfg.bgColor || '#0b1329';
             document.getElementById('cfgTextColor').value = cfg.textColor || '#f3f4f6';
+            document.getElementById('cfgHeaderColor').value = cfg.headerColor || '#0b1329';
+            document.getElementById('cfgFooterColor').value = cfg.footerColor || '#070d1d';
             document.getElementById('cfgBrandName').value = cfg.brandName;
             document.getElementById('cfgBrandSub').value = cfg.brandSub;
             document.getElementById('cfgFooterDesc').value = cfg.footerDesc;
@@ -507,6 +510,8 @@
             const newCfg = {
                 bgColor: document.getElementById('cfgBgColor').value,
                 textColor: document.getElementById('cfgTextColor').value,
+                headerColor: document.getElementById('cfgHeaderColor').value,
+                footerColor: document.getElementById('cfgFooterColor').value,
                 brandName: document.getElementById('cfgBrandName').value,
                 brandSub: document.getElementById('cfgBrandSub').value,
                 footerDesc: document.getElementById('cfgFooterDesc').value,
@@ -525,7 +530,7 @@
             window.siteConfig = newCfg;
             localStorage.setItem('btime_site_config', JSON.stringify(newCfg));
             applySiteConfig();
-            alert("Дизайн и контент сайта успешно обновлены!");
+            alert("Настройки успешно обновлены!");
         };
 
         initRealtimeConfig();
@@ -963,18 +968,18 @@
             const phone = document.getElementById('orderPhone').value;
             const address = document.getElementById('orderAddress').value;
 
-            let totalTJS = cart.reduce((sum, item) => {
-                const p = window.products.find(prod => prod.id == item.id);
-                return sum + (p ? p.priceTJS * item.qty : 0);
+            let totalTJS = cart.reduce((sum, cartItem) => {
+                const p = window.products.find(prod => prod.id == cartItem.id);
+                return sum + (p ? p.priceTJS * cartItem.qty : 0);
             }, 0);
 
             const order = {
                 userId: activeUser.uid,
                 userEmail: activeUser.email,
                 name, phone, address,
-                items: cart.map(i => {
-                    const p = window.products.find(prod => prod.id == item.id);
-                    return { name: p ? p.name : 'Товар', qty: i.qty };
+                items: cart.map(cartItem => {
+                    const p = window.products.find(prod => prod.id == cartItem.id);
+                    return { name: p ? p.name : 'Товар', qty: cartItem.qty };
                 }),
                 total: formatPrice(totalTJS),
                 date: new Date().toLocaleString(),
