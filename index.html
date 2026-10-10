@@ -2,36 +2,129 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title id="pageTitle">B-Time — Официальный интернет-магазин часов</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
         
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', sans-serif; user-select: none; -webkit-tap-highlight-color: transparent; }
-        body { background-color: var(--bg-color, #0b1329); color: var(--text-color, #f3f4f6); min-height: 100vh; display: flex; flex-direction: column; overflow-x: hidden; transition: background 0.3s, color 0.3s; }
+        :root {
+            --bg-color: #0b1329;
+            --text-color: #f3f4f6;
+            --header-color: rgba(11, 19, 41, 0.95);
+            --footer-color: #070d1d;
+            --topbar-color: #070d1d;
+            --gold-gradient: linear-gradient(135deg, #ca8a04, #facc15);
+            --accent-amber: #d97706;
+        }
+
+        * { 
+            box-sizing: border-box; 
+            margin: 0; 
+            padding: 0; 
+            font-family: 'Plus Jakarta Sans', sans-serif; 
+            user-select: none; 
+            -webkit-tap-highlight-color: transparent; 
+        }
+
+        body { 
+            background-color: var(--bg-color); 
+            color: var(--text-color); 
+            min-height: 100vh;
+            min-height: 100dvh; 
+            display: flex; 
+            flex-direction: column; 
+            overflow-x: hidden; 
+            transition: background 0.3s, color 0.3s;
+            padding-bottom: env(safe-area-inset-bottom);
+        }
+
         .serif { font-family: 'Playfair Display', serif; }
         
-        .top-bar { background: var(--topbar-color, #070d1d); border-bottom: 1px solid rgba(30, 58, 138, 0.5); font-size: 12px; color: #d1d5db; padding: 8px 16px; transition: background 0.3s; }
-        .top-bar-inner { max-width: 1280px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; }
+        /* Верхняя панель */
+        .top-bar { 
+            background: var(--topbar-color); 
+            border-bottom: 1px solid rgba(30, 58, 138, 0.5); 
+            font-size: clamp(11px, 2.5vw, 12px); 
+            color: #d1d5db; 
+            padding: 8px 16px; 
+            transition: background 0.3s; 
+        }
+        .top-bar-inner { 
+            max-width: 1280px; 
+            margin: 0 auto; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            flex-wrap: wrap; 
+            gap: 8px; 
+        }
         
-        header { position: sticky; top: 0; z-index: 40; background: var(--header-color, rgba(11, 19, 41, 0.95)); backdrop-filter: blur(10px); border-bottom: 1px solid rgba(30, 58, 138, 0.6); min-height: 70px; display: flex; align-items: center; transition: background 0.3s; }
-        .header-inner { max-width: 1280px; margin: 0 auto; width: 100%; padding: 10px 16px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; }
+        /* Шапка сайта */
+        header { 
+            position: sticky; 
+            top: 0; 
+            z-index: 40; 
+            background: var(--header-color); 
+            backdrop-filter: blur(10px); 
+            border-bottom: 1px solid rgba(30, 58, 138, 0.6); 
+            min-height: 60px; 
+            display: flex; 
+            align-items: center; 
+            transition: background 0.3s; 
+            padding-top: env(safe-area-inset-top);
+        }
+        .header-inner { 
+            max-width: 1280px; 
+            margin: 0 auto; 
+            width: 100%; 
+            padding: 10px 16px; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            flex-wrap: wrap; 
+            gap: 12px; 
+        }
         
         .logo { display: flex; align-items: center; gap: 10px; cursor: pointer; text-decoration: none; color: white; }
-        .logo-icon { width: 38px; height: 38px; border-radius: 12px; background: linear-gradient(135deg, #ca8a04, #facc15); display: flex; align-items: center; justify-content: center; color: black; font-size: 16px; flex-shrink: 0; }
+        .logo-icon { 
+            width: 38px; 
+            height: 38px; 
+            border-radius: 12px; 
+            background: var(--gold-gradient); 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            color: black; 
+            font-size: 16px; 
+            flex-shrink: 0; 
+        }
         
-        nav { display: flex; gap: 16px; font-size: 14px; font-weight: 500; flex-wrap: wrap; }
+        nav { display: flex; gap: clamp(8px, 2vw, 16px); font-size: clamp(12px, 3vw, 14px); font-weight: 500; flex-wrap: wrap; }
         nav button { background: none; border: none; color: #e5e7eb; cursor: pointer; transition: color 0.2s; white-space: nowrap; }
         nav button:hover, nav button.active { color: #facc15; }
 
         .actions { display: flex; align-items: center; gap: 8px; }
-        .btn-icon { background: rgba(255, 255, 255, 0.1); border: 1px solid #1e3a8a; color: #e5e7eb; width: 38px; height: 38px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; position: relative; transition: 0.2s; flex-shrink: 0; }
+        .btn-icon { 
+            background: rgba(255, 255, 255, 0.1); 
+            border: 1px solid #1e3a8a; 
+            color: #e5e7eb; 
+            width: clamp(34px, 8vw, 38px); 
+            height: clamp(34px, 8vw, 38px); 
+            border-radius: 50%; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            cursor: pointer; 
+            position: relative; 
+            transition: 0.2s; 
+            flex-shrink: 0; 
+        }
         .btn-icon:hover { border-color: #facc15; color: #facc15; }
         
         .badge { position: absolute; top: -4px; right: -4px; background: #eab308; color: black; font-size: 10px; font-weight: bold; width: 18px; height: 18px; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
         
-        .main-content { flex-grow: 1; max-width: 1280px; margin: 0 auto; width: 100%; padding: 24px 16px; }
+        .main-content { flex-grow: 1; max-width: 1280px; margin: 0 auto; width: 100%; padding: clamp(12px, 3vw, 24px) 16px; }
         .tab-pane { display: none; }
         .tab-pane.active { display: block; }
 
@@ -47,7 +140,7 @@
             scrollbar-width: none;
         }
         .horizontal-swiper::-webkit-scrollbar { display: none; }
-        .horizontal-swiper .card { flex: 0 0 250px; width: 250px; }
+        .horizontal-swiper .card { flex: 0 0 clamp(200px, 60vw, 250px); width: clamp(200px, 60vw, 250px); }
 
         .swiper-nav-btn {
             position: absolute;
@@ -65,21 +158,20 @@
             align-items: center;
             justify-content: center;
             box-shadow: 0 4px 10px rgba(0,0,0,0.3);
-            transition: background 0.2s, opacity 0.2s;
+            transition: background 0.2s;
         }
         .swiper-nav-btn:hover { background: #eab308; color: black; }
         .swiper-nav-left { left: -10px; }
         .swiper-nav-right { right: -10px; }
 
-        .grid-products { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 20px; }
+        .grid-products { display: grid; grid-template-columns: repeat(auto-fill, minmax(clamp(160px, 45vw, 240px), 1fr)); gap: clamp(10px, 2vw, 20px); }
         
         .card { background: white; border-radius: 16px; overflow: hidden; color: #111827; box-shadow: 0 4px 6px rgba(0,0,0,0.1); display: flex; flex-direction: column; position: relative; }
-        .card-img-slider { position: relative; width: 100%; height: 200px; background: #f9fafb; overflow: hidden; }
+        .card-img-slider { position: relative; width: 100%; height: clamp(160px, 40vw, 200px); background: #f9fafb; overflow: hidden; }
         .card-img-track { display: flex; width: 100%; height: 100%; transition: transform 0.3s ease-in-out; }
         .card-img-track img { width: 100%; height: 100%; object-fit: cover; flex-shrink: 0; }
         
-        .card-arrow { position: absolute; top: 50%; transform: translateY(-50%); background: rgba(0,0,0,0.5); color: white; border: none; width: 26px; height: 26px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 11px; z-index: 2; opacity: 0; transition: opacity 0.2s; }
-        .card:hover .card-arrow { opacity: 1; }
+        .card-arrow { position: absolute; top: 50%; transform: translateY(-50%); background: rgba(0,0,0,0.5); color: white; border: none; width: 26px; height: 26px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 11px; z-index: 2; opacity: 0.8; transition: opacity 0.2s; }
         .card-arrow-left { left: 6px; }
         .card-arrow-right { right: 6px; }
         
@@ -87,22 +179,33 @@
         .card-dot { width: 6px; height: 6px; border-radius: 50%; background: rgba(255,255,255,0.5); transition: background 0.2s; }
         .card-dot.active { background: #eab308; width: 8px; border-radius: 4px; }
 
-        .card-body { padding: 16px; display: flex; flex-direction: column; flex-grow: 1; justify-content: space-between; }
+        .card-body { padding: clamp(10px, 2.5vw, 16px); display: flex; flex-direction: column; flex-grow: 1; justify-content: space-between; }
         
-        .btn-gold { background: linear-gradient(135deg, #eab308, #facc15); color: black; font-weight: bold; border: none; padding: 12px 20px; border-radius: 12px; cursor: pointer; width: 100%; transition: opacity 0.2s; font-size: 14px; }
+        .btn-gold { background: var(--gold-gradient); color: black; font-weight: bold; border: none; padding: 12px 20px; border-radius: 12px; cursor: pointer; width: 100%; transition: opacity 0.2s; font-size: 14px; }
         .btn-gold:hover { opacity: 0.9; }
 
+        /* Модальные окна с адаптацией */
         .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(5px); z-index: 100; display: none; align-items: center; justify-content: center; padding: 16px; }
         .modal.open { display: flex; }
-        .modal-box { background: white; color: #111827; width: 100%; max-width: 550px; border-radius: 24px; padding: 24px; position: relative; max-height: 90vh; overflow-y: auto; }
+        .modal-box { 
+            background: white; 
+            color: #111827; 
+            width: 100%; 
+            max-width: 550px; 
+            border-radius: 24px; 
+            padding: clamp(16px, 4vw, 24px); 
+            position: relative; 
+            max-height: 90dvh; 
+            overflow-y: auto; 
+        }
         .modal-close { position: absolute; top: 16px; right: 16px; background: none; border: none; font-size: 20px; cursor: pointer; color: #6b7280; }
         
         form div { margin-bottom: 14px; }
         form label { display: block; font-size: 13px; font-weight: 600; margin-bottom: 6px; color: #374151; }
         form input, form textarea, form select { width: 100%; padding: 10px 14px; border: 1px solid #d1d5db; border-radius: 10px; font-size: 14px; user-select: text; }
         
-        footer { background: var(--footer-color, #070d1d); border-top: 1px solid rgba(30, 58, 138, 0.5); padding: 32px 16px; margin-top: 40px; color: #9ca3af; font-size: 13px; transition: background 0.3s; }
-        .footer-inner { max-width: 1280px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 24px; }
+        footer { background: var(--footer-color); border-top: 1px solid rgba(30, 58, 138, 0.5); padding: 32px 16px; margin-top: 40px; color: #9ca3af; font-size: 13px; transition: background 0.3s; }
+        .footer-inner { max-width: 1280px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 24px; }
         
         .hidden { display: none !important; }
         .text-gold { color: #facc15; }
@@ -199,7 +302,7 @@
             <div style="padding: 20px 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 30px; align-items: center;">
                 <div>
                     <span id="homeBadgeText" style="background: rgba(234,179,8,0.1); border: 1px solid rgba(234,179,8,0.3); color: #facc15; padding: 6px 12px; border-radius: 20px; font-size: 11px; font-weight: 600; text-transform: uppercase;">Официальный дилер</span>
-                    <h1 id="homeTitleText" class="serif" style="font-size: 36px; line-height: 1.1; margin: 16px 0;">Элегантность в каждой секунде</h1>
+                    <h1 id="homeTitleText" class="serif" style="font-size: clamp(26px, 5vw, 36px); line-height: 1.1; margin: 16px 0;">Элегантность в каждой секунде</h1>
                     <p id="homeDescText" style="opacity: 0.8; margin-bottom: 20px; font-size: 14px;">Эксклюзивная коллекция швейцарских и мировых брендов с гарантией качества.</p>
                     <button onclick="switchTab('catalog')" class="btn-gold" style="width: auto; padding: 12px 24px;">Перейти в каталог</button>
                 </div>
@@ -208,9 +311,9 @@
                 </div>
             </div>
 
-            <!-- Горизонтальный свайпер товаров в стиле Wildberries -->
+            <!-- Горизонтальный свайпер товаров Wildberries -->
             <div style="display: flex; justify-content: space-between; align-items: center; margin: 30px 0 16px;">
-                <h2 class="serif" style="font-size: 24px;">Хиты продаж (Свайпайте вправо <i class="fa-solid fa-arrow-right text-gold"></i>)</h2>
+                <h2 class="serif" style="font-size: clamp(18px, 4vw, 24px);">Хиты продаж (Свайпайте <i class="fa-solid fa-arrow-right text-gold"></i>)</h2>
             </div>
             
             <div class="swiper-wrapper-container">
@@ -221,25 +324,25 @@
         </div>
 
         <div id="tab-catalog" class="tab-pane">
-            <h2 class="serif" style="font-size: 24px; margin-bottom: 20px;">Каталог часов</h2>
+            <h2 class="serif" style="font-size: clamp(18px, 4vw, 24px); margin-bottom: 20px;">Каталог часов</h2>
             <div id="catalogGrid" class="grid-products"></div>
         </div>
 
         <div id="tab-compare" class="tab-pane">
-            <h2 class="serif" style="font-size: 24px; margin-bottom: 20px;">Сравнение товаров</h2>
+            <h2 class="serif" style="font-size: clamp(18px, 4vw, 24px); margin-bottom: 20px;">Сравнение товаров</h2>
             <div id="compareContainer" style="background: white; color: #111827; padding: 20px; border-radius: 16px;"></div>
         </div>
 
         <div id="tab-reviews" class="tab-pane">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 10px;">
-                <h2 class="serif" style="font-size: 24px;">Отзывы клиентов</h2>
+                <h2 class="serif" style="font-size: clamp(18px, 4vw, 24px);">Отзывы клиентов</h2>
                 <button onclick="openModal('reviewModal')" class="btn-gold" style="width: auto; padding: 10px 18px;">Оставить отзыв</button>
             </div>
             <div id="reviewsGrid" class="grid-products"></div>
         </div>
 
         <div id="tab-articles" class="tab-pane">
-            <h2 class="serif" style="font-size: 24px; margin-bottom: 20px;">Часовой журнал</h2>
+            <h2 class="serif" style="font-size: clamp(18px, 4vw, 24px); margin-bottom: 20px;">Часовой журнал</h2>
             <div style="background: white; color: #111827; padding: 20px; border-radius: 16px;">
                 <h3 id="articleTitleText" class="serif" style="font-size: 18px; margin-bottom: 8px;">Как выбрать механические часы?</h3>
                 <p id="articleBodyText" style="color: #4b5563; font-size: 13px; line-height: 1.5;">Механические часы — это не просто прибор для измерения времени, а статусный аксессуар и настоящее произведение инженерного искусства...</p>
@@ -268,7 +371,7 @@
 
     <!-- Модалка настроек дизайна и контента -->
     <div id="siteConfigModal" class="modal">
-        <div class="modal-box" style="max-width: 600px;">
+        <div class="modal-box">
             <button onclick="closeModal('siteConfigModal')" class="modal-close"><i class="fa-solid fa-xmark"></i></button>
             <h3 class="serif" style="font-size: 22px; margin-bottom: 16px;"><i class="fa-solid fa-gear text-amber"></i> Управление сайтом</h3>
             <form onsubmit="saveSiteConfig(event)">
@@ -295,9 +398,9 @@
         </div>
     </div>
 
-    <!-- Модалка товара с поддержкой до 8 фото -->
+    <!-- Модалка товара с поддержкой мультифото -->
     <div id="productModal" class="modal">
-        <div class="modal-box" style="max-width: 600px;">
+        <div class="modal-box">
             <button onclick="closeModal('productModal')" class="modal-close"><i class="fa-solid fa-xmark"></i></button>
             <h3 id="productModalTitle" class="serif" style="font-size: 22px; margin-bottom: 16px;">Добавить товар</h3>
             <form onsubmit="saveProduct(event)">
@@ -309,7 +412,7 @@
                 <div><label>Бейдж (например: Хит, Премиум)</label><input type="text" id="prodBadge" value="Хит"></div>
                 
                 <div>
-                    <label>Фотографии товара (до 8 штук из устройства)</label>
+                    <label>Фотографии товара (выберите несколько)</label>
                     <input type="file" id="prodImageFiles" accept="image/*" multiple onchange="handleMultipleImagesUpload(event)">
                     <div id="uploadedImagesPreview" style="display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px;"></div>
                 </div>
@@ -362,26 +465,26 @@
     </div>
 
     <div id="clientOrdersModal" class="modal">
-        <div class="modal-box" style="max-width: 560px;">
+        <div class="modal-box">
             <button onclick="closeModal('clientOrdersModal')" class="modal-close"><i class="fa-solid fa-xmark"></i></button>
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
                 <h3 class="serif" style="font-size: 22px;"><i class="fa-solid fa-receipt text-amber"></i> Мои заказы</h3>
                 <button onclick="loadClientOrders()" style="background: #f3f4f6; border: none; padding: 6px 12px; border-radius: 8px; cursor: pointer; font-size: 12px; font-weight: bold;"><i class="fa-solid fa-rotate"></i> Обновить</button>
             </div>
-            <div id="clientOrdersContainer" style="display: flex; flex-direction: column; gap: 10px; max-height: 50vh; overflow-y: auto;">
+            <div id="clientOrdersContainer" style="display: flex; flex-direction: column; gap: 10px; max-height: 50dvh; overflow-y: auto;">
                 <p style="color: #6b7280; text-align: center;">Загрузка...</p>
             </div>
         </div>
     </div>
 
     <div id="adminModal" class="modal">
-        <div class="modal-box" style="max-width: 600px;">
+        <div class="modal-box">
             <button onclick="closeModal('adminModal')" class="modal-close"><i class="fa-solid fa-xmark"></i></button>
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
-                <h3 class="serif" style="font-size: 22px;"><i class="fa-solid fa-file-lines text-amber"></i> Панель администратора (Заказы)</h3>
+                <h3 class="serif" style="font-size: 22px;"><i class="fa-solid fa-file-lines text-amber"></i> Панель админа</h3>
                 <button onclick="loadAdminOrders()" style="background: #f3f4f6; border: none; padding: 6px 12px; border-radius: 8px; cursor: pointer; font-size: 12px; font-weight: bold;"><i class="fa-solid fa-rotate"></i> Обновить</button>
             </div>
-            <div id="adminOrdersContainer" style="display: flex; flex-direction: column; gap: 10px; max-height: 50vh; overflow-y: auto;">
+            <div id="adminOrdersContainer" style="display: flex; flex-direction: column; gap: 10px; max-height: 50dvh; overflow-y: auto;">
                 <p style="color: #6b7280; text-align: center;">Загрузка...</p>
             </div>
         </div>
@@ -402,7 +505,7 @@
         </div>
     </div>
 
-    <!-- Защита кода -->
+    <!-- Защита от девтулзов -->
     <script>
         document.addEventListener('contextmenu', e => e.preventDefault());
         document.addEventListener('keydown', e => {
@@ -416,7 +519,7 @@
         });
     </script>
 
-    <!-- Логика и Firebase -->
+    <!-- Основная логика Firebase + Кэширование -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js";
         import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
@@ -605,6 +708,7 @@
             } catch (e) { return false; }
         }
 
+        // Синхронизация товаров в реальном времени с защитой от пропажи при F5
         const qProd = query(collection(db, "products"), orderBy("timestamp", "desc"));
         onSnapshot(qProd, (snapshot) => {
             let cloudProducts = [];
@@ -787,7 +891,7 @@
         window.openModal = (id) => document.getElementById(id).classList.add('open');
         window.closeModal = (id) => document.getElementById(id).classList.remove('open');
 
-        // Обработка мультизагрузки до 8 изображений
+        // Мультизагрузка файлов из устройства
         window.handleMultipleImagesUpload = (event) => {
             const files = Array.from(event.target.files).slice(0, 8);
             window.tempProductBase64Images = [];
@@ -843,9 +947,11 @@
             openModal('productModal');
         };
 
+        // Двойное сохранение (Firestore + LocalStorage) для предотвращения пропадания при F5
         window.saveProduct = async (e) => {
             e.preventDefault();
             if (!ADMINS.includes(currentUser?.email?.toLowerCase())) return;
+
             const editId = document.getElementById('editProductDocId').value;
             const name = document.getElementById('prodName').value;
             const brand = document.getElementById('prodBrand').value;
@@ -861,23 +967,31 @@
 
             closeModal('productModal');
 
+            const now = Date.now();
+            const productData = { 
+                name, brand, sku, priceTJS, badge, images, image: images[0], timestamp: now 
+            };
+
+            // 1. Мгновенно заносим в локальный сторадж для мгновенного F5 сохранения
+            if (editId) {
+                const pIdx = window.products.findIndex(prod => prod.id == editId);
+                if (pIdx !== -1) window.products[pIdx] = { ...window.products[pIdx], ...productData };
+            } else {
+                const tempId = 'loc_' + now;
+                window.products.unshift({ id: tempId, ...productData });
+            }
+            localStorage.setItem('btime_products', JSON.stringify(window.products));
+            if (typeof renderProducts === 'function') renderProducts();
+
+            // 2. Отправляем в Firebase
             try {
-                if (editId && !editId.startsWith('def_')) {
-                    await updateDoc(doc(db, "products", editId), { name, brand, sku, priceTJS, badge, images, image: images[0] });
+                if (editId && !editId.startsWith('def_') && !editId.startsWith('loc_')) {
+                    await updateDoc(doc(db, "products", editId), productData);
                 } else {
-                    await addDoc(collection(db, "products"), { 
-                        name, brand, sku, priceTJS, badge, images, image: images[0], timestamp: Date.now() 
-                    });
+                    await addDoc(collection(db, "products"), productData);
                 }
             } catch (err) {
-                if (editId) {
-                    const p = window.products.find(prod => prod.id == editId);
-                    if (p) { p.name = name; p.brand = brand; p.sku = sku; p.priceTJS = priceTJS; p.badge = badge; p.images = images; p.image = images[0]; }
-                } else {
-                    window.products.unshift({ id: 'loc_' + Date.now(), name, brand, sku, priceTJS, badge, images, image: images[0], timestamp: Date.now() });
-                }
-                localStorage.setItem('btime_products', JSON.stringify(window.products));
-                if (typeof renderProducts === 'function') renderProducts();
+                console.log("Сохранено локально в резервное хранилище");
             }
         };
 
