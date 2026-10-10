@@ -6,7 +6,7 @@
     <title id="pageTitle">B-Time — Официальный интернет-магазин часов</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
-    <!-- МОМЕНТАЛЬНАЯ ЗАГРУЗКА НАСТРОЕК -->
+    <!-- СКРИПТ МОМЕНТАЛЬНОЙ ЗАГРУЗКИ НАСТРОЕК -->
     <script>
         (function() {
             const savedCfg = localStorage.getItem('btime_site_config');
@@ -416,7 +416,7 @@
                 <div><label>Бейдж (например: Хит, Премиум)</label><input type="text" id="prodBadge" value="Хит"></div>
                 
                 <div>
-                    <label>Фотографии товара (выберите до 8 штук)</label>
+                    <label>Фотографии товара (до 3 штук, авто-сжатие)</label>
                     <input type="file" id="prodImageFiles" accept="image/*" multiple onchange="handleMultipleImagesUpload(event)">
                     <div id="uploadedImagesPreview" style="display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px;"></div>
                 </div>
@@ -715,7 +715,7 @@
             } catch (e) { return false; }
         }
 
-        // АКТИВНЫЙ ОБЛАЧНЫЙ СЛУШАТЕЛЬ ДЛЯ ВСЕХ КЛИЕНТОВ (FIREBASE КАК ОСНОВНОЙ ИСТОЧНИК)
+        // ЕДИНЫЙ ОБЛАЧНЫЙ СЛУШАТЕЛЬ БЕЗ ДУБЛИКАТОВ
         try {
             const qProd = query(collection(db, "products"), orderBy("timestamp", "desc"));
             onSnapshot(qProd, (snapshot) => {
@@ -897,8 +897,9 @@
         window.openModal = (id) => document.getElementById(id).classList.add('open');
         window.closeModal = (id) => document.getElementById(id).classList.remove('open');
 
+        // Мощное сжатие картинок для предотвращения превышения лимита Firestore
         window.handleMultipleImagesUpload = (event) => {
-            const files = Array.from(event.target.files).slice(0, 8);
+            const files = Array.from(event.target.files).slice(0, 3); // Строго до 3 файлов
             window.tempProductBase64Images = [];
             const previewContainer = document.getElementById('uploadedImagesPreview');
             previewContainer.innerHTML = '';
@@ -906,11 +907,32 @@
             files.forEach(file => {
                 const reader = new FileReader();
                 reader.onload = function(e) {
-                    window.tempProductBase64Images.push(e.target.result);
-                    const img = document.createElement('img');
+                    const img = new Image();
                     img.src = e.target.result;
-                    img.style.cssText = "width: 50px; height: 50px; object-fit: cover; border-radius: 8px; border: 1px solid #d1d5db;";
-                    previewContainer.appendChild(img);
+                    img.onload = function() {
+                        const canvas = document.createElement('canvas');
+                        const ctx = canvas.getContext('2d');
+                        let width = img.width;
+                        let height = img.height;
+                        const maxDim = 600; // Оптимальный размер для мгновенной загрузки и экономии веса
+                        if (width > height && width > maxDim) {
+                            height *= maxDim / width;
+                            width = maxDim;
+                        } else if (height > maxDim) {
+                            width *= maxDim / height;
+                            height = maxDim;
+                        }
+                        canvas.width = width;
+                        canvas.height = height;
+                        ctx.drawImage(img, 0, 0, width, height);
+                        const compressedDataUrl = canvas.toDataURL('image/jpeg', 0.6); // 60% качества для стабильности базы
+                        
+                        window.tempProductBase64Images.push(compressedDataUrl);
+                        const thumb = document.createElement('img');
+                        thumb.src = compressedDataUrl;
+                        thumb.style.cssText = "width: 50px; height: 50px; object-fit: cover; border-radius: 8px; border: 1px solid #d1d5db;";
+                        previewContainer.appendChild(thumb);
+                    };
                 };
                 reader.readAsDataURL(file);
             });
@@ -952,7 +974,7 @@
             openModal('productModal');
         };
 
-        // МГНОВЕННАЯ ЗАПИСЬ В FIREBASE ДЛЯ ПОКАЗА ВСЕМ КЛИЕНТАМ
+        // СОХРАНЕНИЕ ТОЛЬКО В ОБЛАКО (ИСКЛЮЧАЕТ ДУБЛИРОВАНИЕ)
         window.saveProduct = async (e) => {
             e.preventDefault();
             if (!ADMINS.includes(currentUser?.email?.toLowerCase())) return;
@@ -966,15 +988,14 @@
             const images = window.tempProductBase64Images;
 
             if (images.length === 0) {
-                alert("Загрузите хотя бы одно фото товара!");
+                alert("Дождитесь сжатия фото или выберите хотя бы одно!");
                 return;
             }
 
             closeModal('productModal');
 
-            const now = Date.now();
             const productData = { 
-                name, brand, sku, priceTJS, badge, images, image: images[0], timestamp: now 
+                name, brand, sku, priceTJS, badge, images, image: images[0], timestamp: Date.now() 
             };
 
             try {
@@ -983,9 +1004,9 @@
                 } else {
                     await addDoc(collection(db, "products"), productData);
                 }
-                alert("Товар успешно добавлен и отправлен в облако клиентам!");
+                alert("Товар успешно сохранен и отправлен всем клиентам!");
             } catch (err) {
-                alert("Ошибка сохранения в облако: " + err.message);
+                alert("Ошибка сохранения: файлы слишком большие. Попробуйте уменьшить количество фото.");
             }
         };
 
@@ -1280,7 +1301,7 @@
 
             const compBadge = document.getElementById('compareBadge');
             if (compBadge) {
-                if (compareList.length > 0) { compBadge.innerText = compareList.length; compBadge.classList.remove('hidden'); }
+                if (compareList.length > 0) { compBadge.innerText = compareList.length; compBadge.classList.add('hidden'); }
                 else compBadge.classList.add('hidden');
             }
         }
