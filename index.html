@@ -6,7 +6,7 @@
     <title id="pageTitle">B-Time — Официальный интернет-магазин часов</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
-    <!-- СКРИПТ МОМЕНТАЛЬНОЙ ЗАГРУЗКИ НАСТРОЕК (Устраняет мигание и задержки) -->
+    <!-- СКРИПТ МОМЕНТАЛЬНОЙ ЗАГРУЗКИ НАСТРОЕК (Без мигания) -->
     <script>
         (function() {
             const savedCfg = localStorage.getItem('btime_site_config');
@@ -567,7 +567,6 @@
             ]
         };
 
-        // Моментальная загрузка конфига и рендеринг интерфейса
         window.siteConfig = JSON.parse(localStorage.getItem('btime_site_config')) || defaultConfig;
         applySiteConfig();
 
@@ -716,6 +715,7 @@
             } catch (e) { return false; }
         }
 
+        // МОМЕНТАЛЬНЫЙ СЛУШАТЕЛЬ FIREBASE (Синхронизация в реальном времени для всех клиентов)
         const qProd = query(collection(db, "products"), orderBy("timestamp", "desc"));
         onSnapshot(qProd, (snapshot) => {
             let cloudProducts = [];
