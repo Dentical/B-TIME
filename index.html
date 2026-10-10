@@ -577,6 +577,7 @@
             { id: "def_4", name: "Casio G-Shock", brand: "Casio", sku: "CSO-004", priceTJS: 1800, images: ["https://images.unsplash.com/photo-1533139502658-0198f920d8e8?w=600&auto=format&fit=crop&q=80"], badge: "Хит", timestamp: 4000 }
         ];
 
+        // Загружаем товары из localStorage сразу для мгновенного отображения
         window.products = JSON.parse(localStorage.getItem('btime_products')) || defaultProducts;
 
         function initRealtimeConfig() {
@@ -715,7 +716,7 @@
             } catch (e) { return false; }
         }
 
-        // МОМЕНТАЛЬНЫЙ СЛУШАТЕЛЬ СЕРВЕРА ДЛЯ ВСЕХ ПОЛЬЗОВАТЕЛЕЙ
+        // БЕЗОПАСНОЕ СЛИЯНИЕ ДАННЫХ ИЗ FIREBASE С ЛОКАЛЬНЫМ КЭШЕМ
         const qProd = query(collection(db, "products"), orderBy("timestamp", "desc"));
         onSnapshot(qProd, (snapshot) => {
             let cloudProducts = [];
@@ -730,8 +731,21 @@
             });
 
             if (cloudProducts.length > 0) {
-                // Если в облаке есть товары, берем их за основу
-                window.products = cloudProducts;
+                // Объединяем облачные товары с локальными, чтобы локальные добавления не пропадали
+                const localProducts = JSON.parse(localStorage.getItem('btime_products')) || [];
+                const mergedMap = new Map();
+
+                // Сначала добавляем всё из облака
+                cloudProducts.forEach(p => mergedMap.set(p.id, p));
+                // Затем добавляем локальные (если их еще нет в облаке)
+                localProducts.forEach(p => {
+                    if (!mergedMap.has(p.id)) {
+                        mergedMap.set(p.id, p);
+                    }
+                });
+
+                window.products = Array.from(mergedMap.values());
+                window.products.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
                 localStorage.setItem('btime_products', JSON.stringify(window.products));
             }
 
@@ -953,7 +967,7 @@
             openModal('productModal');
         };
 
-        // МГНОВЕННОЕ СОХРАНЕНИЕ И ОТПРАВКА ТОВАРА НА СЕРВЕР ДЛЯ ВСЕХ КЛИЕНТОВ
+        // НАДЕЖНОЕ СОХРАНЕНИЕ ТОВАРА С ПРИОРИТЕТОМ ЛОКАЛЬНОГО КЭША
         window.saveProduct = async (e) => {
             e.preventDefault();
             if (!ADMINS.includes(currentUser?.email?.toLowerCase())) return;
@@ -978,27 +992,38 @@
                 name, brand, sku, priceTJS, badge, images, image: images[0], timestamp: now 
             };
 
+            // Мгновенно добавляем в локальный массив и сохраняем в localStorage
+            if (editId) {
+                const pIdx = window.products.findIndex(prod => prod.id == editId);
+                if (pIdx !== -1) {
+                    window.products[pIdx] = { ...window.products[pIdx], ...productData };
+                }
+            } else {
+                const tempId = 'loc_' + now;
+                window.products.unshift({ id: tempId, ...productData });
+            }
+            localStorage.setItem('btime_products', JSON.stringify(window.products));
+            if (typeof renderProducts === 'function') renderProducts();
+
+            // Отправляем в Firebase в фоне
             try {
-                if (editId && !editId.startsWith('def_')) {
+                if (editId && !editId.startsWith('def_') && !editId.startsWith('loc_')) {
                     await updateDoc(doc(db, "products", editId), productData);
                 } else {
                     await addDoc(collection(db, "products"), productData);
                 }
-                alert("Товар успешно добавлен и отправлен клиентам!");
             } catch (err) {
-                alert("Ошибка сохранения: " + err.message);
+                console.log("Сохранено локально");
             }
         };
 
         window.deleteProduct = async (id) => {
             if (!ADMINS.includes(currentUser?.email?.toLowerCase())) return;
             if (confirm("Удалить товар?")) {
-                try { 
-                    if (!id.startsWith('def_')) await deleteDoc(doc(db, "products", id)); 
-                    window.products = window.products.filter(p => p.id != id);
-                    localStorage.setItem('btime_products', JSON.stringify(window.products));
-                    if (typeof renderProducts === 'function') renderProducts();
-                } catch(e) { alert("Ошибка удаления: " + e.message); }
+                try { if (!id.startsWith('def_') && !id.startsWith('loc_')) await deleteDoc(doc(db, "products", id)); } catch(e) {}
+                window.products = window.products.filter(p => p.id != id);
+                localStorage.setItem('btime_products', JSON.stringify(window.products));
+                if (typeof renderProducts === 'function') renderProducts();
             }
         };
     </script>
