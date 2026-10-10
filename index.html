@@ -5,6 +5,24 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title id="pageTitle">B-Time — Официальный интернет-магазин часов</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- СКРИПТ МОМЕНТАЛЬНОЙ ЗАГРУЗКИ НАСТРОЕК (Устраняет мигание и задержки) -->
+    <script>
+        (function() {
+            const savedCfg = localStorage.getItem('btime_site_config');
+            if (savedCfg) {
+                try {
+                    const cfg = JSON.parse(savedCfg);
+                    document.documentElement.style.setProperty('--bg-color', cfg.bgColor || '#0b1329');
+                    document.documentElement.style.setProperty('--text-color', cfg.textColor || '#f3f4f6');
+                    document.documentElement.style.setProperty('--header-color', cfg.headerColor || '#0b1329');
+                    document.documentElement.style.setProperty('--footer-color', cfg.footerColor || '#070d1d');
+                    document.write('<style>body { background-color: ' + (cfg.bgColor || '#0b1329') + '; color: ' + (cfg.textColor || '#f3f4f6') + '; }</style>');
+                } catch(e) {}
+            }
+        })();
+    </script>
+
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
         
@@ -35,20 +53,17 @@
             display: flex; 
             flex-direction: column; 
             overflow-x: hidden; 
-            transition: background 0.3s, color 0.3s;
             padding-bottom: env(safe-area-inset-bottom);
         }
 
         .serif { font-family: 'Playfair Display', serif; }
         
-        /* Верхняя панель */
         .top-bar { 
             background: var(--topbar-color); 
             border-bottom: 1px solid rgba(30, 58, 138, 0.5); 
             font-size: clamp(11px, 2.5vw, 12px); 
             color: #d1d5db; 
             padding: 8px 16px; 
-            transition: background 0.3s; 
         }
         .top-bar-inner { 
             max-width: 1280px; 
@@ -60,7 +75,6 @@
             gap: 8px; 
         }
         
-        /* Шапка сайта */
         header { 
             position: sticky; 
             top: 0; 
@@ -71,7 +85,6 @@
             min-height: 60px; 
             display: flex; 
             align-items: center; 
-            transition: background 0.3s; 
             padding-top: env(safe-area-inset-top);
         }
         .header-inner { 
@@ -128,7 +141,6 @@
         .tab-pane { display: none; }
         .tab-pane.active { display: block; }
 
-        /* Контейнер горизонтального свайпа в стиле Wildberries */
         .swiper-wrapper-container { position: relative; width: 100%; margin-bottom: 30px; }
         .horizontal-swiper {
             display: flex;
@@ -184,7 +196,6 @@
         .btn-gold { background: var(--gold-gradient); color: black; font-weight: bold; border: none; padding: 12px 20px; border-radius: 12px; cursor: pointer; width: 100%; transition: opacity 0.2s; font-size: 14px; }
         .btn-gold:hover { opacity: 0.9; }
 
-        /* Модальные окна с адаптацией */
         .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(5px); z-index: 100; display: none; align-items: center; justify-content: center; padding: 16px; }
         .modal.open { display: flex; }
         .modal-box { 
@@ -204,7 +215,7 @@
         form label { display: block; font-size: 13px; font-weight: 600; margin-bottom: 6px; color: #374151; }
         form input, form textarea, form select { width: 100%; padding: 10px 14px; border: 1px solid #d1d5db; border-radius: 10px; font-size: 14px; user-select: text; }
         
-        footer { background: var(--footer-color); border-top: 1px solid rgba(30, 58, 138, 0.5); padding: 32px 16px; margin-top: 40px; color: #9ca3af; font-size: 13px; transition: background 0.3s; }
+        footer { background: var(--footer-color); border-top: 1px solid rgba(30, 58, 138, 0.5); padding: 32px 16px; margin-top: 40px; color: #9ca3af; font-size: 13px; }
         .footer-inner { max-width: 1280px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 24px; }
         
         .hidden { display: none !important; }
@@ -221,7 +232,6 @@
 </head>
 <body>
 
-    <!-- Верхняя панель -->
     <div class="top-bar">
         <div class="top-bar-inner">
             <div style="display: flex; gap: 16px; align-items: center;" id="topBarDynamicContacts">
@@ -254,7 +264,6 @@
         </div>
     </div>
 
-    <!-- Шапка сайта -->
     <header>
         <div class="header-inner">
             <div class="logo" onclick="switchTab('home')">
@@ -296,7 +305,6 @@
         </div>
     </header>
 
-    <!-- Основной контент -->
     <main class="main-content">
         <div id="tab-home" class="tab-pane active">
             <div style="padding: 20px 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 30px; align-items: center;">
@@ -311,7 +319,6 @@
                 </div>
             </div>
 
-            <!-- Горизонтальный свайпер товаров Wildberries -->
             <div style="display: flex; justify-content: space-between; align-items: center; margin: 30px 0 16px;">
                 <h2 class="serif" style="font-size: clamp(18px, 4vw, 24px);">Хиты продаж (Свайпайте <i class="fa-solid fa-arrow-right text-gold"></i>)</h2>
             </div>
@@ -350,7 +357,6 @@
         </div>
     </main>
 
-    <!-- Футер -->
     <footer>
         <div class="footer-inner">
             <div>
@@ -369,7 +375,6 @@
         </div>
     </footer>
 
-    <!-- Модалка настроек дизайна и контента -->
     <div id="siteConfigModal" class="modal">
         <div class="modal-box">
             <button onclick="closeModal('siteConfigModal')" class="modal-close"><i class="fa-solid fa-xmark"></i></button>
@@ -398,7 +403,6 @@
         </div>
     </div>
 
-    <!-- Модалка товара с поддержкой мультифото -->
     <div id="productModal" class="modal">
         <div class="modal-box">
             <button onclick="closeModal('productModal')" class="modal-close"><i class="fa-solid fa-xmark"></i></button>
@@ -412,7 +416,7 @@
                 <div><label>Бейдж (например: Хит, Премиум)</label><input type="text" id="prodBadge" value="Хит"></div>
                 
                 <div>
-                    <label>Фотографии товара (выберите несколько)</label>
+                    <label>Фотографии товара (выберите до 8 штук)</label>
                     <input type="file" id="prodImageFiles" accept="image/*" multiple onchange="handleMultipleImagesUpload(event)">
                     <div id="uploadedImagesPreview" style="display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px;"></div>
                 </div>
@@ -422,7 +426,6 @@
         </div>
     </div>
 
-    <!-- Остальные модалки -->
     <div id="authModal" class="modal">
         <div class="modal-box">
             <button onclick="closeModal('authModal')" class="modal-close"><i class="fa-solid fa-xmark"></i></button>
@@ -505,7 +508,6 @@
         </div>
     </div>
 
-    <!-- Защита от девтулзов -->
     <script>
         document.addEventListener('contextmenu', e => e.preventDefault());
         document.addEventListener('keydown', e => {
@@ -519,7 +521,6 @@
         });
     </script>
 
-    <!-- Основная логика Firebase + Кэширование -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js";
         import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
@@ -566,7 +567,9 @@
             ]
         };
 
+        // Моментальная загрузка конфига и рендеринг интерфейса
         window.siteConfig = JSON.parse(localStorage.getItem('btime_site_config')) || defaultConfig;
+        applySiteConfig();
 
         const defaultProducts = [
             { id: "def_1", name: "Rolex Submariner Date", brand: "Rolex", sku: "RLX-001", priceTJS: 98000, images: ["https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=600&auto=format&fit=crop&q=80", "https://images.unsplash.com/photo-1547996160-81dfa63595aa?w=600&auto=format&fit=crop&q=80"], badge: "Хит", timestamp: 1000 },
@@ -585,12 +588,8 @@
                         localStorage.setItem('btime_site_config', JSON.stringify(window.siteConfig));
                     }
                     applySiteConfig();
-                }, (error) => {
-                    applySiteConfig();
-                });
-            } catch (e) {
-                applySiteConfig();
-            }
+                }, (error) => {});
+            } catch (e) {}
         }
 
         function applySiteConfig() {
@@ -603,19 +602,29 @@
             document.body.style.backgroundColor = cfg.bgColor || '#0b1329';
             document.body.style.color = cfg.textColor || '#f3f4f6';
 
-            document.getElementById('siteBrandName').innerText = cfg.brandName;
-            document.getElementById('siteBrandSub').innerText = cfg.brandSub;
-            document.getElementById('footerDescText').innerText = cfg.footerDesc;
-            document.getElementById('homeTitleText').innerText = cfg.heroTitle;
-            document.getElementById('homeDescText').innerText = cfg.heroDesc;
-            document.getElementById('homeBadgeText').innerText = cfg.heroBadge;
+            const brandEl = document.getElementById('siteBrandName');
+            const subEl = document.getElementById('siteBrandSub');
+            const footerDescEl = document.getElementById('footerDescText');
+            const homeTitleEl = document.getElementById('homeTitleText');
+            const homeDescEl = document.getElementById('homeDescText');
+            const homeBadgeEl = document.getElementById('homeBadgeText');
+
+            if (brandEl) brandEl.innerText = cfg.brandName;
+            if (subEl) subEl.innerText = cfg.brandSub;
+            if (footerDescEl) footerDescEl.innerText = cfg.footerDesc;
+            if (homeTitleEl) homeTitleEl.innerText = cfg.heroTitle;
+            if (homeDescEl) homeDescEl.innerText = cfg.heroDesc;
+            if (homeBadgeEl) homeBadgeEl.innerText = cfg.heroBadge;
 
             const contactsList = cfg.contacts || [];
             const topBarHtml = contactsList.map(c => `
                 <span><i class="fa-solid ${c.icon} text-gold"></i> ${c.link ? `<a href="${c.link}" style="color:inherit; text-decoration:none;">${c.text}</a>` : c.text}</span>
             `).join('');
-            document.getElementById('topBarDynamicContacts').innerHTML = topBarHtml;
-            document.getElementById('footerContactsContainer').innerHTML = topBarHtml;
+            
+            const topContacts = document.getElementById('topBarDynamicContacts');
+            const footContacts = document.getElementById('footerContactsContainer');
+            if (topContacts) topContacts.innerHTML = topBarHtml;
+            if (footContacts) footContacts.innerHTML = topBarHtml;
         }
 
         window.addContactField = (icon = 'fa-phone', text = '', link = '') => {
@@ -687,19 +696,18 @@
 
             closeModal('siteConfigModal');
 
+            window.siteConfig = newCfg;
+            localStorage.setItem('btime_site_config', JSON.stringify(newCfg));
+            applySiteConfig();
+
             try {
                 await setDoc(doc(db, "settings", "main"), newCfg);
             } catch (err) {}
 
-            window.siteConfig = newCfg;
-            localStorage.setItem('btime_site_config', JSON.stringify(newCfg));
-            applySiteConfig();
             alert("Настройки успешно обновлены!");
         };
 
         initRealtimeConfig();
-
-        if (typeof renderProducts === 'function') renderProducts();
 
         async function checkIsBlocked(uid) {
             try {
@@ -708,7 +716,6 @@
             } catch (e) { return false; }
         }
 
-        // Синхронизация товаров в реальном времени с защитой от пропажи при F5
         const qProd = query(collection(db, "products"), orderBy("timestamp", "desc"));
         onSnapshot(qProd, (snapshot) => {
             let cloudProducts = [];
@@ -721,13 +728,20 @@
                     timestamp: data.timestamp || Date.now() 
                 });
             });
+
             if (cloudProducts.length > 0) {
-                cloudProducts.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
-                window.products = cloudProducts;
-                localStorage.setItem('btime_products', JSON.stringify(cloudProducts));
-            } else if (window.products.length === 0) {
-                window.products = defaultProducts;
+                const localProducts = JSON.parse(localStorage.getItem('btime_products')) || [];
+                const mergedMap = new Map();
+                cloudProducts.forEach(p => mergedMap.set(p.id, p));
+                localProducts.forEach(p => {
+                    if (!mergedMap.has(p.id)) mergedMap.set(p.id, p);
+                });
+
+                window.products = Array.from(mergedMap.values());
+                window.products.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
+                localStorage.setItem('btime_products', JSON.stringify(window.products));
             }
+
             if (typeof renderProducts === 'function') renderProducts();
         }, (error) => {
             if (typeof renderProducts === 'function') renderProducts();
@@ -891,7 +905,6 @@
         window.openModal = (id) => document.getElementById(id).classList.add('open');
         window.closeModal = (id) => document.getElementById(id).classList.remove('open');
 
-        // Мультизагрузка файлов из устройства
         window.handleMultipleImagesUpload = (event) => {
             const files = Array.from(event.target.files).slice(0, 8);
             window.tempProductBase64Images = [];
@@ -947,7 +960,6 @@
             openModal('productModal');
         };
 
-        // Двойное сохранение (Firestore + LocalStorage) для предотвращения пропадания при F5
         window.saveProduct = async (e) => {
             e.preventDefault();
             if (!ADMINS.includes(currentUser?.email?.toLowerCase())) return;
@@ -972,7 +984,6 @@
                 name, brand, sku, priceTJS, badge, images, image: images[0], timestamp: now 
             };
 
-            // 1. Мгновенно заносим в локальный сторадж для мгновенного F5 сохранения
             if (editId) {
                 const pIdx = window.products.findIndex(prod => prod.id == editId);
                 if (pIdx !== -1) window.products[pIdx] = { ...window.products[pIdx], ...productData };
@@ -983,16 +994,13 @@
             localStorage.setItem('btime_products', JSON.stringify(window.products));
             if (typeof renderProducts === 'function') renderProducts();
 
-            // 2. Отправляем в Firebase
             try {
                 if (editId && !editId.startsWith('def_') && !editId.startsWith('loc_')) {
                     await updateDoc(doc(db, "products", editId), productData);
                 } else {
                     await addDoc(collection(db, "products"), productData);
                 }
-            } catch (err) {
-                console.log("Сохранено локально в резервное хранилище");
-            }
+            } catch (err) {}
         };
 
         window.deleteProduct = async (id) => {
@@ -1006,7 +1014,6 @@
         };
     </script>
 
-    <!-- Интерфейс, свайпер и карусель -->
     <script>
         let reviews = [{ author: "Алишер Р.", rating: 5, text: "Отличный магазин, всё оригинальное!" }];
         let cart = JSON.parse(localStorage.getItem('btime_cart')) || [];
