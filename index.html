@@ -35,10 +35,58 @@
         .tab-pane { display: none; }
         .tab-pane.active { display: block; }
 
+        /* Контейнер горизонтального свайпа в стиле Wildberries */
+        .swiper-wrapper-container { position: relative; width: 100%; margin-bottom: 30px; }
+        .horizontal-swiper {
+            display: flex;
+            gap: 16px;
+            overflow-x: auto;
+            scroll-behavior: smooth;
+            padding: 8px 4px 16px 4px;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;
+        }
+        .horizontal-swiper::-webkit-scrollbar { display: none; }
+        .horizontal-swiper .card { flex: 0 0 250px; width: 250px; }
+
+        .swiper-nav-btn {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 10;
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            border: none;
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            transition: background 0.2s, opacity 0.2s;
+        }
+        .swiper-nav-btn:hover { background: #eab308; color: black; }
+        .swiper-nav-left { left: -10px; }
+        .swiper-nav-right { right: -10px; }
+
         .grid-products { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 20px; }
+        
         .card { background: white; border-radius: 16px; overflow: hidden; color: #111827; box-shadow: 0 4px 6px rgba(0,0,0,0.1); display: flex; flex-direction: column; position: relative; }
-        .card-img { background: #f9fafb; height: 200px; display: flex; align-items: center; justify-content: center; position: relative; }
-        .card-img img { height: 150px; object-fit: cover; }
+        .card-img-slider { position: relative; width: 100%; height: 200px; background: #f9fafb; overflow: hidden; }
+        .card-img-track { display: flex; width: 100%; height: 100%; transition: transform 0.3s ease-in-out; }
+        .card-img-track img { width: 100%; height: 100%; object-fit: cover; flex-shrink: 0; }
+        
+        .card-arrow { position: absolute; top: 50%; transform: translateY(-50%); background: rgba(0,0,0,0.5); color: white; border: none; width: 26px; height: 26px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 11px; z-index: 2; opacity: 0; transition: opacity 0.2s; }
+        .card:hover .card-arrow { opacity: 1; }
+        .card-arrow-left { left: 6px; }
+        .card-arrow-right { right: 6px; }
+        
+        .card-dots { position: absolute; bottom: 6px; left: 0; right: 0; display: flex; justify-content: center; gap: 4px; z-index: 2; }
+        .card-dot { width: 6px; height: 6px; border-radius: 50%; background: rgba(255,255,255,0.5); transition: background 0.2s; }
+        .card-dot.active { background: #eab308; width: 8px; border-radius: 4px; }
+
         .card-body { padding: 16px; display: flex; flex-direction: column; flex-grow: 1; justify-content: space-between; }
         
         .btn-gold { background: linear-gradient(135deg, #eab308, #facc15); color: black; font-weight: bold; border: none; padding: 12px 20px; border-radius: 12px; cursor: pointer; width: 100%; transition: opacity 0.2s; font-size: 14px; }
@@ -64,6 +112,7 @@
             .header-inner { flex-direction: column; align-items: stretch; gap: 10px; }
             nav { justify-content: center; }
             .actions { justify-content: flex-end; }
+            .swiper-nav-btn { display: none; }
         }
     </style>
 </head>
@@ -159,8 +208,16 @@
                 </div>
             </div>
 
-            <h2 class="serif" style="font-size: 24px; margin: 30px 0 16px;">Хиты продаж</h2>
-            <div id="homeGrid" class="grid-products"></div>
+            <!-- Горизонтальный свайпер товаров в стиле Wildberries -->
+            <div style="display: flex; justify-content: space-between; align-items: center; margin: 30px 0 16px;">
+                <h2 class="serif" style="font-size: 24px;">Хиты продаж (Свайпайте вправо <i class="fa-solid fa-arrow-right text-gold"></i>)</h2>
+            </div>
+            
+            <div class="swiper-wrapper-container">
+                <button class="swiper-nav-btn swiper-nav-left" onclick="scrollSwiper('homeSwiper', -280)"><i class="fa-solid fa-chevron-left"></i></button>
+                <div id="homeSwiper" class="horizontal-swiper"></div>
+                <button class="swiper-nav-btn swiper-nav-right" onclick="scrollSwiper('homeSwiper', 280)"><i class="fa-solid fa-chevron-right"></i></button>
+            </div>
         </div>
 
         <div id="tab-catalog" class="tab-pane">
@@ -213,7 +270,7 @@
     <div id="siteConfigModal" class="modal">
         <div class="modal-box" style="max-width: 600px;">
             <button onclick="closeModal('siteConfigModal')" class="modal-close"><i class="fa-solid fa-xmark"></i></button>
-            <h3 class="serif" style="font-size: 22px; margin-bottom: 16px;"><i class="fa-solid fa-gear text-amber"></i> Абсолютное управление сайтом</h3>
+            <h3 class="serif" style="font-size: 22px; margin-bottom: 16px;"><i class="fa-solid fa-gear text-amber"></i> Управление сайтом</h3>
             <form onsubmit="saveSiteConfig(event)">
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
                     <div><label>Фон сайта</label><input type="color" id="cfgBgColor" value="#0b1329" style="height: 40px; padding: 2px;"></div>
@@ -238,6 +295,30 @@
         </div>
     </div>
 
+    <!-- Модалка товара с поддержкой до 8 фото -->
+    <div id="productModal" class="modal">
+        <div class="modal-box" style="max-width: 600px;">
+            <button onclick="closeModal('productModal')" class="modal-close"><i class="fa-solid fa-xmark"></i></button>
+            <h3 id="productModalTitle" class="serif" style="font-size: 22px; margin-bottom: 16px;">Добавить товар</h3>
+            <form onsubmit="saveProduct(event)">
+                <input type="hidden" id="editProductDocId">
+                <div><label>Название</label><input type="text" id="prodName" required></div>
+                <div><label>Бренд</label><input type="text" id="prodBrand" required></div>
+                <div><label>Артикул (SKU) — виден только админу</label><input type="text" id="prodSku" required></div>
+                <div><label>Цена (в сомони TJS)</label><input type="number" id="prodPrice" required min="1"></div>
+                <div><label>Бейдж (например: Хит, Премиум)</label><input type="text" id="prodBadge" value="Хит"></div>
+                
+                <div>
+                    <label>Фотографии товара (до 8 штук из устройства)</label>
+                    <input type="file" id="prodImageFiles" accept="image/*" multiple onchange="handleMultipleImagesUpload(event)">
+                    <div id="uploadedImagesPreview" style="display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px;"></div>
+                </div>
+                
+                <button type="submit" class="btn-gold" style="margin-top: 10px;">Сохранить товар</button>
+            </form>
+        </div>
+    </div>
+
     <!-- Остальные модалки -->
     <div id="authModal" class="modal">
         <div class="modal-box">
@@ -250,27 +331,6 @@
                 <div><label>Email</label><input type="email" id="authEmail" required></div>
                 <div><label>Пароль</label><input type="password" id="authPassword" required minlength="6"></div>
                 <button type="submit" class="btn-gold">Войти / Регистрация</button>
-            </form>
-        </div>
-    </div>
-
-    <div id="productModal" class="modal">
-        <div class="modal-box">
-            <button onclick="closeModal('productModal')" class="modal-close"><i class="fa-solid fa-xmark"></i></button>
-            <h3 id="productModalTitle" class="serif" style="font-size: 22px; margin-bottom: 16px;">Добавить товар</h3>
-            <form onsubmit="saveProduct(event)">
-                <input type="hidden" id="editProductDocId">
-                <input type="hidden" id="prodImageBase64">
-                <div><label>Название</label><input type="text" id="prodName" required></div>
-                <div><label>Бренд</label><input type="text" id="prodBrand" required></div>
-                <div><label>Артикул (SKU) — виден только админу</label><input type="text" id="prodSku" required></div>
-                <div><label>Цена (в сомони TJS)</label><input type="number" id="prodPrice" required min="1"></div>
-                <div>
-                    <label>Фото из устройства</label>
-                    <input type="file" id="prodImageFile" accept="image/*" onchange="handleImageUpload(event)">
-                </div>
-                <div><label>Бейдж (например: Хит, Премиум)</label><input type="text" id="prodBadge" value="Хит"></div>
-                <button type="submit" class="btn-gold">Сохранить товар</button>
             </form>
         </div>
     </div>
@@ -383,6 +443,7 @@
         const ADMINS = ["samirdv888@gmail.com", "abdullochoriev4242@gmail.com"];
         let currentUser = null;
         let cachedOrders = [];
+        window.tempProductBase64Images = [];
 
         const defaultConfig = {
             bgColor: "#0b1329",
@@ -405,10 +466,10 @@
         window.siteConfig = JSON.parse(localStorage.getItem('btime_site_config')) || defaultConfig;
 
         const defaultProducts = [
-            { id: "def_1", name: "Rolex Submariner Date", brand: "Rolex", sku: "RLX-001", priceTJS: 98000, image: "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=600&auto=format&fit=crop&q=80", badge: "Хит", timestamp: 1000 },
-            { id: "def_2", name: "Omega Seamaster Diver", brand: "Omega", sku: "OMG-002", priceTJS: 75000, image: "https://images.unsplash.com/photo-1547996160-81dfa63595aa?w=600&auto=format&fit=crop&q=80", badge: "Премиум", timestamp: 2000 },
-            { id: "def_3", name: "Tissot Gentleman", brand: "Tissot", sku: "TSS-003", priceTJS: 9500, image: "https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?w=600&auto=format&fit=crop&q=80", badge: "Хит", timestamp: 3000 },
-            { id: "def_4", name: "Casio G-Shock", brand: "Casio", sku: "CSO-004", priceTJS: 1800, image: "https://images.unsplash.com/photo-1533139502658-0198f920d8e8?w=600&auto=format&fit=crop&q=80", badge: "Хит", timestamp: 4000 }
+            { id: "def_1", name: "Rolex Submariner Date", brand: "Rolex", sku: "RLX-001", priceTJS: 98000, images: ["https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=600&auto=format&fit=crop&q=80", "https://images.unsplash.com/photo-1547996160-81dfa63595aa?w=600&auto=format&fit=crop&q=80"], badge: "Хит", timestamp: 1000 },
+            { id: "def_2", name: "Omega Seamaster Diver", brand: "Omega", sku: "OMG-002", priceTJS: 75000, images: ["https://images.unsplash.com/photo-1547996160-81dfa63595aa?w=600&auto=format&fit=crop&q=80"], badge: "Премиум", timestamp: 2000 },
+            { id: "def_3", name: "Tissot Gentleman", brand: "Tissot", sku: "TSS-003", priceTJS: 9500, images: ["https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?w=600&auto=format&fit=crop&q=80"], badge: "Хит", timestamp: 3000 },
+            { id: "def_4", name: "Casio G-Shock", brand: "Casio", sku: "CSO-004", priceTJS: 1800, images: ["https://images.unsplash.com/photo-1533139502658-0198f920d8e8?w=600&auto=format&fit=crop&q=80"], badge: "Хит", timestamp: 4000 }
         ];
 
         window.products = JSON.parse(localStorage.getItem('btime_products')) || defaultProducts;
@@ -549,10 +610,14 @@
             let cloudProducts = [];
             snapshot.forEach(docSnap => {
                 let data = docSnap.data();
-                cloudProducts.push({ id: docSnap.id, ...data, timestamp: data.timestamp || Date.now() });
+                cloudProducts.push({ 
+                    id: docSnap.id, 
+                    ...data, 
+                    images: data.images || (data.image ? [data.image] : []),
+                    timestamp: data.timestamp || Date.now() 
+                });
             });
             if (cloudProducts.length > 0) {
-                // Сортируем по timestamp по убыванию на случай отсутствия индекса в Firestore
                 cloudProducts.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
                 window.products = cloudProducts;
                 localStorage.setItem('btime_products', JSON.stringify(cloudProducts));
@@ -722,13 +787,24 @@
         window.openModal = (id) => document.getElementById(id).classList.add('open');
         window.closeModal = (id) => document.getElementById(id).classList.remove('open');
 
-        window.handleImageUpload = (event) => {
-            const file = event.target.files[0];
-            if (file) {
+        // Обработка мультизагрузки до 8 изображений
+        window.handleMultipleImagesUpload = (event) => {
+            const files = Array.from(event.target.files).slice(0, 8);
+            window.tempProductBase64Images = [];
+            const previewContainer = document.getElementById('uploadedImagesPreview');
+            previewContainer.innerHTML = '';
+
+            files.forEach(file => {
                 const reader = new FileReader();
-                reader.onload = function(e) { document.getElementById('prodImageBase64').value = e.target.result; };
+                reader.onload = function(e) {
+                    window.tempProductBase64Images.push(e.target.result);
+                    const img = document.createElement('img');
+                    img.src = e.target.result;
+                    img.style.cssText = "width: 50px; height: 50px; object-fit: cover; border-radius: 8px; border: 1px solid #d1d5db;";
+                    previewContainer.appendChild(img);
+                };
                 reader.readAsDataURL(file);
-            }
+            });
         };
 
         window.openProductModal = () => {
@@ -738,9 +814,10 @@
             document.getElementById('prodBrand').value = '';
             document.getElementById('prodSku').value = '';
             document.getElementById('prodPrice').value = '';
-            document.getElementById('prodImageFile').value = '';
-            document.getElementById('prodImageBase64').value = '';
             document.getElementById('prodBadge').value = 'Хит';
+            document.getElementById('prodImageFiles').value = '';
+            document.getElementById('uploadedImagesPreview').innerHTML = '';
+            window.tempProductBase64Images = [];
             document.getElementById('productModalTitle').innerText = "Добавить товар";
             openModal('productModal');
         };
@@ -754,9 +831,14 @@
             document.getElementById('prodBrand').value = p.brand;
             document.getElementById('prodSku').value = p.sku || '';
             document.getElementById('prodPrice').value = p.priceTJS;
-            document.getElementById('prodImageFile').value = '';
-            document.getElementById('prodImageBase64').value = p.image;
             document.getElementById('prodBadge').value = p.badge || 'Хит';
+            
+            window.tempProductBase64Images = p.images || (p.image ? [p.image] : []);
+            const previewContainer = document.getElementById('uploadedImagesPreview');
+            previewContainer.innerHTML = window.tempProductBase64Images.map(img => `
+                <img src="${img}" style="width: 50px; height: 50px; object-fit: cover; border-radius: 8px; border: 1px solid #d1d5db;">
+            `).join('');
+
             document.getElementById('productModalTitle').innerText = "Редактировать товар";
             openModal('productModal');
         };
@@ -769,28 +851,30 @@
             const brand = document.getElementById('prodBrand').value;
             const sku = document.getElementById('prodSku').value;
             const priceTJS = parseFloat(document.getElementById('prodPrice').value);
-            const imageBase64 = document.getElementById('prodImageBase64').value;
             const badge = document.getElementById('prodBadge').value;
+            const images = window.tempProductBase64Images;
+
+            if (images.length === 0) {
+                alert("Загрузите хотя бы одно фото товара!");
+                return;
+            }
 
             closeModal('productModal');
 
             try {
                 if (editId && !editId.startsWith('def_')) {
-                    const updateData = { name, brand, sku, priceTJS, badge };
-                    if (imageBase64) updateData.image = imageBase64;
-                    await updateDoc(doc(db, "products", editId), updateData);
+                    await updateDoc(doc(db, "products", editId), { name, brand, sku, priceTJS, badge, images, image: images[0] });
                 } else {
-                    if (!imageBase64) { alert("Выберите фото!"); openModal('productModal'); return; }
                     await addDoc(collection(db, "products"), { 
-                        name, brand, sku, priceTJS, image: imageBase64, badge, timestamp: Date.now() 
+                        name, brand, sku, priceTJS, badge, images, image: images[0], timestamp: Date.now() 
                     });
                 }
             } catch (err) {
                 if (editId) {
                     const p = window.products.find(prod => prod.id == editId);
-                    if (p) { p.name = name; p.brand = brand; p.sku = sku; p.priceTJS = priceTJS; if(imageBase64) p.image = imageBase64; p.badge = badge; }
+                    if (p) { p.name = name; p.brand = brand; p.sku = sku; p.priceTJS = priceTJS; p.badge = badge; p.images = images; p.image = images[0]; }
                 } else {
-                    window.products.unshift({ id: 'loc_' + Date.now(), name, brand, sku, priceTJS, image: imageBase64, badge, timestamp: Date.now() });
+                    window.products.unshift({ id: 'loc_' + Date.now(), name, brand, sku, priceTJS, badge, images, image: images[0], timestamp: Date.now() });
                 }
                 localStorage.setItem('btime_products', JSON.stringify(window.products));
                 if (typeof renderProducts === 'function') renderProducts();
@@ -808,7 +892,7 @@
         };
     </script>
 
-    <!-- Интерфейс и корзина -->
+    <!-- Интерфейс, свайпер и карусель -->
     <script>
         let reviews = [{ author: "Алишер Р.", rating: 5, text: "Отличный магазин, всё оригинальное!" }];
         let cart = JSON.parse(localStorage.getItem('btime_cart')) || [];
@@ -834,15 +918,64 @@
             return activeUser && ADMINS.includes(activeUser.email.toLowerCase());
         }
 
+        window.scrollSwiper = function(id, distance) {
+            const container = document.getElementById(id);
+            if (container) container.scrollBy({ left: distance, behavior: 'smooth' });
+        };
+
+        window.moveCardImage = function(id, dir) {
+            const p = window.products.find(prod => prod.id == id);
+            if (!p) return;
+            const images = p.images || (p.image ? [p.image] : []);
+            if (images.length <= 1) return;
+
+            p.currentIndex = (p.currentIndex || 0) + dir;
+            if (p.currentIndex < 0) p.currentIndex = images.length - 1;
+            if (p.currentIndex >= images.length) p.currentIndex = 0;
+
+            const track = document.getElementById(`track_${id}`);
+            const dotsContainer = document.getElementById(`dots_${id}`);
+            if (track) {
+                track.style.transform = `translateX(-${p.currentIndex * 100}%)`;
+            }
+            if (dotsContainer) {
+                const dots = dotsContainer.querySelectorAll('.card-dot');
+                dots.forEach((dot, idx) => {
+                    if (idx === p.currentIndex) dot.classList.add('active');
+                    else dot.classList.remove('active');
+                });
+            }
+        };
+
         window.renderProducts = function() {
             const admin = isAdminUser();
             const list = window.products || [];
-            const html = list.map(p => `
+            
+            const html = list.map(p => {
+                const images = p.images && p.images.length > 0 ? p.images : [p.image];
+                const activeIndex = p.currentIndex || 0;
+
+                return `
                 <div class="card">
-                    <div class="card-img">
-                        <span style="position: absolute; top: 10px; left: 10px; background: #eab308; color: black; font-size: 10px; font-weight: bold; padding: 4px 8px; border-radius: 20px; text-transform: uppercase;">${p.badge || 'Хит'}</span>
-                        <img src="${p.image}" alt="${p.name}">
+                    <div class="card-img-slider">
+                        <span style="position: absolute; top: 10px; left: 10px; background: #eab308; color: black; font-size: 10px; font-weight: bold; padding: 4px 8px; border-radius: 20px; text-transform: uppercase; z-index: 3;">${p.badge || 'Хит'}</span>
+                        
+                        ${images.length > 1 ? `
+                            <button class="card-arrow card-arrow-left" onclick="event.stopPropagation(); moveCardImage('${p.id}', -1)"><i class="fa-solid fa-chevron-left"></i></button>
+                            <button class="card-arrow card-arrow-right" onclick="event.stopPropagation(); moveCardImage('${p.id}', 1)"><i class="fa-solid fa-chevron-right"></i></button>
+                        ` : ''}
+
+                        <div class="card-img-track" id="track_${p.id}" style="transform: translateX(-${activeIndex * 100}%);">
+                            ${images.map(img => `<img src="${img}" alt="${p.name}">`).join('')}
+                        </div>
+
+                        ${images.length > 1 ? `
+                            <div class="card-dots" id="dots_${p.id}">
+                                ${images.map((_, idx) => `<div class="card-dot ${idx === activeIndex ? 'active' : ''}"></div>`).join('')}
+                            </div>
+                        ` : ''}
                     </div>
+
                     <div class="card-body">
                         <div>
                             <div style="display: flex; justify-content: space-between; align-items: center;">
@@ -868,11 +1001,12 @@
                         </div>
                     </div>
                 </div>
-            `).join('');
+            `;
+            }).join('');
 
-            const homeGrid = document.getElementById('homeGrid');
+            const homeSwiper = document.getElementById('homeSwiper');
             const catalogGrid = document.getElementById('catalogGrid');
-            if (homeGrid) homeGrid.innerHTML = html;
+            if (homeSwiper) homeSwiper.innerHTML = html;
             if (catalogGrid) catalogGrid.innerHTML = html;
             renderReviews();
             updateBadges();
@@ -906,9 +1040,10 @@
                     ${compareList.map(id => {
                         const p = window.products.find(prod => prod.id == id);
                         if (!p) return '';
+                        const img = p.images && p.images.length > 0 ? p.images[0] : p.image;
                         return `<div style="border: 1px solid #e5e7eb; padding: 14px; border-radius: 12px; text-align: center; position: relative;">
                             <button onclick="toggleCompare('${p.id}'); renderCompare();" style="position: absolute; top: 6px; right: 6px; background: none; border: none; color: #dc2626; cursor: pointer;"><i class="fa-solid fa-xmark"></i></button>
-                            <img src="${p.image}" style="height: 100px; object-fit: cover; margin-bottom: 8px;">
+                            <img src="${img}" style="height: 100px; object-fit: cover; margin-bottom: 8px;">
                             <h4 style="font-weight: bold; font-size: 14px; margin-bottom: 4px;">${p.name}</h4>
                             <p class="text-amber" style="font-weight: bold; font-size: 14px;">${formatPrice(p.priceTJS)}</p>
                         </div>`;
