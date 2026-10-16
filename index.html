@@ -7,7 +7,8 @@
     <link id="faviconLink" rel="icon" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/svgs/solid/clock.svg">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
-    <!-- Динамическое подключение выбранного шрифта Google Fonts -->
+    <!-- Динамическое подключение шрифтов для превью и сайта -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Montserrat:wght@400;700&family=Roboto:wght@400;700&family=Inter:wght@400;700&family=Open+Sans:wght@400;700&family=Lato:wght@400;700&family=Poppins:wght@400;700&family=Oswald:wght@400;700&family=Raleway:wght@400;700&family=Nunito:wght@400;700&family=Rubik:wght@400;700&family=Ubuntu:wght@400;700&family=Playfair+Display:wght@400;700&family=Merriweather:wght@400;700&family=Cormorant+Garamond:wght@400;700&family=PT+Serif:wght@400;700&family=PT+Sans:wght@400;700&family=Lora:wght@400;700&family=Cinzel:wght@400;700&family=Pacifico&family=Lobster&family=Comfortaa:wght@400;700&family=Marck+Script&family=Caveat:wght@400;700&family=Ruslan+Display&family=Press+Start+2P&family=Fira+Sans:wght@400;700&family=Josefin+Sans:wght@400;700&family=Quicksand:wght@400;700&family=Titillium+Web:wght@400;700&family=Mulish:wght@400;700&family=Work+Sans:wght@400;700&family=Inconsolata:wght@400;700&family=Bebas+Neue&family=Exo+2:wght@400;700&family=Arimo:wght@400;700&family=Vollkorn:wght@400;700&family=Alegreya:wght@400;700&family=Bitter:wght@400;700&family=Source+Sans+3:wght@400;700&family=Noto+Sans:wght@400;700&family=Kanit:wght@400;700&family=Nanum+Gothic:wght@400;700&family=Overpass:wght@400;700&family=Spectral:wght@400;700&family=Manrope:wght@400;700&family=Syne:wght@400;700&family=Space+Grotesk:wght@400;700&display=swap">
     <link id="dynamicGoogleFont" rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap">
 
     <!-- СКРИПТ МОМЕНТАЛЬНОЙ ЗАГРУЗКИ НАСТРОЕК -->
@@ -357,73 +358,63 @@
         </div>
     </footer>
 
-    <!-- МОДАЛЬНОЕ ОКНО ДЛЯ ВЫБОРА ШРИФТОВ И ИКОНКИ WAB -->
+    <!-- МОДАЛЬНОЕ ОКНО ДЛЯ ВЫБОРА ШРИФТОВ И ИКОНКИ -->
     <div id="fontModal" class="modal">
         <div class="modal-box">
             <button onclick="closeModal('fontModal')" class="modal-close"><i class="fa-solid fa-xmark"></i></button>
             <h3 class="serif" style="font-size: 22px; margin-bottom: 16px;"><i class="fa-solid fa-font text-amber"></i> Шрифт и Favicon вкладки</h3>
             <form onsubmit="saveFontAndFavicon(event)">
                 <div>
-                    <label>Выберите шрифт сайта (50+ вариантов)</label>
-                    <select id="fontSelect" style="max-height: 200px; font-size: 14px;">
-                        <option value="Plus Jakarta Sans">Plus Jakarta Sans (По умолчанию)</option>
-                        <option value="Montserrat">Montserrat</option>
-                        <option value="Roboto">Roboto</option>
-                        <option value="Inter">Inter</option>
-                        <option value="Open Sans">Open Sans</option>
-                        <option value="Lato">Lato</option>
-                        <option value="Poppins">Poppins</option>
-                        <option value="Oswald">Oswald</option>
-                        <option value="Raleway">Raleway</option>
-                        <option value="Nunito">Nunito</option>
-                        <option value="Rubik">Rubik</option>
-                        <option value="Ubuntu">Ubuntu</option>
-                        <option value="Playfair Display">Playfair Display</option>
-                        <option value="Merriweather">Merriweather</option>
-
-                        <option value="Cormorant Garamond">Cormorant Garamond</option>
-                        <option value="PT Serif">PT Serif</option>
-                        <option value="PT Sans">PT Sans</option>
-                        <option value="Lora">Lora</option>
-                        <option value="Cinzel">Cinzel</option>
-                        <option value="Pacifico">Pacifico</option>
-                        <option value="Lobster">Lobster</option>
-                        <option value="Comfortaa">Comfortaa</option>
-                        <option value="Marck Script">Marck Script</option>
-                        <option value="Caveat">Caveat</option>
-                        <option value="Ruslan Display">Ruslan Display</option>
-                        <option value="Press Start 2P">Press Start 2P</option>
-                        
-                        <option value="Fira Sans">Fira Sans</option>
-                        <option value="Josefin Sans">Josefin Sans</option>
-                        <option value="Quicksand">Quicksand</option>
-                        <option value="Titillium Web">Titillium Web</option>
-                        <option value="Mulish">Mulish</option>
-                        <option value="Work Sans">Work Sans</option>
-                        <option value="Inconsolata">Inconsolata</option>
-
-                        <option value="Bebas Neue">Bebas Neue</option>
-
-                        <option value="Exo 2">Exo 2</option>
-                        <option value="Arimo">Arimo</option>
-                        <option value="Vollkorn">Vollkorn</option>
-
-                        <option value="Alegreya">Alegreya</option>
-                        <option value="Caveat">Caveat</option>
-                        <option value="Bitter">Bitter</option>
-                        <option value="Source Sans 3">Source Sans 3</option>
-                        <option value="Noto Sans">Noto Sans</option>
-
-                        <option value="Kanit">Kanit</option>
-
-                        <option value="Nanum Gothic">Nanum Gothic</option>
-                        <option value="Overpass">Overpass</option>
-
-                        <option value="Spectral">Spectral</option>
-                        <option value="Manrope">Manrope</option>
-
-                        <option value="Syne">Syne</option>
-                        <option value="Space Grotesk">Space Grotesk</option>
+                    <label>Выберите шрифт сайта (каждый пункт отображает себя)</label>
+                    <select id="fontSelect" onchange="previewFontInSelect(this.value)" style="max-height: 220px; font-size: 15px;">
+                        <option value="Plus Jakarta Sans" style="font-family: 'Plus Jakarta Sans', sans-serif;">Plus Jakarta Sans (По умолчанию)</option>
+                        <option value="Montserrat" style="font-family: 'Montserrat', sans-serif;">Montserrat</option>
+                        <option value="Roboto" style="font-family: 'Roboto', sans-serif;">Roboto</option>
+                        <option value="Inter" style="font-family: 'Inter', sans-serif;">Inter</option>
+                        <option value="Open Sans" style="font-family: 'Open Sans', sans-serif;">Open Sans</option>
+                        <option value="Lato" style="font-family: 'Lato', sans-serif;">Lato</option>
+                        <option value="Poppins" style="font-family: 'Poppins', sans-serif;">Poppins</option>
+                        <option value="Oswald" style="font-family: 'Oswald', sans-serif;">Oswald</option>
+                        <option value="Raleway" style="font-family: 'Raleway', sans-serif;">Raleway</option>
+                        <option value="Nunito" style="font-family: 'Nunito', sans-serif;">Nunito</option>
+                        <option value="Rubik" style="font-family: 'Rubik', sans-serif;">Rubik</option>
+                        <option value="Ubuntu" style="font-family: 'Ubuntu', sans-serif;">Ubuntu</option>
+                        <option value="Playfair Display" style="font-family: 'Playfair Display', serif;">Playfair Display</option>
+                        <option value="Merriweather" style="font-family: 'Merriweather', serif;">Merriweather</option>
+                        <option value="Cormorant Garamond" style="font-family: 'Cormorant Garamond', serif;">Cormorant Garamond</option>
+                        <option value="PT Serif" style="font-family: 'PT Serif', serif;">PT Serif</option>
+                        <option value="PT Sans" style="font-family: 'PT Sans', sans-serif;">PT Sans</option>
+                        <option value="Lora" style="font-family: 'Lora', serif;">Lora</option>
+                        <option value="Cinzel" style="font-family: 'Cinzel', serif;">Cinzel</option>
+                        <option value="Pacifico" style="font-family: 'Pacifico', cursive;">Pacifico</option>
+                        <option value="Lobster" style="font-family: 'Lobster', cursive;">Lobster</option>
+                        <option value="Comfortaa" style="font-family: 'Comfortaa', cursive;">Comfortaa</option>
+                        <option value="Marck Script" style="font-family: 'Marck Script', cursive;">Marck Script</option>
+                        <option value="Caveat" style="font-family: 'Caveat', cursive;">Caveat</option>
+                        <option value="Ruslan Display" style="font-family: 'Ruslan Display', cursive;">Ruslan Display</option>
+                        <option value="Press Start 2P" style="font-family: 'Press Start 2P', monospace;">Press Start 2P</option>
+                        <option value="Fira Sans" style="font-family: 'Fira Sans', sans-serif;">Fira Sans</option>
+                        <option value="Josefin Sans" style="font-family: 'Josefin Sans', sans-serif;">Josefin Sans</option>
+                        <option value="Quicksand" style="font-family: 'Quicksand', sans-serif;">Quicksand</option>
+                        <option value="Titillium Web" style="font-family: 'Titillium Web', sans-serif;">Titillium Web</option>
+                        <option value="Mulish" style="font-family: 'Mulish', sans-serif;">Mulish</option>
+                        <option value="Work Sans" style="font-family: 'Work Sans', sans-serif;">Work Sans</option>
+                        <option value="Inconsolata" style="font-family: 'Inconsolata', monospace;">Inconsolata</option>
+                        <option value="Bebas Neue" style="font-family: 'Bebas Neue', cursive;">Bebas Neue</option>
+                        <option value="Exo 2" style="font-family: 'Exo 2', sans-serif;">Exo 2</option>
+                        <option value="Arimo" style="font-family: 'Arimo', sans-serif;">Arimo</option>
+                        <option value="Vollkorn" style="font-family: 'Vollkorn', serif;">Vollkorn</option>
+                        <option value="Alegreya" style="font-family: 'Alegreya', serif;">Alegreya</option>
+                        <option value="Bitter" style="font-family: 'Bitter', serif;">Bitter</option>
+                        <option value="Source Sans 3" style="font-family: 'Source Sans 3', sans-serif;">Source Sans 3</option>
+                        <option value="Noto Sans" style="font-family: 'Noto Sans', sans-serif;">Noto Sans</option>
+                        <option value="Kanit" style="font-family: 'Kanit', sans-serif;">Kanit</option>
+                        <option value="Nanum Gothic" style="font-family: 'Nanum Gothic', sans-serif;">Nanum Gothic</option>
+                        <option value="Overpass" style="font-family: 'Overpass', sans-serif;">Overpass</option>
+                        <option value="Spectral" style="font-family: 'Spectral', serif;">Spectral</option>
+                        <option value="Manrope" style="font-family: 'Manrope', sans-serif;">Manrope</option>
+                        <option value="Syne" style="font-family: 'Syne', sans-serif;">Syne</option>
+                        <option value="Space Grotesk" style="font-family: 'Space Grotesk', sans-serif;">Space Grotesk</option>
                     </select>
                 </div>
 
@@ -592,6 +583,14 @@
                 return false;
             }
         });
+
+        // Функция превью шрифта в самом селекте при клике
+        function previewFontInSelect(fontName) {
+            const selectEl = document.getElementById('fontSelect');
+            if (selectEl) {
+                selectEl.style.fontFamily = `'${fontName}', sans-serif`;
+            }
+        }
     </script>
 
     <script type="module">
