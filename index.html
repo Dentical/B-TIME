@@ -4,8 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title id="pageTitle">B-Time — Официальный интернет-магазин часов</title>
+    <link id="faviconLink" rel="icon" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/svgs/solid/clock.svg">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
+    <!-- Динамическое подключение выбранного шрифта Google Fonts -->
+    <link id="dynamicGoogleFont" rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap">
+
     <!-- СКРИПТ МОМЕНТАЛЬНОЙ ЗАГРУЗКИ НАСТРОЕК -->
     <script>
         (function() {
@@ -17,7 +21,14 @@
                     document.documentElement.style.setProperty('--text-color', cfg.textColor || '#f3f4f6');
                     document.documentElement.style.setProperty('--header-color', cfg.headerColor || '#0b1329');
                     document.documentElement.style.setProperty('--footer-color', cfg.footerColor || '#070d1d');
-                    document.write('<style>body { background-color: ' + (cfg.bgColor || '#0b1329') + '; color: ' + (cfg.textColor || '#f3f4f6') + '; }</style>');
+                    if (cfg.fontFamily) {
+                        document.documentElement.style.setProperty('--site-font', "'" + cfg.fontFamily + "', sans-serif");
+                    }
+                    if (cfg.faviconUrl) {
+                        const fav = document.getElementById('faviconLink');
+                        if (fav) fav.href = cfg.faviconUrl;
+                    }
+                    document.write('<style>body { background-color: ' + (cfg.bgColor || '#0b1329') + '; color: ' + (cfg.textColor || '#f3f4f6') + '; font-family: ' + (cfg.fontFamily ? "'" + cfg.fontFamily + "', sans-serif" : "'Plus Jakarta Sans', sans-serif") + '; }</style>');
                 } catch(e) {}
             }
         })();
@@ -34,13 +45,14 @@
             --topbar-color: #070d1d;
             --gold-gradient: linear-gradient(135deg, #ca8a04, #facc15);
             --accent-amber: #d97706;
+            --site-font: 'Plus Jakarta Sans', sans-serif;
         }
 
         * { 
             box-sizing: border-box; 
             margin: 0; 
             padding: 0; 
-            font-family: 'Plus Jakarta Sans', sans-serif; 
+            font-family: var(--site-font); 
             user-select: none; 
             -webkit-tap-highlight-color: transparent; 
         }
@@ -48,6 +60,7 @@
         body { 
             background-color: var(--bg-color); 
             color: var(--text-color); 
+            font-family: var(--site-font);
             min-height: 100vh;
             min-height: 100dvh; 
             display: flex; 
@@ -256,6 +269,12 @@
                 <button id="addProductBtn" onclick="openProductModal()" class="btn-icon hidden" title="Добавить товар" style="background: #eab308; color: black; border-color: #eab308; font-weight: bold;">
                     <i class="fa-solid fa-plus"></i>
                 </button>
+                <button id="skuSearchBtn" onclick="openModal('skuSearchModal')" class="btn-icon hidden" title="Поиск по артикулу (SKU)" style="background: rgba(234,179,8,0.15); color: #facc15; border-color: rgba(234,179,8,0.4); font-weight: bold; font-size: 16px;">
+                    <i class="fa-solid fa-hashtag"></i>
+                </button>
+                <button id="fontBtn" onclick="openModal('fontModal')" class="btn-icon hidden" title="Настройка шрифта и Favicon" style="background: rgba(168,85,247,0.2); color: #c084fc; border-color: rgba(168,85,247,0.4); font-weight: bold; font-size: 16px;">
+                    <i class="fa-solid fa-font"></i>
+                </button>
                 <button id="clientOrdersBtn" onclick="openClientOrdersModal()" class="btn-icon hidden" title="Мои заказы" style="color: #60a5fa; border-color: rgba(96,165,250,0.4);">
                     <i class="fa-solid fa-receipt"></i>
                     <span id="clientBadge" class="badge hidden" style="background:#60a5fa; color:white;">0</span>
@@ -294,13 +313,7 @@
         </div>
 
         <div id="tab-catalog" class="tab-pane">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 10px;">
-                <h2 class="serif" style="font-size: clamp(18px, 4vw, 24px);">Каталог часов</h2>
-                <div id="adminSkuSearchContainer" class="hidden" style="display: flex; align-items: center; gap: 6px; background: rgba(255,255,255,0.05); padding: 4px 10px; border-radius: 10px; border: 1px solid rgba(234,179,8,0.3);">
-                    <i class="fa-solid fa-hashtag text-gold"></i>
-                    <input type="text" id="skuSearchInput" oninput="filterBySku(this.value)" placeholder="Поиск по артикулу (SKU)..." style="background: transparent; border: none; color: white; outline: none; font-size: 13px; width: 180px;">
-                </div>
-            </div>
+            <h2 class="serif" style="font-size: clamp(18px, 4vw, 24px); margin-bottom: 20px;">Каталог часов</h2>
             <div id="catalogGrid" class="grid-products"></div>
         </div>
 
@@ -343,6 +356,97 @@
             </div>
         </div>
     </footer>
+
+    <!-- МОДАЛЬНОЕ ОКНО ДЛЯ ВЫБОРА ШРИФТОВ И ИКОНКИ WAB -->
+    <div id="fontModal" class="modal">
+        <div class="modal-box">
+            <button onclick="closeModal('fontModal')" class="modal-close"><i class="fa-solid fa-xmark"></i></button>
+            <h3 class="serif" style="font-size: 22px; margin-bottom: 16px;"><i class="fa-solid fa-font text-amber"></i> Шрифт и Favicon вкладки</h3>
+            <form onsubmit="saveFontAndFavicon(event)">
+                <div>
+                    <label>Выберите шрифт сайта (50+ вариантов)</label>
+                    <select id="fontSelect" style="max-height: 200px; font-size: 14px;">
+                        <option value="Plus Jakarta Sans">Plus Jakarta Sans (По умолчанию)</option>
+                        <option value="Montserrat">Montserrat</option>
+                        <option value="Roboto">Roboto</option>
+                        <option value="Inter">Inter</option>
+                        <option value="Open Sans">Open Sans</option>
+                        <option value="Lato">Lato</option>
+                        <option value="Poppins">Poppins</option>
+                        <option value="Oswald">Oswald</option>
+                        <option value="Raleway">Raleway</option>
+                        <option value="Nunito">Nunito</option>
+                        <option value="Rubik">Rubik</option>
+                        <option value="Ubuntu">Ubuntu</option>
+                        <option value="Playfair Display">Playfair Display</option>
+                        <option value="Merriweather">Merriweather</option>
+
+                        <option value="Cormorant Garamond">Cormorant Garamond</option>
+                        <option value="PT Serif">PT Serif</option>
+                        <option value="PT Sans">PT Sans</option>
+                        <option value="Lora">Lora</option>
+                        <option value="Cinzel">Cinzel</option>
+                        <option value="Pacifico">Pacifico</option>
+                        <option value="Lobster">Lobster</option>
+                        <option value="Comfortaa">Comfortaa</option>
+                        <option value="Marck Script">Marck Script</option>
+                        <option value="Caveat">Caveat</option>
+                        <option value="Ruslan Display">Ruslan Display</option>
+                        <option value="Press Start 2P">Press Start 2P</option>
+                        
+                        <option value="Fira Sans">Fira Sans</option>
+                        <option value="Josefin Sans">Josefin Sans</option>
+                        <option value="Quicksand">Quicksand</option>
+                        <option value="Titillium Web">Titillium Web</option>
+                        <option value="Mulish">Mulish</option>
+                        <option value="Work Sans">Work Sans</option>
+                        <option value="Inconsolata">Inconsolata</option>
+
+                        <option value="Bebas Neue">Bebas Neue</option>
+
+                        <option value="Exo 2">Exo 2</option>
+                        <option value="Arimo">Arimo</option>
+                        <option value="Vollkorn">Vollkorn</option>
+
+                        <option value="Alegreya">Alegreya</option>
+                        <option value="Caveat">Caveat</option>
+                        <option value="Bitter">Bitter</option>
+                        <option value="Source Sans 3">Source Sans 3</option>
+                        <option value="Noto Sans">Noto Sans</option>
+
+                        <option value="Kanit">Kanit</option>
+
+                        <option value="Nanum Gothic">Nanum Gothic</option>
+                        <option value="Overpass">Overpass</option>
+
+                        <option value="Spectral">Spectral</option>
+                        <option value="Manrope">Manrope</option>
+
+                        <option value="Syne">Syne</option>
+                        <option value="Space Grotesk">Space Grotesk</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label>URL Favicon (иконка браузерной вкладки)</label>
+                    <input type="text" id="faviconInput" placeholder="https://site.com/icon.png">
+                </div>
+
+                <button type="submit" class="btn-gold">Сохранить изменения</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="skuSearchModal" class="modal">
+        <div class="modal-box">
+            <button onclick="closeModal('skuSearchModal')" class="modal-close"><i class="fa-solid fa-xmark"></i></button>
+            <h3 class="serif" style="font-size: 22px; margin-bottom: 16px;"><i class="fa-solid fa-hashtag text-amber"></i> Поиск по артикулу (SKU)</h3>
+            <div>
+                <input type="text" id="skuSearchInputModal" oninput="filterBySku(this.value)" placeholder="Введите SKU артикул товара..." style="width: 100%; padding: 12px; border: 1px solid #d1d5db; border-radius: 10px; font-size: 14px; margin-bottom: 14px;">
+            </div>
+            <button onclick="switchTab('catalog'); closeModal('skuSearchModal');" class="btn-gold">Перейти к результатам</button>
+        </div>
+    </div>
 
     <div id="siteConfigModal" class="modal">
         <div class="modal-box">
@@ -529,6 +633,8 @@
             heroTitle: "Элегантность в каждой секунде",
             heroDesc: "Эксклюзивная коллекция швейцарских и мировых брендов с гарантией качества.",
             heroBadge: "Официальный дилер",
+            fontFamily: "Plus Jakarta Sans",
+            faviconUrl: "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/svgs/solid/clock.svg",
             contacts: [
                 { icon: "fa-location-dot", text: "Душанбе", link: "" },
                 { icon: "fa-phone", text: "+992 (90) 000-00-00", link: "tel:+992900000000" },
@@ -567,6 +673,21 @@
             document.documentElement.style.setProperty('--header-color', cfg.headerColor || '#0b1329');
             document.documentElement.style.setProperty('--footer-color', cfg.footerColor || '#070d1d');
             
+            if (cfg.fontFamily) {
+                const fontName = cfg.fontFamily;
+                const dynamicFontLink = document.getElementById('dynamicGoogleFont');
+                if (dynamicFontLink) {
+                    dynamicFontLink.href = `https://fonts.googleapis.com/css2?family=${fontName.replace(/ /g, '+')}:wght@400;500;600;700&display=swap`;
+                }
+                document.documentElement.style.setProperty('--site-font', `'${fontName}', sans-serif`);
+                document.body.style.fontFamily = `'${fontName}', sans-serif`;
+            }
+
+            if (cfg.faviconUrl) {
+                const fav = document.getElementById('faviconLink');
+                if (fav) fav.href = cfg.faviconUrl;
+            }
+            
             document.body.style.backgroundColor = cfg.bgColor || '#0b1329';
             document.body.style.color = cfg.textColor || '#f3f4f6';
 
@@ -594,6 +715,32 @@
             if (topContacts) topContacts.innerHTML = topBarHtml;
             if (footContacts) footContacts.innerHTML = topBarHtml;
         }
+
+        window.saveFontAndFavicon = async (e) => {
+            e.preventDefault();
+            if (!ADMINS.includes(currentUser?.email?.toLowerCase())) return;
+
+            const fontVal = document.getElementById('fontSelect').value;
+            const favVal = document.getElementById('faviconInput').value.trim();
+
+            const newCfg = {
+                ...window.siteConfig,
+                fontFamily: fontVal,
+                faviconUrl: favVal || window.siteConfig.faviconUrl
+            };
+
+            closeModal('fontModal');
+
+            window.siteConfig = newCfg;
+            localStorage.setItem('btime_site_config', JSON.stringify(newCfg));
+            applySiteConfig();
+
+            try {
+                await setDoc(doc(db, "settings", "main"), newCfg);
+            } catch (err) {}
+
+            alert("Шрифт и Favicon успешно обновлены!");
+        };
 
         window.addContactField = (icon = 'fa-phone', text = '', link = '') => {
             const container = document.getElementById('dynamicContactsInputsContainer');
@@ -649,6 +796,7 @@
             }
 
             const newCfg = {
+                ...window.siteConfig,
                 bgColor: document.getElementById('cfgBgColor').value,
                 textColor: document.getElementById('cfgTextColor').value,
                 headerColor: document.getElementById('cfgHeaderColor').value,
@@ -719,7 +867,8 @@
             const clientBtn = document.getElementById('clientOrdersBtn');
             const addProductBtn = document.getElementById('addProductBtn');
             const siteConfigBtn = document.getElementById('siteConfigBtn');
-            const skuSearchContainer = document.getElementById('adminSkuSearchContainer');
+            const skuSearchBtn = document.getElementById('skuSearchBtn');
+            const fontBtn = document.getElementById('fontBtn');
 
             if (user) {
                 const isAdmin = ADMINS.includes(user.email.toLowerCase());
@@ -732,12 +881,14 @@
                     adminBtn.classList.remove('hidden');
                     addProductBtn.classList.remove('hidden');
                     siteConfigBtn.classList.remove('hidden');
-                    skuSearchContainer.classList.remove('hidden');
+                    skuSearchBtn.classList.remove('hidden');
+                    fontBtn.classList.remove('hidden');
                 } else {
                     adminBtn.classList.add('hidden');
                     addProductBtn.classList.add('hidden');
                     siteConfigBtn.classList.add('hidden');
-                    skuSearchContainer.classList.add('hidden');
+                    skuSearchBtn.classList.add('hidden');
+                    fontBtn.classList.add('hidden');
                 }
                 initRealtimeOrders();
             } else {
@@ -750,7 +901,8 @@
                 clientBtn.classList.add('hidden');
                 addProductBtn.classList.add('hidden');
                 siteConfigBtn.classList.add('hidden');
-                skuSearchContainer.classList.add('hidden');
+                skuSearchBtn.classList.add('hidden');
+                fontBtn.classList.add('hidden');
             }
             if (typeof renderProducts === 'function') renderProducts();
         });
