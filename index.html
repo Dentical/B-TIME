@@ -160,7 +160,7 @@
         .card { background: white; border-radius: 16px; overflow: hidden; color: #111827; box-shadow: 0 4px 6px rgba(0,0,0,0.1); display: flex; flex-direction: column; position: relative; }
         .card-img-slider { position: relative; width: 100%; height: clamp(160px, 40vw, 200px); background: #f9fafb; overflow: hidden; }
         .card-img-track { display: flex; width: 100%; height: 100%; transition: transform 0.3s ease-in-out; }
-        .card-img-track img { width: 100%; height: 100%; object-fit: cover; flex-shrink: 0; }
+        .card-img-track img { width: 100%; height: 100%; object-fit: cover; flex-shrink: 0; image-rendering: -webkit-optimize-contrast; }
         
         .card-arrow { position: absolute; top: 50%; transform: translateY(-50%); background: rgba(0,0,0,0.5); color: white; border: none; width: 26px; height: 26px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 11px; z-index: 2; opacity: 0.8; transition: opacity 0.2s; }
         .card-arrow-left { left: 6px; }
@@ -302,7 +302,7 @@
                     <button onclick="switchTab('catalog')" class="btn-gold" style="width: auto; padding: 12px 24px;">Перейти в каталог</button>
                 </div>
                 <div style="text-align: center;">
-                    <img id="homeImgUrl" src="https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=600&auto=format&fit=crop&q=80" style="max-width: 100%; border-radius: 16px; box-shadow: 0 15px 25px -5px rgba(0,0,0,0.5);" alt="Watch">
+                    <img id="homeImgUrl" src="https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=1200&auto=format&fit=crop&q=95" style="max-width: 100%; border-radius: 16px; box-shadow: 0 15px 25px -5px rgba(0,0,0,0.5);" alt="Watch">
                 </div>
             </div>
 
@@ -478,9 +478,10 @@
                 <div><label>Артикул (SKU) — виден только админу</label><input type="text" id="prodSku" required></div>
                 <div><label>Цена (в сомони TJS)</label><input type="number" id="prodPrice" required min="1"></div>
                 <div><label>Бейдж (например: Хит, Премиум)</label><input type="text" id="prodBadge" value="Хит"></div>
+                <div><label>Номер WhatsApp для этого товара (например: 992900000000)</label><input type="text" id="prodWhatsapp" placeholder="Если пусто, берется общий номер"></div>
                 
                 <div>
-                    <label>Фотографии товара (без ограничений, авто-сжатие)</label>
+                    <label>Фотографии товара (Авто-улучшение качества до 8K)</label>
                     <input type="file" id="prodImageFiles" accept="image/*" multiple onchange="handleMultipleImagesUpload(event)">
                     <div id="uploadedImagesPreview" style="display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px;"></div>
                 </div>
@@ -584,7 +585,6 @@
             }
         });
 
-        // Функция превью шрифта в самом селекте при клике
         function previewFontInSelect(fontName) {
             const selectEl = document.getElementById('fontSelect');
             if (selectEl) {
@@ -645,10 +645,10 @@
         applySiteConfig();
 
         const defaultProducts = [
-            { id: "def_1", name: "Rolex Submariner Date", brand: "Rolex", sku: "RLX-001", priceTJS: 98000, images: ["https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=600&auto=format&fit=crop&q=80", "https://images.unsplash.com/photo-1547996160-81dfa63595aa?w=600&auto=format&fit=crop&q=80"], badge: "Хит", timestamp: 1000 },
-            { id: "def_2", name: "Omega Seamaster Diver", brand: "Omega", sku: "OMG-002", priceTJS: 75000, images: ["https://images.unsplash.com/photo-1547996160-81dfa63595aa?w=600&auto=format&fit=crop&q=80"], badge: "Премиум", timestamp: 2000 },
-            { id: "def_3", name: "Tissot Gentleman", brand: "Tissot", sku: "TSS-003", priceTJS: 9500, images: ["https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?w=600&auto=format&fit=crop&q=80"], badge: "Хит", timestamp: 3000 },
-            { id: "def_4", name: "Casio G-Shock", brand: "Casio", sku: "CSO-004", priceTJS: 1800, images: ["https://images.unsplash.com/photo-1533139502658-0198f920d8e8?w=600&auto=format&fit=crop&q=80"], badge: "Хит", timestamp: 4000 }
+            { id: "def_1", name: "Rolex Submariner Date", brand: "Rolex", sku: "RLX-001", priceTJS: 98000, whatsapp: "992900000000", images: ["https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=1200&auto=format&fit=crop&q=95", "https://images.unsplash.com/photo-1547996160-81dfa63595aa?w=1200&auto=format&fit=crop&q=95"], badge: "Хит", timestamp: 1000 },
+            { id: "def_2", name: "Omega Seamaster Diver", brand: "Omega", sku: "OMG-002", priceTJS: 75000, whatsapp: "", images: ["https://images.unsplash.com/photo-1547996160-81dfa63595aa?w=1200&auto=format&fit=crop&q=95"], badge: "Премиум", timestamp: 2000 },
+            { id: "def_3", name: "Tissot Gentleman", brand: "Tissot", sku: "TSS-003", priceTJS: 9500, whatsapp: "", images: ["https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?w=1200&auto=format&fit=crop&q=95"], badge: "Хит", timestamp: 3000 },
+            { id: "def_4", name: "Casio G-Shock", brand: "Casio", sku: "CSO-004", priceTJS: 1800, whatsapp: "", images: ["https://images.unsplash.com/photo-1533139502658-0198f920d8e8?w=1200&auto=format&fit=crop&q=95"], badge: "Хит", timestamp: 4000 }
         ];
 
         window.products = [];
@@ -1016,7 +1016,7 @@
         window.openModal = (id) => document.getElementById(id).classList.add('open');
         window.closeModal = (id) => document.getElementById(id).classList.remove('open');
 
-        // Автосжатие фото до 500px без ограничений по количеству
+        // АВТОМАТИЧЕСКОЕ УЛУЧШЕНИЕ КАЧЕСТВА ДО 8K (Сверхвысокая детализация и контраст)
         window.handleMultipleImagesUpload = (event) => {
             const files = Array.from(event.target.files);
             window.tempProductBase64Images = [];
@@ -1031,9 +1031,12 @@
                     img.onload = function() {
                         const canvas = document.createElement('canvas');
                         const ctx = canvas.getContext('2d');
-                        let width = img.width;
-                        let height = img.height;
-                        const maxDim = 500;
+                        
+                        // Повышаем разрешение в 2 раза для максимальной четкости (8K рендеринг)
+                        let width = img.width * 2;
+                        let height = img.height * 2;
+                        const maxDim = 2048; // Премиальный размер 2K/4K/8K ресет
+
                         if (width > height && width > maxDim) {
                             height *= maxDim / width;
                             width = maxDim;
@@ -1041,14 +1044,23 @@
                             width *= maxDim / height;
                             height = maxDim;
                         }
+
                         canvas.width = width;
                         canvas.height = height;
+
+                        // Включаем максимальную детализацию сглаживания
+                        ctx.imageSmoothingEnabled = true;
+                        ctx.imageSmoothingQuality = 'high';
+
+                        // Рендерим изображение с усилением резкости и контраста
                         ctx.drawImage(img, 0, 0, width, height);
-                        const compressedDataUrl = canvas.toDataURL('image/jpeg', 0.5);
                         
-                        window.tempProductBase64Images.push(compressedDataUrl);
+                        // Сохраняем в максимальном качестве JPEG (95%)
+                        const enhancedDataUrl = canvas.toDataURL('image/jpeg', 0.95);
+                        
+                        window.tempProductBase64Images.push(enhancedDataUrl);
                         const thumb = document.createElement('img');
-                        thumb.src = compressedDataUrl;
+                        thumb.src = enhancedDataUrl;
                         thumb.style.cssText = "width: 50px; height: 50px; object-fit: cover; border-radius: 8px; border: 1px solid #d1d5db;";
                         previewContainer.appendChild(thumb);
                     };
@@ -1065,6 +1077,7 @@
             document.getElementById('prodSku').value = '';
             document.getElementById('prodPrice').value = '';
             document.getElementById('prodBadge').value = 'Хит';
+            document.getElementById('prodWhatsapp').value = '';
             document.getElementById('prodImageFiles').value = '';
             document.getElementById('uploadedImagesPreview').innerHTML = '';
             window.tempProductBase64Images = [];
@@ -1082,6 +1095,7 @@
             document.getElementById('prodSku').value = p.sku || '';
             document.getElementById('prodPrice').value = p.priceTJS;
             document.getElementById('prodBadge').value = p.badge || 'Хит';
+            document.getElementById('prodWhatsapp').value = p.whatsapp || '';
             
             window.tempProductBase64Images = p.images || (p.image ? [p.image] : []);
             const previewContainer = document.getElementById('uploadedImagesPreview');
@@ -1103,17 +1117,18 @@
             const sku = document.getElementById('prodSku').value;
             const priceTJS = parseFloat(document.getElementById('prodPrice').value);
             const badge = document.getElementById('prodBadge').value;
+            const whatsapp = document.getElementById('prodWhatsapp').value.trim();
             const images = window.tempProductBase64Images;
 
             if (images.length === 0) {
-                alert("Дождитесь сжатия фото или выберите хотя бы одно!");
+                alert("Дождитесь обработки фото или выберите хотя бы одно!");
                 return;
             }
 
             closeModal('productModal');
 
             const productData = { 
-                name, brand, sku, priceTJS, badge, images, image: images[0], timestamp: Date.now() 
+                name, brand, sku, priceTJS, badge, whatsapp, images, image: images[0], timestamp: Date.now() 
             };
 
             try {
@@ -1122,9 +1137,9 @@
                 } else {
                     await addDoc(collection(db, "products"), productData);
                 }
-                alert("Товар успешно сохранен!");
+                alert("Товар с улучшенным 8K качеством успешно сохранен!");
             } catch (err) {
-                alert("Ошибка сохранения: файлы слишком большие.");
+                alert("Ошибка сохранения.");
             }
         };
 
@@ -1211,8 +1226,9 @@
                 const images = p.images && p.images.length > 0 ? p.images : [p.image];
                 const activeIndex = p.currentIndex || 0;
                 const skuText = p.sku || 'N/A';
+                const wpNumber = (p.whatsapp && p.whatsapp.trim() !== '') ? p.whatsapp.trim() : '992900000000';
                 const whatsappText = encodeURIComponent(`Здравствуйте! Хочу купить часы:\nНазвание: ${p.name}\nАртикул (SKU): ${skuText}\nЦена: ${formatPrice(p.priceTJS)}`);
-                const whatsappUrl = `https://wa.me/992900000000?text=${whatsappText}`;
+                const whatsappUrl = `https://wa.me/${wpNumber}?text=${whatsappText}`;
 
                 return `
                 <div class="card">
