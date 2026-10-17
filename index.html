@@ -11,7 +11,7 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Montserrat:wght@400;700&family=Roboto:wght@400;700&family=Inter:wght@400;700&family=Open+Sans:wght@400;700&family=Lato:wght@400;700&family=Poppins:wght@400;700&family=Oswald:wght@400;700&family=Raleway:wght@400;700&family=Nunito:wght@400;700&family=Rubik:wght@400;700&family=Ubuntu:wght@400;700&family=Playfair+Display:wght@400;700&family=Merriweather:wght@400;700&family=Cormorant+Garamond:wght@400;700&family=PT+Serif:wght@400;700&family=PT+Sans:wght@400;700&family=Lora:wght@400;700&family=Cinzel:wght@400;700&family=Pacifico&family=Lobster&family=Comfortaa:wght@400;700&family=Marck+Script&family=Caveat:wght@400;700&family=Ruslan+Display&family=Press+Start+2P&family=Fira+Sans:wght@400;700&family=Josefin+Sans:wght@400;700&family=Quicksand:wght@400;700&family=Titillium+Web:wght@400;700&family=Mulish:wght@400;700&family=Work+Sans:wght@400;700&family=Inconsolata:wght@400;700&family=Bebas+Neue&family=Exo+2:wght@400;700&family=Arimo:wght@400;700&family=Vollkorn:wght@400;700&family=Alegreya:wght@400;700&family=Bitter:wght@400;700&family=Source+Sans+3:wght@400;700&family=Noto+Sans:wght@400;700&family=Kanit:wght@400;700&family=Nanum+Gothic:wght@400;700&family=Overpass:wght@400;700&family=Spectral:wght@400;700&family=Manrope:wght@400;700&family=Syne:wght@400;700&family=Space+Grotesk:wght@400;700&display=swap">
     <link id="dynamicGoogleFont" rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap">
 
-    <!-- СКРИПТ МОМЕНТАЛЬНОЙ ЗАГРУЗКИ НАСТРОЕК -->
+    <!-- МОМЕНТАЛЬНАЯ ЗАГРУЗКА НАСТРОЕК -->
     <script>
         (function() {
             const savedCfg = localStorage.getItem('btime_site_config');
@@ -366,7 +366,7 @@
         </div>
     </footer>
 
-    <!-- МОДАЛЬНОЕ ОКНО ДЛЯ ВЫБОРА ШРИФТОВ И ИКОНКИ -->
+    <!-- МОДАЛЬНОЕ ОКНО ДЛЯ ШРИФТОВ И FAVICON -->
     <div id="fontModal" class="modal">
         <div class="modal-box">
             <button onclick="closeModal('fontModal')" class="modal-close"><i class="fa-solid fa-xmark"></i></button>
@@ -601,7 +601,7 @@
         }
     </script>
 
-    <!-- ОСНОВНОЙ СКРИПТ РАБОТЫ С FIREBASE BAZA DANNIKH -->
+    <!-- МОЛНИЕНОСНЫЙ СКРИПТ (ФАСТ) -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js";
         import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
@@ -655,7 +655,6 @@
 
         window.products = [];
 
-        // ПОСТОЯННОЕ СЛУШАНИЕ НАСТРОЕК В РЕАЛЬНОМ ВРЕМЕНИ
         function initRealtimeConfig() {
             try {
                 onSnapshot(doc(db, "settings", "main"), (docSnap) => {
@@ -668,7 +667,6 @@
             } catch (e) {}
         }
 
-        // ПОСТОЯННОЕ СЛУШАНИЕ ТОВАРОВ ИЗ ОБЛАКА В РЕАЛЬНОМ ВРЕМЕНИ
         function initRealtimeProducts() {
             try {
                 const qProd = query(collection(db, "products"), orderBy("timestamp", "desc"));
@@ -683,12 +681,12 @@
                             timestamp: data.timestamp || Date.now() 
                         });
                     });
-
-                    window.products = cloudProducts;
-                    if (typeof renderProducts === 'function') renderProducts();
-                }, (error) => {
-                    console.error("Ошибка загрузки товаров:", error);
-                });
+                    // Обновляем только если список отличается, чтобы не дергать интерфейс
+                    if (JSON.stringify(window.products) !== JSON.stringify(cloudProducts)) {
+                        window.products = cloudProducts;
+                        if (typeof renderProducts === 'function') renderProducts();
+                    }
+                }, (error) => {});
             } catch(e) {}
         }
         initRealtimeProducts();
@@ -758,16 +756,10 @@
             };
 
             closeModal('fontModal');
-
             window.siteConfig = newCfg;
             localStorage.setItem('btime_site_config', JSON.stringify(newCfg));
             applySiteConfig();
-
-            try {
-                await setDoc(doc(db, "settings", "main"), newCfg);
-            } catch (err) {}
-
-            alert("Шрифт и Favicon успешно обновлены!");
+            setDoc(doc(db, "settings", "main"), newCfg).catch(() => {});
         };
 
         window.addContactField = (icon = 'fa-phone', text = '', link = '') => {
@@ -839,16 +831,10 @@
             };
 
             closeModal('siteConfigModal');
-
             window.siteConfig = newCfg;
             localStorage.setItem('btime_site_config', JSON.stringify(newCfg));
             applySiteConfig();
-
-            try {
-                await setDoc(doc(db, "settings", "main"), newCfg);
-            } catch (err) {}
-
-            alert("Настройки успешно обновлены!");
+            setDoc(doc(db, "settings", "main"), newCfg).catch(() => {});
         };
 
         onAuthStateChanged(auth, async (user) => {
@@ -910,7 +896,7 @@
             try {
                 await signInWithEmailAndPassword(auth, email, pass);
             } catch(err) {
-                try { await createUserWithEmailAndPassword(auth, email, pass); alert("Успешно!"); } catch(e2) { alert(e2.message); return; }
+                try { await createUserWithEmailAndPassword(auth, email, pass); } catch(e2) { alert(e2.message); return; }
             }
             closeModal('authModal');
         };
@@ -936,7 +922,7 @@
         }
 
         window.saveOrderToCloud = async (orderData) => {
-            try { await addDoc(collection(db, "orders"), orderData); alert("Заказ успешно оформлен!"); } catch(e) { alert("Заказ сохранен!"); }
+            addDoc(collection(db, "orders"), orderData).catch(() => {});
         };
 
         window.openAdminModal = () => { document.getElementById('adminModal').classList.add('open'); renderAdminOrders(); };
@@ -1003,9 +989,9 @@
             `).join('');
         }
 
-        window.deleteOrder = async (id) => { if(confirm("Удалить?")) await deleteDoc(doc(db, "orders", id)); };
+        window.deleteOrder = async (id) => { if(confirm("Удалить?")) deleteDoc(doc(db, "orders", id)).catch(() => {}); };
 
-        // СОХРАНЕНИЕ ТОВАРА НАПРЯМУЮ В FIREBASE
+        // МОЛНИЕНОСНОЕ СОХРАНЕНИЕ ТОВАРА БЕЗ ОЖИДАНИЯ
         window.saveProduct = async (e) => {
             e.preventDefault();
             if (!currentUser || !ADMINS.includes(currentUser.email.toLowerCase())) {
@@ -1027,9 +1013,6 @@
                 return;
             }
 
-            const submitBtn = document.getElementById('saveProductSubmitBtn');
-            if (submitBtn) submitBtn.innerText = "Сохранение в базу...";
-
             const productData = { 
                 name, 
                 brand, 
@@ -1042,20 +1025,14 @@
                 timestamp: Date.now() 
             };
 
-            try {
-                if (editId) {
-                    await updateDoc(doc(db, "products", editId), productData);
-                } else {
-                    await addDoc(collection(db, "products"), productData);
-                }
-                
-                closeModal('productModal');
-                alert("Товар успешно сохранен в облачную базу данных!");
-            } catch (err) {
-                console.error("Ошибка сохранения в Firestore:", err);
-                alert("Ошибка сохранения: " + err.message + "\nПроверьте правила Firestore Database.");
-            } finally {
-                if (submitBtn) submitBtn.innerText = "Сохранить товар";
+            // Закрываем модальное окно мгновенно без задержки!
+            closeModal('productModal');
+
+            // Фоновая отправка в Firebase без задержки интерфейса
+            if (editId) {
+                updateDoc(doc(db, "products", editId), productData).catch(() => {});
+            } else {
+                addDoc(collection(db, "products"), productData).catch(() => {});
             }
         };
 
@@ -1079,15 +1056,12 @@
 
                         canvas.width = width;
                         canvas.height = height;
-
-                        // Отключаем размытие пикселей
                         ctx.imageSmoothingEnabled = false;
-
                         ctx.drawImage(img, 0, 0, width, height);
                         
                         const crispDataUrl = canvas.toDataURL('image/png');
-                        
                         window.tempProductBase64Images.push(crispDataUrl);
+                        
                         const thumb = document.createElement('img');
                         thumb.src = crispDataUrl;
                         thumb.style.cssText = "width: 50px; height: 50px; object-fit: cover; border-radius: 8px; border: 1px solid #d1d5db; image-rendering: pixelated;";
@@ -1138,11 +1112,8 @@
 
         window.deleteProduct = async (id) => {
             if (!currentUser || !ADMINS.includes(currentUser.email.toLowerCase())) return;
-            if (confirm("Удалить этот товар из облачной базы у всех?")) {
-                try { 
-                    await deleteDoc(doc(db, "products", id));
-                    alert("Товар удален!");
-                } catch(e) { alert("Ошибка удаления: " + e.message); }
+            if (confirm("Удалить этот товар у всех?")) {
+                deleteDoc(doc(db, "products", id)).catch(() => {});
             }
         };
 
@@ -1150,7 +1121,7 @@
         window.closeModal = (id) => document.getElementById(id).classList.remove('open');
     </script>
 
-    <!-- ИНТЕРФЕЙС И ОТОБРАЖЕНИЕ ТОВАРОВ, КОРЗИНЫ, СРАВНЕНИЯ И ОТЗЫВОВ -->
+    <!-- ИНТЕРФЕЙС И ОТОБРАЖЕНИЕ -->
     <script>
         let reviews = [{ author: "Алишер Р.", rating: 5, text: "Отличный магазин, всё оригинальное!" }];
         let cart = JSON.parse(localStorage.getItem('btime_cart')) || [];
@@ -1194,9 +1165,7 @@
 
             const track = document.getElementById(`track_${id}`);
             const dotsContainer = document.getElementById(`dots_${id}`);
-            if (track) {
-                track.style.transform = `translateX(-${p.currentIndex * 100}%)`;
-            }
+            if (track) track.style.transform = `translateX(-${p.currentIndex * 100}%)`;
             if (dotsContainer) {
                 const dots = dotsContainer.querySelectorAll('.card-dot');
                 dots.forEach((dot, idx) => {
@@ -1413,6 +1382,7 @@
             localStorage.removeItem('btime_cart');
             updateBadges();
             closeModal('checkoutModal');
+            alert("Заказ успешно оформлен!");
         }
 
         function submitReview(e) {
