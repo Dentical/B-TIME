@@ -7,7 +7,7 @@
     <link id="faviconLink" rel="icon" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/svgs/solid/clock.svg">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
-    <!-- Динамическое подключение шрифтов для превью и сайта -->
+    <!-- Динамическое подключение шрифтов -->
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Montserrat:wght@400;700&family=Roboto:wght@400;700&family=Inter:wght@400;700&family=Open+Sans:wght@400;700&family=Lato:wght@400;700&family=Poppins:wght@400;700&family=Oswald:wght@400;700&family=Raleway:wght@400;700&family=Nunito:wght@400;700&family=Rubik:wght@400;700&family=Ubuntu:wght@400;700&family=Playfair+Display:wght@400;700&family=Merriweather:wght@400;700&family=Cormorant+Garamond:wght@400;700&family=PT+Serif:wght@400;700&family=PT+Sans:wght@400;700&family=Lora:wght@400;700&family=Cinzel:wght@400;700&family=Pacifico&family=Lobster&family=Comfortaa:wght@400;700&family=Marck+Script&family=Caveat:wght@400;700&family=Ruslan+Display&family=Press+Start+2P&family=Fira+Sans:wght@400;700&family=Josefin+Sans:wght@400;700&family=Quicksand:wght@400;700&family=Titillium+Web:wght@400;700&family=Mulish:wght@400;700&family=Work+Sans:wght@400;700&family=Inconsolata:wght@400;700&family=Bebas+Neue&family=Exo+2:wght@400;700&family=Arimo:wght@400;700&family=Vollkorn:wght@400;700&family=Alegreya:wght@400;700&family=Bitter:wght@400;700&family=Source+Sans+3:wght@400;700&family=Noto+Sans:wght@400;700&family=Kanit:wght@400;700&family=Nanum+Gothic:wght@400;700&family=Overpass:wght@400;700&family=Spectral:wght@400;700&family=Manrope:wght@400;700&family=Syne:wght@400;700&family=Space+Grotesk:wght@400;700&display=swap">
     <link id="dynamicGoogleFont" rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap">
 
@@ -161,7 +161,6 @@
         .card-img-slider { position: relative; width: 100%; height: clamp(160px, 40vw, 200px); background: #f9fafb; overflow: hidden; }
         .card-img-track { display: flex; width: 100%; height: 100%; transition: transform 0.3s ease-in-out; }
         
-        /* Устранение пикселизации через принудительное отключение размытия */
         .card-img-track img { 
             width: 100%; 
             height: 100%; 
@@ -374,7 +373,7 @@
             <h3 class="serif" style="font-size: 22px; margin-bottom: 16px;"><i class="fa-solid fa-font text-amber"></i> Шрифт и Favicon вкладки</h3>
             <form onsubmit="saveFontAndFavicon(event)">
                 <div>
-                    <label>Выберите шрифт сайта (каждый пункт отображает себя)</label>
+                    <label>Выберите шрифт сайта</label>
                     <select id="fontSelect" onchange="previewFontInSelect(this.value)" style="max-height: 220px; font-size: 15px;">
                         <option value="Plus Jakarta Sans" style="font-family: 'Plus Jakarta Sans', sans-serif;">Plus Jakarta Sans (По умолчанию)</option>
                         <option value="Montserrat" style="font-family: 'Montserrat', sans-serif;">Montserrat</option>
@@ -490,12 +489,12 @@
                 <div><label>Номер WhatsApp для этого товара (например: 992900000000)</label><input type="text" id="prodWhatsapp" placeholder="Если пусто, берется общий номер"></div>
                 
                 <div>
-                    <label>Фотографии товара (Четкий пиксель-арт и графика)</label>
+                    <label>Фотографии товара (сохраняют четкие пиксели)</label>
                     <input type="file" id="prodImageFiles" accept="image/*" multiple onchange="handleMultipleImagesUpload(event)">
                     <div id="uploadedImagesPreview" style="display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px;"></div>
                 </div>
                 
-                <button type="submit" class="btn-gold" style="margin-top: 10px;">Сохранить товар</button>
+                <button type="submit" id="saveProductSubmitBtn" class="btn-gold" style="margin-top: 10px;">Сохранить товар</button>
             </form>
         </div>
     </div>
@@ -602,6 +601,7 @@
         }
     </script>
 
+    <!-- ОСНОВНОЙ СКРИПТ РАБОТЫ С FIREBASE BAZA DANNIKH -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js";
         import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
@@ -653,15 +653,9 @@
         window.siteConfig = JSON.parse(localStorage.getItem('btime_site_config')) || defaultConfig;
         applySiteConfig();
 
-        const defaultProducts = [
-            { id: "def_1", name: "Rolex Submariner Date", brand: "Rolex", sku: "RLX-001", priceTJS: 98000, whatsapp: "992900000000", images: ["https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=1600&auto=format&fit=crop&q=100", "https://images.unsplash.com/photo-1547996160-81dfa63595aa?w=1600&auto=format&fit=crop&q=100"], badge: "Хит", timestamp: 1000 },
-            { id: "def_2", name: "Omega Seamaster Diver", brand: "Omega", sku: "OMG-002", priceTJS: 75000, whatsapp: "", images: ["https://images.unsplash.com/photo-1547996160-81dfa63595aa?w=1600&auto=format&fit=crop&q=100"], badge: "Премиум", timestamp: 2000 },
-            { id: "def_3", name: "Tissot Gentleman", brand: "Tissot", sku: "TSS-003", priceTJS: 9500, whatsapp: "", images: ["https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?w=1600&auto=format&fit=crop&q=100"], badge: "Хит", timestamp: 3000 },
-            { id: "def_4", name: "Casio G-Shock", brand: "Casio", sku: "CSO-004", priceTJS: 1800, whatsapp: "", images: ["https://images.unsplash.com/photo-1533139502658-0198f920d8e8?w=1600&auto=format&fit=crop&q=100"], badge: "Хит", timestamp: 4000 }
-        ];
-
         window.products = [];
 
+        // ПОСТОЯННОЕ СЛУШАНИЕ НАСТРОЕК В РЕАЛЬНОМ ВРЕМЕНИ
         function initRealtimeConfig() {
             try {
                 onSnapshot(doc(db, "settings", "main"), (docSnap) => {
@@ -673,6 +667,32 @@
                 }, (error) => {});
             } catch (e) {}
         }
+
+        // ПОСТОЯННОЕ СЛУШАНИЕ ТОВАРОВ ИЗ ОБЛАКА В РЕАЛЬНОМ ВРЕМЕНИ
+        function initRealtimeProducts() {
+            try {
+                const qProd = query(collection(db, "products"), orderBy("timestamp", "desc"));
+                onSnapshot(qProd, (snapshot) => {
+                    let cloudProducts = [];
+                    snapshot.forEach(docSnap => {
+                        let data = docSnap.data();
+                        cloudProducts.push({ 
+                            id: docSnap.id, 
+                            ...data, 
+                            images: data.images || (data.image ? [data.image] : []),
+                            timestamp: data.timestamp || Date.now() 
+                        });
+                    });
+
+                    window.products = cloudProducts;
+                    if (typeof renderProducts === 'function') renderProducts();
+                }, (error) => {
+                    console.error("Ошибка загрузки товаров:", error);
+                });
+            } catch(e) {}
+        }
+        initRealtimeProducts();
+        initRealtimeConfig();
 
         function applySiteConfig() {
             const cfg = window.siteConfig || defaultConfig;
@@ -831,44 +851,7 @@
             alert("Настройки успешно обновлены!");
         };
 
-        initRealtimeConfig();
-
-        async function checkIsBlocked(uid) {
-            try {
-                const docSnap = await getDoc(doc(db, "blocked_users", uid));
-                return docSnap.exists();
-            } catch (e) { return false; }
-        }
-
-        try {
-            const qProd = query(collection(db, "products"), orderBy("timestamp", "desc"));
-            onSnapshot(qProd, (snapshot) => {
-                let cloudProducts = [];
-                snapshot.forEach(docSnap => {
-                    let data = docSnap.data();
-                    cloudProducts.push({ 
-                        id: docSnap.id, 
-                        ...data, 
-                        images: data.images || (data.image ? [data.image] : []),
-                        timestamp: data.timestamp || Date.now() 
-                    });
-                });
-
-                window.products = cloudProducts.length > 0 ? cloudProducts : defaultProducts;
-                if (typeof renderProducts === 'function') renderProducts();
-            }, (error) => {});
-        } catch(e) {}
-
         onAuthStateChanged(auth, async (user) => {
-            if (user) {
-                const blocked = await checkIsBlocked(user.uid);
-                if (blocked) {
-                    alert("Ваш аккаунт заблокирован администратором.");
-                    await signOut(auth);
-                    return;
-                }
-            }
-
             currentUser = user;
             const authContainer = document.getElementById('authContainer');
             const adminBtn = document.getElementById('adminOrdersBtn');
@@ -953,7 +936,7 @@
         }
 
         window.saveOrderToCloud = async (orderData) => {
-            try { await addDoc(collection(db, "orders"), orderData); alert("Заказ успешно оформлен!"); } catch(e) { alert("Заказ успешно сохранен!"); }
+            try { await addDoc(collection(db, "orders"), orderData); alert("Заказ успешно оформлен!"); } catch(e) { alert("Заказ сохранен!"); }
         };
 
         window.openAdminModal = () => { document.getElementById('adminModal').classList.add('open'); renderAdminOrders(); };
@@ -1022,10 +1005,60 @@
 
         window.deleteOrder = async (id) => { if(confirm("Удалить?")) await deleteDoc(doc(db, "orders", id)); };
 
-        window.openModal = (id) => document.getElementById(id).classList.add('open');
-        window.closeModal = (id) => document.getElementById(id).classList.remove('open');
+        // СОХРАНЕНИЕ ТОВАРА НАПРЯМУЮ В FIREBASE
+        window.saveProduct = async (e) => {
+            e.preventDefault();
+            if (!currentUser || !ADMINS.includes(currentUser.email.toLowerCase())) {
+                alert("Ошибка! Вы не вошли как администратор.");
+                return;
+            }
 
-        // СОХРАНЕНИЕ ЧЕТКОСТИ ПИКСЕЛЬНЫХ КАРТИНОК
+            const editId = document.getElementById('editProductDocId').value;
+            const name = document.getElementById('prodName').value;
+            const brand = document.getElementById('prodBrand').value;
+            const sku = document.getElementById('prodSku').value;
+            const priceTJS = parseFloat(document.getElementById('prodPrice').value);
+            const badge = document.getElementById('prodBadge').value;
+            const whatsapp = document.getElementById('prodWhatsapp').value.trim();
+            const images = window.tempProductBase64Images;
+
+            if (!images || images.length === 0) {
+                alert("Пожалуйста, выберите хотя бы одно фото товара!");
+                return;
+            }
+
+            const submitBtn = document.getElementById('saveProductSubmitBtn');
+            if (submitBtn) submitBtn.innerText = "Сохранение в базу...";
+
+            const productData = { 
+                name, 
+                brand, 
+                sku: sku || 'N/A', 
+                priceTJS, 
+                badge: badge || 'Хит', 
+                whatsapp, 
+                images, 
+                image: images[0], 
+                timestamp: Date.now() 
+            };
+
+            try {
+                if (editId) {
+                    await updateDoc(doc(db, "products", editId), productData);
+                } else {
+                    await addDoc(collection(db, "products"), productData);
+                }
+                
+                closeModal('productModal');
+                alert("Товар успешно сохранен в облачную базу данных!");
+            } catch (err) {
+                console.error("Ошибка сохранения в Firestore:", err);
+                alert("Ошибка сохранения: " + err.message + "\nПроверьте правила Firestore Database.");
+            } finally {
+                if (submitBtn) submitBtn.innerText = "Сохранить товар";
+            }
+        };
+
         window.handleMultipleImagesUpload = (event) => {
             const files = Array.from(event.target.files);
             window.tempProductBase64Images = [];
@@ -1047,7 +1080,7 @@
                         canvas.width = width;
                         canvas.height = height;
 
-                        // Отключаем размытие сглаживания, чтобы пиксельные картинки оставались резкими
+                        // Отключаем размытие пикселей
                         ctx.imageSmoothingEnabled = false;
 
                         ctx.drawImage(img, 0, 0, width, height);
@@ -1066,7 +1099,7 @@
         };
 
         window.openProductModal = () => {
-            if (!ADMINS.includes(currentUser?.email?.toLowerCase())) return;
+            if (!currentUser || !ADMINS.includes(currentUser.email.toLowerCase())) return;
             document.getElementById('editProductDocId').value = '';
             document.getElementById('prodName').value = '';
             document.getElementById('prodBrand').value = '';
@@ -1082,7 +1115,7 @@
         };
 
         window.editProduct = (id) => {
-            if (!ADMINS.includes(currentUser?.email?.toLowerCase())) return;
+            if (!currentUser || !ADMINS.includes(currentUser.email.toLowerCase())) return;
             const p = window.products.find(prod => prod.id == id);
             if (!p) return;
             document.getElementById('editProductDocId').value = p.id;
@@ -1103,58 +1136,21 @@
             openModal('productModal');
         };
 
-        window.saveProduct = async (e) => {
-            e.preventDefault();
-            if (!ADMINS.includes(currentUser?.email?.toLowerCase())) return;
-
-            const editId = document.getElementById('editProductDocId').value;
-            const name = document.getElementById('prodName').value;
-            const brand = document.getElementById('prodBrand').value;
-            const sku = document.getElementById('prodSku').value;
-            const priceTJS = parseFloat(document.getElementById('prodPrice').value);
-            const badge = document.getElementById('prodBadge').value;
-            const whatsapp = document.getElementById('prodWhatsapp').value.trim();
-            const images = window.tempProductBase64Images;
-
-            if (images.length === 0) {
-                alert("Дождитесь загрузки фото или выберите хотя бы одно!");
-                return;
-            }
-
-            closeModal('productModal');
-
-            const productData = { 
-                name, brand, sku, priceTJS, badge, whatsapp, images, image: images[0], timestamp: Date.now() 
-            };
-
-            try {
-                if (editId && !editId.startsWith('def_')) {
-                    await updateDoc(doc(db, "products", editId), productData);
-                } else {
-                    await addDoc(collection(db, "products"), productData);
-                }
-                alert("Товар успешно сохранен с четкими краями!");
-            } catch (err) {
-                alert("Ошибка сохранения.");
-            }
-        };
-
         window.deleteProduct = async (id) => {
-            if (!ADMINS.includes(currentUser?.email?.toLowerCase())) return;
-            if (confirm("Удалить этот товар у всех пользователей?")) {
+            if (!currentUser || !ADMINS.includes(currentUser.email.toLowerCase())) return;
+            if (confirm("Удалить этот товар из облачной базы у всех?")) {
                 try { 
-                    if (!id.startsWith('def_')) {
-                        await deleteDoc(doc(db, "products", id));
-                    } else {
-                        window.products = window.products.filter(p => p.id != id);
-                        if (typeof renderProducts === 'function') renderProducts();
-                    }
-                    alert("Товар успешно удален!");
+                    await deleteDoc(doc(db, "products", id));
+                    alert("Товар удален!");
                 } catch(e) { alert("Ошибка удаления: " + e.message); }
             }
         };
+
+        window.openModal = (id) => document.getElementById(id).classList.add('open');
+        window.closeModal = (id) => document.getElementById(id).classList.remove('open');
     </script>
 
+    <!-- ИНТЕРФЕЙС И ОТОБРАЖЕНИЕ ТОВАРОВ, КОРЗИНЫ, СРАВНЕНИЯ И ОТЗЫВОВ -->
     <script>
         let reviews = [{ author: "Алишер Р.", rating: 5, text: "Отличный магазин, всё оригинальное!" }];
         let cart = JSON.parse(localStorage.getItem('btime_cart')) || [];
@@ -1218,6 +1214,13 @@
                 list = list.filter(p => p.sku && p.sku.toLowerCase().includes(skuQuery));
             }
             
+            if (list.length === 0) {
+                const emptyHtml = `<div style="grid-column: 1/-1; text-align: center; padding: 40px; color: #9ca3af;">Товаров пока нет в каталоге.</div>`;
+                if (document.getElementById('homeGrid')) document.getElementById('homeGrid').innerHTML = emptyHtml;
+                if (document.getElementById('catalogGrid')) document.getElementById('catalogGrid').innerHTML = emptyHtml;
+                return;
+            }
+
             const html = list.map(p => {
                 const images = p.images && p.images.length > 0 ? p.images : [p.image];
                 const activeIndex = p.currentIndex || 0;
@@ -1319,7 +1322,7 @@
                         const img = p.images && p.images.length > 0 ? p.images[0] : p.image;
                         return `<div style="border: 1px solid #e5e7eb; padding: 14px; border-radius: 12px; text-align: center; position: relative;">
                             <button onclick="toggleCompare('${p.id}'); renderCompare();" style="position: absolute; top: 6px; right: 6px; background: none; border: none; color: #dc2626; cursor: pointer;"><i class="fa-solid fa-xmark"></i></button>
-                            <img src="${img}" style="height: 100px; object-fit: cover; margin-bottom: 8px;">
+                            <img src="${img}" style="height: 100px; object-fit: cover; margin-bottom: 8px; image-rendering: pixelated;">
                             <h4 style="font-weight: bold; font-size: 14px; margin-bottom: 4px;">${p.name}</h4>
                             <p class="text-amber" style="font-weight: bold; font-size: 14px;">${formatPrice(p.priceTJS)}</p>
                         </div>`;
