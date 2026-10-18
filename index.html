@@ -7,11 +7,10 @@
     <link id="faviconLink" rel="icon" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/svgs/solid/clock.svg">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
-    <!-- Динамическое подключение шрифтов -->
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Montserrat:wght@400;700&family=Roboto:wght@400;700&family=Inter:wght@400;700&family=Open+Sans:wght@400;700&family=Lato:wght@400;700&family=Poppins:wght@400;700&family=Oswald:wght@400;700&family=Raleway:wght@400;700&family=Nunito:wght@400;700&family=Rubik:wght@400;700&family=Ubuntu:wght@400;700&family=Playfair+Display:wght@400;700&family=Merriweather:wght@400;700&family=Cormorant+Garamond:wght@400;700&family=PT+Serif:wght@400;700&family=PT+Sans:wght@400;700&family=Lora:wght@400;700&family=Cinzel:wght@400;700&family=Pacifico&family=Lobster&family=Comfortaa:wght@400;700&family=Marck+Script&family=Caveat:wght@400;700&family=Ruslan+Display&family=Press+Start+2P&family=Fira+Sans:wght@400;700&family=Josefin+Sans:wght@400;700&family=Quicksand:wght@400;700&family=Titillium+Web:wght@400;700&family=Mulish:wght@400;700&family=Work+Sans:wght@400;700&family=Inconsolata:wght@400;700&family=Bebas+Neue&family=Exo+2:wght@400;700&family=Arimo:wght@400;700&family=Vollkorn:wght@400;700&family=Alegreya:wght@400;700&family=Bitter:wght@400;700&family=Source+Sans+3:wght@400;700&family=Noto+Sans:wght@400;700&family=Kanit:wght@400;700&family=Nanum+Gothic:wght@400;700&family=Overpass:wght@400;700&family=Spectral:wght@400;700&family=Manrope:wght@400;700&family=Syne:wght@400;700&family=Space+Grotesk:wght@400;700&display=swap">
+    <!-- Подключение шрифтов -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Montserrat:wght@400;700&family=Roboto:wght@400;700&family=Inter:wght@400;700&family=Open+Sans:wght@400;700&family=Lato:wght@400;700&family=Poppins:wght@400;700&family=Oswald:wght@400;700&family=Raleway:wght@400;700&family=Nunito:wght@400;700&family=Rubik:wght@400;700&family=Ubuntu:wght@400;700&family=Playfair+Display:wght@400;700&display=swap">
     <link id="dynamicGoogleFont" rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap">
 
-    <!-- МОМЕНТАЛЬНАЯ ЗАГРУЗКА НАСТРОЕК -->
     <script>
         (function() {
             const savedCfg = localStorage.getItem('btime_site_config');
@@ -166,8 +165,6 @@
             height: 100%; 
             object-fit: cover; 
             flex-shrink: 0; 
-            image-rendering: pixelated;
-            image-rendering: crisp-edges;
         }
         
         .card-arrow { position: absolute; top: 50%; transform: translateY(-50%); background: rgba(0,0,0,0.5); color: white; border: none; width: 26px; height: 26px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 11px; z-index: 2; opacity: 0.8; transition: opacity 0.2s; }
@@ -366,7 +363,7 @@
         </div>
     </footer>
 
-    <!-- МОДАЛЬНОЕ ОКНО ДЛЯ ШРИФТОВ И FAVICON -->
+    <!-- МОДАЛЬНЫЕ ОКНА -->
     <div id="fontModal" class="modal">
         <div class="modal-box">
             <button onclick="closeModal('fontModal')" class="modal-close"><i class="fa-solid fa-xmark"></i></button>
@@ -374,60 +371,20 @@
             <form onsubmit="saveFontAndFavicon(event)">
                 <div>
                     <label>Выберите шрифт сайта</label>
-                    <select id="fontSelect" onchange="previewFontInSelect(this.value)" style="max-height: 220px; font-size: 15px;">
-                        <option value="Plus Jakarta Sans" style="font-family: 'Plus Jakarta Sans', sans-serif;">Plus Jakarta Sans (По умолчанию)</option>
-                        <option value="Montserrat" style="font-family: 'Montserrat', sans-serif;">Montserrat</option>
-                        <option value="Roboto" style="font-family: 'Roboto', sans-serif;">Roboto</option>
-                        <option value="Inter" style="font-family: 'Inter', sans-serif;">Inter</option>
-                        <option value="Open Sans" style="font-family: 'Open Sans', sans-serif;">Open Sans</option>
-                        <option value="Lato" style="font-family: 'Lato', sans-serif;">Lato</option>
-                        <option value="Poppins" style="font-family: 'Poppins', sans-serif;">Poppins</option>
-                        <option value="Oswald" style="font-family: 'Oswald', sans-serif;">Oswald</option>
-                        <option value="Raleway" style="font-family: 'Raleway', sans-serif;">Raleway</option>
-                        <option value="Nunito" style="font-family: 'Nunito', sans-serif;">Nunito</option>
-                        <option value="Rubik" style="font-family: 'Rubik', sans-serif;">Rubik</option>
-                        <option value="Ubuntu" style="font-family: 'Ubuntu', sans-serif;">Ubuntu</option>
-                        <option value="Playfair Display" style="font-family: 'Playfair Display', serif;">Playfair Display</option>
-                        <option value="Merriweather" style="font-family: 'Merriweather', serif;">Merriweather</option>
-                        <option value="Cormorant Garamond" style="font-family: 'Cormorant Garamond', serif;">Cormorant Garamond</option>
-                        <option value="PT Serif" style="font-family: 'PT Serif', serif;">PT Serif</option>
-                        <option value="PT Sans" style="font-family: 'PT Sans', sans-serif;">PT Sans</option>
-                        <option value="Lora" style="font-family: 'Lora', serif;">Lora</option>
-                        <option value="Cinzel" style="font-family: 'Cinzel', serif;">Cinzel</option>
-                        <option value="Pacifico" style="font-family: 'Pacifico', cursive;">Pacifico</option>
-                        <option value="Lobster" style="font-family: 'Lobster', cursive;">Lobster</option>
-                        <option value="Comfortaa" style="font-family: 'Comfortaa', cursive;">Comfortaa</option>
-                        <option value="Marck Script" style="font-family: 'Marck Script', cursive;">Marck Script</option>
-                        <option value="Caveat" style="font-family: 'Caveat', cursive;">Caveat</option>
-                        <option value="Ruslan Display" style="font-family: 'Ruslan Display', cursive;">Ruslan Display</option>
-                        <option value="Press Start 2P" style="font-family: 'Press Start 2P', monospace;">Press Start 2P</option>
-                        <option value="Fira Sans" style="font-family: 'Fira Sans', sans-serif;">Fira Sans</option>
-                        <option value="Josefin Sans" style="font-family: 'Josefin Sans', sans-serif;">Josefin Sans</option>
-                        <option value="Quicksand" style="font-family: 'Quicksand', sans-serif;">Quicksand</option>
-                        <option value="Titillium Web" style="font-family: 'Titillium Web', sans-serif;">Titillium Web</option>
-                        <option value="Mulish" style="font-family: 'Mulish', sans-serif;">Mulish</option>
-                        <option value="Work Sans" style="font-family: 'Work Sans', sans-serif;">Work Sans</option>
-                        <option value="Inconsolata" style="font-family: 'Inconsolata', monospace;">Inconsolata</option>
-                        <option value="Bebas Neue" style="font-family: 'Bebas Neue', cursive;">Bebas Neue</option>
-                        <option value="Exo 2" style="font-family: 'Exo 2', sans-serif;">Exo 2</option>
-                        <option value="Arimo" style="font-family: 'Arimo', sans-serif;">Arimo</option>
-                        <option value="Vollkorn" style="font-family: 'Vollkorn', serif;">Vollkorn</option>
-                        <option value="Alegreya" style="font-family: 'Alegreya', serif;">Alegreya</option>
-                        <option value="Bitter" style="font-family: 'Bitter', serif;">Bitter</option>
-                        <option value="Source Sans 3" style="font-family: 'Source Sans 3', sans-serif;">Source Sans 3</option>
-                        <option value="Noto Sans" style="font-family: 'Noto Sans', sans-serif;">Noto Sans</option>
-                        <option value="Kanit" style="font-family: 'Kanit', sans-serif;">Kanit</option>
-                        <option value="Nanum Gothic" style="font-family: 'Nanum Gothic', sans-serif;">Nanum Gothic</option>
-                        <option value="Overpass" style="font-family: 'Overpass', sans-serif;">Overpass</option>
-                        <option value="Spectral" style="font-family: 'Spectral', serif;">Spectral</option>
-                        <option value="Manrope" style="font-family: 'Manrope', sans-serif;">Manrope</option>
-                        <option value="Syne" style="font-family: 'Syne', sans-serif;">Syne</option>
-                        <option value="Space Grotesk" style="font-family: 'Space Grotesk', sans-serif;">Space Grotesk</option>
+                    <select id="fontSelect" style="max-height: 220px; font-size: 15px;">
+                        <option value="Plus Jakarta Sans">Plus Jakarta Sans (По умолчанию)</option>
+                        <option value="Montserrat">Montserrat</option>
+                        <option value="Roboto">Roboto</option>
+                        <option value="Inter">Inter</option>
+                        <option value="Open Sans">Open Sans</option>
+                        <option value="Lato">Lato</option>
+                        <option value="Poppins">Poppins</option>
+                        <option value="Playfair Display">Playfair Display</option>
                     </select>
                 </div>
 
                 <div>
-                    <label>URL Favicon (иконка браузерной вкладки)</label>
+                    <label>URL Favicon</label>
                     <input type="text" id="faviconInput" placeholder="https://site.com/icon.png">
                 </div>
 
@@ -483,13 +440,13 @@
                 <input type="hidden" id="editProductDocId">
                 <div><label>Название</label><input type="text" id="prodName" required></div>
                 <div><label>Бренд</label><input type="text" id="prodBrand" required></div>
-                <div><label>Артикул (SKU) — виден только админу</label><input type="text" id="prodSku" required></div>
+                <div><label>Артикул (SKU)</label><input type="text" id="prodSku" required></div>
                 <div><label>Цена (в сомони TJS)</label><input type="number" id="prodPrice" required min="1"></div>
-                <div><label>Бейдж (например: Хит, Премиум)</label><input type="text" id="prodBadge" value="Хит"></div>
-                <div><label>Номер WhatsApp для этого товара (например: 992900000000)</label><input type="text" id="prodWhatsapp" placeholder="Если пусто, берется общий номер"></div>
+                <div><label>Бейдж</label><input type="text" id="prodBadge" value="Хит"></div>
+                <div><label>Номер WhatsApp (например: 992900000000)</label><input type="text" id="prodWhatsapp" placeholder="Если пусто, берется общий номер"></div>
                 
                 <div>
-                    <label>Фотографии товара (сохраняют четкие пиксели)</label>
+                    <label>Фотографии товара (без ограничений)</label>
                     <input type="file" id="prodImageFiles" accept="image/*" multiple onchange="handleMultipleImagesUpload(event)">
                     <div id="uploadedImagesPreview" style="display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px;"></div>
                 </div>
@@ -592,20 +549,13 @@
                 return false;
             }
         });
-
-        function previewFontInSelect(fontName) {
-            const selectEl = document.getElementById('fontSelect');
-            if (selectEl) {
-                selectEl.style.fontFamily = `'${fontName}', sans-serif`;
-            }
-        }
     </script>
 
-    <!-- МОЛНИЕНОСНЫЙ СКРИПТ (ФАСТ) -->
+    <!-- СИНХРОНИЗАЦИЯ С FIREBASE -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js";
         import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
-        import { getFirestore, collection, addDoc, getDocs, doc, deleteDoc, setDoc, getDoc, onSnapshot, query, orderBy, updateDoc } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
+        import { getFirestore, collection, addDoc, doc, deleteDoc, setDoc, onSnapshot, query, orderBy, updateDoc } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyDCyzNeJt0Fi67LALJljFjjeQWJ9uqC2io",
@@ -681,11 +631,8 @@
                             timestamp: data.timestamp || Date.now() 
                         });
                     });
-                    // Обновляем только если список отличается, чтобы не дергать интерфейс
-                    if (JSON.stringify(window.products) !== JSON.stringify(cloudProducts)) {
-                        window.products = cloudProducts;
-                        if (typeof renderProducts === 'function') renderProducts();
-                    }
+                    window.products = cloudProducts;
+                    if (typeof renderProducts === 'function') renderProducts();
                 }, (error) => {});
             } catch(e) {}
         }
@@ -991,51 +938,7 @@
 
         window.deleteOrder = async (id) => { if(confirm("Удалить?")) deleteDoc(doc(db, "orders", id)).catch(() => {}); };
 
-        // МОЛНИЕНОСНОЕ СОХРАНЕНИЕ ТОВАРА БЕЗ ОЖИДАНИЯ
-        window.saveProduct = async (e) => {
-            e.preventDefault();
-            if (!currentUser || !ADMINS.includes(currentUser.email.toLowerCase())) {
-                alert("Ошибка! Вы не вошли как администратор.");
-                return;
-            }
-
-            const editId = document.getElementById('editProductDocId').value;
-            const name = document.getElementById('prodName').value;
-            const brand = document.getElementById('prodBrand').value;
-            const sku = document.getElementById('prodSku').value;
-            const priceTJS = parseFloat(document.getElementById('prodPrice').value);
-            const badge = document.getElementById('prodBadge').value;
-            const whatsapp = document.getElementById('prodWhatsapp').value.trim();
-            const images = window.tempProductBase64Images;
-
-            if (!images || images.length === 0) {
-                alert("Пожалуйста, выберите хотя бы одно фото товара!");
-                return;
-            }
-
-            const productData = { 
-                name, 
-                brand, 
-                sku: sku || 'N/A', 
-                priceTJS, 
-                badge: badge || 'Хит', 
-                whatsapp, 
-                images, 
-                image: images[0], 
-                timestamp: Date.now() 
-            };
-
-            // Закрываем модальное окно мгновенно без задержки!
-            closeModal('productModal');
-
-            // Фоновая отправка в Firebase без задержки интерфейса
-            if (editId) {
-                updateDoc(doc(db, "products", editId), productData).catch(() => {});
-            } else {
-                addDoc(collection(db, "products"), productData).catch(() => {});
-            }
-        };
-
+        // ЗАГРУЗКА И СЖАТИЕ ЛЮБЫХ ФОТО БЕЗ ОГРАНИЧЕНИЙ
         window.handleMultipleImagesUpload = (event) => {
             const files = Array.from(event.target.files);
             window.tempProductBase64Images = [];
@@ -1051,25 +954,87 @@
                         const canvas = document.createElement('canvas');
                         const ctx = canvas.getContext('2d');
                         
+                        let maxDim = 600;
                         let width = img.width;
                         let height = img.height;
 
+                        if (width > height) {
+                            if (width > maxDim) {
+                                height *= maxDim / width;
+                                width = maxDim;
+                            }
+                        } else {
+                            if (height > maxDim) {
+                                width *= maxDim / height;
+                                height = maxDim;
+                            }
+                        }
+
                         canvas.width = width;
                         canvas.height = height;
-                        ctx.imageSmoothingEnabled = false;
                         ctx.drawImage(img, 0, 0, width, height);
                         
-                        const crispDataUrl = canvas.toDataURL('image/png');
-                        window.tempProductBase64Images.push(crispDataUrl);
+                        const compressedBase64 = canvas.toDataURL('image/jpeg', 0.8);
+                        window.tempProductBase64Images.push(compressedBase64);
                         
                         const thumb = document.createElement('img');
-                        thumb.src = crispDataUrl;
-                        thumb.style.cssText = "width: 50px; height: 50px; object-fit: cover; border-radius: 8px; border: 1px solid #d1d5db; image-rendering: pixelated;";
+                        thumb.src = compressedBase64;
+                        thumb.style.cssText = "width: 50px; height: 50px; object-fit: cover; border-radius: 8px; border: 1px solid #d1d5db;";
                         previewContainer.appendChild(thumb);
                     };
                 };
                 reader.readAsDataURL(file);
             });
+        };
+
+        window.saveProduct = async (e) => {
+            e.preventDefault();
+            if (!currentUser || !ADMINS.includes(currentUser.email.toLowerCase())) {
+                alert("Ошибка! Вы должны быть вошедшим администратором.");
+                return;
+            }
+
+            const editId = document.getElementById('editProductDocId').value;
+            const name = document.getElementById('prodName').value;
+            const brand = document.getElementById('prodBrand').value;
+            const sku = document.getElementById('prodSku').value;
+            const priceTJS = parseFloat(document.getElementById('prodPrice').value);
+            const badge = document.getElementById('prodBadge').value;
+            const whatsapp = document.getElementById('prodWhatsapp').value.trim();
+            const images = window.tempProductBase64Images;
+
+            if (!images || images.length === 0) {
+                alert("Пожалуйста, выберите хотя бы одно фото!");
+                return;
+            }
+
+            const submitBtn = document.getElementById('saveProductSubmitBtn');
+            if (submitBtn) submitBtn.innerText = "Сохранение...";
+
+            const productData = { 
+                name, 
+                brand, 
+                sku: sku || 'N/A', 
+                priceTJS, 
+                badge: badge || 'Хит', 
+                whatsapp, 
+                images, 
+                image: images[0], 
+                timestamp: Date.now() 
+            };
+
+            try {
+                if (editId) {
+                    await updateDoc(doc(db, "products", editId), productData);
+                } else {
+                    await addDoc(collection(db, "products"), productData);
+                }
+                closeModal('productModal');
+            } catch (err) {
+                alert("Ошибка сохранения! Проверьте правила базы данных Firebase: " + err.message);
+            } finally {
+                if (submitBtn) submitBtn.innerText = "Сохранить товар";
+            }
         };
 
         window.openProductModal = () => {
@@ -1103,7 +1068,7 @@
             window.tempProductBase64Images = p.images || (p.image ? [p.image] : []);
             const previewContainer = document.getElementById('uploadedImagesPreview');
             previewContainer.innerHTML = window.tempProductBase64Images.map(img => `
-                <img src="${img}" style="width: 50px; height: 50px; object-fit: cover; border-radius: 8px; border: 1px solid #d1d5db; image-rendering: pixelated;">
+                <img src="${img}" style="width: 50px; height: 50px; object-fit: cover; border-radius: 8px; border: 1px solid #d1d5db;">
             `).join('');
 
             document.getElementById('productModalTitle').innerText = "Редактировать товар";
@@ -1112,7 +1077,7 @@
 
         window.deleteProduct = async (id) => {
             if (!currentUser || !ADMINS.includes(currentUser.email.toLowerCase())) return;
-            if (confirm("Удалить этот товар у всех?")) {
+            if (confirm("Удалить этот товар у всех клиентов?")) {
                 deleteDoc(doc(db, "products", id)).catch(() => {});
             }
         };
@@ -1121,7 +1086,7 @@
         window.closeModal = (id) => document.getElementById(id).classList.remove('open');
     </script>
 
-    <!-- ИНТЕРФЕЙС И ОТОБРАЖЕНИЕ -->
+    <!-- ИНТЕРФЕЙС УПРАВЛЕНИЯ -->
     <script>
         let reviews = [{ author: "Алишер Р.", rating: 5, text: "Отличный магазин, всё оригинальное!" }];
         let cart = JSON.parse(localStorage.getItem('btime_cart')) || [];
@@ -1291,7 +1256,7 @@
                         const img = p.images && p.images.length > 0 ? p.images[0] : p.image;
                         return `<div style="border: 1px solid #e5e7eb; padding: 14px; border-radius: 12px; text-align: center; position: relative;">
                             <button onclick="toggleCompare('${p.id}'); renderCompare();" style="position: absolute; top: 6px; right: 6px; background: none; border: none; color: #dc2626; cursor: pointer;"><i class="fa-solid fa-xmark"></i></button>
-                            <img src="${img}" style="height: 100px; object-fit: cover; margin-bottom: 8px; image-rendering: pixelated;">
+                            <img src="${img}" style="height: 100px; object-fit: cover; margin-bottom: 8px;">
                             <h4 style="font-weight: bold; font-size: 14px; margin-bottom: 4px;">${p.name}</h4>
                             <p class="text-amber" style="font-weight: bold; font-size: 14px;">${formatPrice(p.priceTJS)}</p>
                         </div>`;
