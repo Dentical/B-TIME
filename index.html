@@ -2,433 +2,446 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title id="pageTitle">B-Time — Официальный интернет-магазин часов</title>
-    <link id="faviconLink" rel="icon" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/svgs/solid/clock.svg">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BTime.tj - Магазин Оригинальных Часов</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
-    <!-- Подключение шрифтов -->
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Montserrat:wght@400;700&family=Roboto:wght@400;700&family=Inter:wght@400;700&family=Open+Sans:wght@400;700&family=Lato:wght@400;700&family=Poppins:wght@400;700&family=Oswald:wght@400;700&family=Raleway:wght@400;700&family=Nunito:wght@400;700&family=Rubik:wght@400;700&family=Ubuntu:wght@400;700&family=Playfair+Display:wght@400;700&display=swap">
-    <link id="dynamicGoogleFont" rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap">
-
-    <script>
-        (function() {
-            const savedCfg = localStorage.getItem('btime_site_config');
-            if (savedCfg) {
-                try {
-                    const cfg = JSON.parse(savedCfg);
-                    document.documentElement.style.setProperty('--bg-color', cfg.bgColor || '#0b1329');
-                    document.documentElement.style.setProperty('--text-color', cfg.textColor || '#f3f4f6');
-                    document.documentElement.style.setProperty('--header-color', cfg.headerColor || '#0b1329');
-                    document.documentElement.style.setProperty('--footer-color', cfg.footerColor || '#070d1d');
-                    if (cfg.fontFamily) {
-                        document.documentElement.style.setProperty('--site-font', "'" + cfg.fontFamily + "', sans-serif");
-                    }
-                    if (cfg.faviconUrl) {
-                        const fav = document.getElementById('faviconLink');
-                        if (fav) fav.href = cfg.faviconUrl;
-                    }
-                    document.write('<style>body { background-color: ' + (cfg.bgColor || '#0b1329') + '; color: ' + (cfg.textColor || '#f3f4f6') + '; font-family: ' + (cfg.fontFamily ? "'" + cfg.fontFamily + "', sans-serif" : "'Plus Jakarta Sans', sans-serif") + '; }</style>');
-                } catch(e) {}
-            }
-        })();
-    </script>
-
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
-        
-        :root {
-            --bg-color: #0b1329;
-            --text-color: #f3f4f6;
-            --header-color: rgba(11, 19, 41, 0.95);
-            --footer-color: #070d1d;
-            --topbar-color: #070d1d;
-            --gold-gradient: linear-gradient(135deg, #ca8a04, #facc15);
-            --accent-amber: #d97706;
-            --site-font: 'Plus Jakarta Sans', sans-serif;
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0f172a;
+            color: #f8fafc;
         }
 
-        * { 
-            box-sizing: border-box; 
-            margin: 0; 
-            padding: 0; 
-            font-family: var(--site-font); 
-            user-select: none; 
-            -webkit-tap-highlight-color: transparent; 
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #1e293b;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #334155;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #eab308;
         }
 
-        body { 
-            background-color: var(--bg-color); 
-            color: var(--text-color); 
-            font-family: var(--site-font);
-            min-height: 100vh;
-            min-height: 100dvh; 
-            display: flex; 
-            flex-direction: column; 
-            overflow-x: hidden; 
-            padding-bottom: env(safe-area-inset-bottom);
+        /* Card Image Slider */
+        .card-img-slider {
+            position: relative;
+            width: 100%;
+            height: 220px;
+            overflow: hidden;
+            border-radius: 12px 12px 0 0;
+            background-color: #1e293b;
         }
 
-        .serif { font-family: 'Playfair Display', serif; }
-        
-        .top-bar { 
-            background: var(--topbar-color); 
-            border-bottom: 1px solid rgba(30, 58, 138, 0.5); 
-            font-size: clamp(11px, 2.5vw, 12px); 
-            color: #d1d5db; 
-            padding: 8px 16px; 
+        .card-img-track {
+            display: flex;
+            width: 100%;
+            height: 100%;
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
-        .top-bar-inner { 
-            max-width: 1280px; 
-            margin: 0 auto; 
-            display: flex; 
-            justify-content: space-between; 
-            align-items: center; 
-            flex-wrap: wrap; 
-            gap: 8px; 
-        }
-        
-        header { 
-            position: sticky; 
-            top: 0; 
-            z-index: 40; 
-            background: var(--header-color); 
-            backdrop-filter: blur(10px); 
-            border-bottom: 1px solid rgba(30, 58, 138, 0.6); 
-            min-height: 60px; 
-            display: flex; 
-            align-items: center; 
-            padding-top: env(safe-area-inset-top);
-        }
-        .header-inner { 
-            max-width: 1280px; 
-            margin: 0 auto; 
-            width: 100%; 
-            padding: 10px 16px; 
-            display: flex; 
-            justify-content: space-between; 
-            align-items: center; 
-            flex-wrap: wrap; 
-            gap: 12px; 
-        }
-        
-        .logo { display: flex; align-items: center; gap: 10px; cursor: pointer; text-decoration: none; color: white; }
-        .logo-icon { 
-            width: 38px; 
-            height: 38px; 
-            border-radius: 12px; 
-            background: var(--gold-gradient); 
-            display: flex; 
-            align-items: center; 
-            justify-content: center; 
-            color: black; 
-            font-size: 16px; 
-            flex-shrink: 0; 
-        }
-        
-        nav { display: flex; gap: clamp(8px, 2vw, 16px); font-size: clamp(12px, 3vw, 14px); font-weight: 500; flex-wrap: wrap; }
-        nav button { background: none; border: none; color: #e5e7eb; cursor: pointer; transition: color 0.2s; white-space: nowrap; }
-        nav button:hover, nav button.active { color: #facc15; }
 
-        .actions { display: flex; align-items: center; gap: 8px; }
-        .btn-icon { 
-            background: rgba(255, 255, 255, 0.1); 
-            border: 1px solid #1e3a8a; 
-            color: #e5e7eb; 
-            width: clamp(34px, 8vw, 38px); 
-            height: clamp(34px, 8vw, 38px); 
-            border-radius: 50%; 
-            display: flex; 
-            align-items: center; 
-            justify-content: center; 
-            cursor: pointer; 
-            position: relative; 
-            transition: 0.2s; 
-            flex-shrink: 0; 
+        .card-img-track img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            flex-shrink: 0;
         }
-        .btn-icon:hover { border-color: #facc15; color: #facc15; }
-        
-        .badge { position: absolute; top: -4px; right: -4px; background: #eab308; color: black; font-size: 10px; font-weight: bold; width: 18px; height: 18px; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
-        
-        .main-content { flex-grow: 1; max-width: 1280px; margin: 0 auto; width: 100%; padding: clamp(12px, 3vw, 24px) 16px; }
-        .tab-pane { display: none; }
-        .tab-pane.active { display: block; }
 
-        .grid-products { display: grid; grid-template-columns: repeat(auto-fill, minmax(clamp(160px, 45vw, 240px), 1fr)); gap: clamp(10px, 2vw, 20px); }
-        
-        .card { background: white; border-radius: 16px; overflow: hidden; color: #111827; box-shadow: 0 4px 6px rgba(0,0,0,0.1); display: flex; flex-direction: column; position: relative; }
-        .card-img-slider { position: relative; width: 100%; height: clamp(160px, 40vw, 200px); background: #f9fafb; overflow: hidden; }
-        .card-img-track { display: flex; width: 100%; height: 100%; transition: transform 0.3s ease-in-out; }
-        
-        .card-img-track img { 
-            width: 100%; 
-            height: 100%; 
-            object-fit: cover; 
-            flex-shrink: 0; 
+        .card-arrow {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(15, 23, 42, 0.65);
+            color: #ffffff;
+            border: none;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 2;
+            transition: background 0.2s;
+            font-size: 12px;
         }
-        
-        .card-arrow { position: absolute; top: 50%; transform: translateY(-50%); background: rgba(0,0,0,0.5); color: white; border: none; width: 26px; height: 26px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 11px; z-index: 2; opacity: 0.8; transition: opacity 0.2s; }
-        .card-arrow-left { left: 6px; }
-        .card-arrow-right { right: 6px; }
-        
-        .card-dots { position: absolute; bottom: 6px; left: 0; right: 0; display: flex; justify-content: center; gap: 4px; z-index: 2; }
-        .card-dot { width: 6px; height: 6px; border-radius: 50%; background: rgba(255,255,255,0.5); transition: background 0.2s; }
-        .card-dot.active { background: #eab308; width: 8px; border-radius: 4px; }
-
-        .card-body { padding: clamp(10px, 2.5vw, 16px); display: flex; flex-direction: column; flex-grow: 1; justify-content: space-between; }
-        
-        .btn-gold { background: var(--gold-gradient); color: black; font-weight: bold; border: none; padding: 12px 20px; border-radius: 12px; cursor: pointer; width: 100%; transition: opacity 0.2s; font-size: 14px; }
-        .btn-gold:hover { opacity: 0.9; }
-
-        .btn-whatsapp { background: #25d366; color: white; font-weight: bold; border: none; padding: 10px 14px; border-radius: 10px; cursor: pointer; width: 100%; transition: opacity 0.2s; font-size: 13px; display: flex; align-items: center; justify-content: center; gap: 6px; text-decoration: none; margin-top: 6px; }
-        .btn-whatsapp:hover { opacity: 0.9; }
-
-        .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(5px); z-index: 100; display: none; align-items: center; justify-content: center; padding: 16px; }
-        .modal.open { display: flex; }
-        .modal-box { 
-            background: white; 
-            color: #111827; 
-            width: 100%; 
-            max-width: 550px; 
-            border-radius: 24px; 
-            padding: clamp(16px, 4vw, 24px); 
-            position: relative; 
-            max-height: 90dvh; 
-            overflow-y: auto; 
+        .card-arrow:hover {
+            background: #eab308;
+            color: #000000;
         }
-        .modal-close { position: absolute; top: 16px; right: 16px; background: none; border: none; font-size: 20px; cursor: pointer; color: #6b7280; }
-        
-        form div { margin-bottom: 14px; }
-        form label { display: block; font-size: 13px; font-weight: 600; margin-bottom: 6px; color: #374151; }
-        form input, form textarea, form select { width: 100%; padding: 10px 14px; border: 1px solid #d1d5db; border-radius: 10px; font-size: 14px; user-select: text; }
-        
-        footer { background: var(--footer-color); border-top: 1px solid rgba(30, 58, 138, 0.5); padding: 32px 16px; margin-top: 40px; color: #9ca3af; font-size: 13px; }
-        .footer-inner { max-width: 1280px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 24px; }
-        
-        .hidden { display: none !important; }
-        .text-gold { color: #facc15; }
-        .text-amber { color: #d97706; }
+        .card-arrow-left { left: 8px; }
+        .card-arrow-right { right: 8px; }
 
-        @media (max-width: 768px) {
-            .header-inner { flex-direction: column; align-items: stretch; gap: 10px; }
-            nav { justify-content: center; }
-            .actions { justify-content: flex-end; }
+        .card-dots {
+            position: absolute;
+            bottom: 8px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 4px;
+            z-index: 2;
+        }
+
+        .card-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.4);
+            transition: all 0.2s;
+        }
+
+        .card-dot.active {
+            background: #eab308;
+            width: 14px;
+            border-radius: 4px;
+        }
+
+        /* Card Container */
+        .card {
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 16px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s;
+        }
+        .card:hover {
+            transform: translateY(-3px);
+            border-color: #eab308;
+            box-shadow: 0 10px 25px -5px rgba(234, 179, 8, 0.15);
+        }
+
+        .card-body {
+            padding: 14px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            flex-grow: 1;
+        }
+
+        /* Modal Overlay */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(15, 23, 42, 0.85);
+            backdrop-filter: blur(4px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.25s ease;
+            padding: 16px;
+        }
+
+        .modal.open {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .modal-content {
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 20px;
+            width: 100%;
+            max-width: 520px;
+            max-height: 90vh;
+            overflow-y: auto;
+            padding: 24px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            color: #f8fafc;
+        }
+
+        /* Tabs Navigation */
+        .tab-pane {
+            display: none;
+        }
+        .tab-pane.active {
+            display: block;
+        }
+
+        /* Swiper scroll container */
+        .swiper-container {
+            display: flex;
+            gap: 16px;
+            overflow-x: auto;
+            scroll-behavior: smooth;
+            padding-bottom: 12px;
+            -webkit-overflow-scrolling: touch;
+        }
+        .swiper-container::-webkit-scrollbar {
+            height: 6px;
+        }
+        .swiper-slide {
+            flex: 0 0 260px;
+        }
+
+        .text-amber {
+            color: #eab308;
         }
     </style>
 </head>
-<body>
+<body class="bg-slate-900 text-slate-100 min-h-screen flex flex-col justify-between">
 
-    <div class="top-bar">
-        <div class="top-bar-inner">
-            <div style="display: flex; gap: 16px; align-items: center;" id="topBarDynamicContacts">
-                <span><i class="fa-solid fa-location-dot text-gold"></i> Душанбе</span>
-                <span><i class="fa-solid fa-phone text-gold"></i> +992 (90) 000-00-00</span>
-            </div>
-            <div style="display: flex; gap: 12px; align-items: center;">
+    <!-- HEADER / NAVIGATION -->
+    <header class="sticky top-0 z-50 bg-slate-900/90 backdrop-blur-md border-b border-slate-800">
+        <div class="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between gap-4">
+            <!-- Brand Logo -->
+            <div class="flex items-center gap-2 cursor-pointer" onclick="switchTab('home')">
+                <div class="w-10 h-10 bg-amber-500 rounded-xl flex items-center justify-center text-slate-950 font-black text-xl shadow-lg shadow-amber-500/20">
+                    B
+                </div>
                 <div>
-                    <span>Язык:</span>
-                    <select id="langSelect" onchange="changeLanguage(this.value)" style="background: #1e3a8a; color: #facc15; border: none; padding: 2px 6px; border-radius: 4px; font-weight: bold;">
-                        <option value="ru" style="background:#0b1329;">RU</option>
-                        <option value="tj" style="background:#0b1329;">TJ</option>
-                        <option value="en" style="background:#0b1329;">EN</option>
+                    <h1 class="text-xl font-extrabold tracking-tight text-white flex items-center gap-1">
+                        BTIME<span class="text-amber-500">.TJ</span>
+                    </h1>
+                    <p class="text-[10px] text-slate-400 -mt-1 tracking-wider uppercase font-semibold">Watch Boutique</p>
+                </div>
+            </div>
+
+            <!-- Currency & Language Selectors -->
+            <div class="hidden sm:flex items-center gap-3 bg-slate-800/80 px-3 py-1.5 rounded-xl border border-slate-700/50">
+                <div class="flex items-center gap-1 text-xs">
+                    <i class="fa-solid fa-[#fa-coins] text-amber-500"></i>
+                    <select onchange="changeCurrency(this.value)" class="bg-transparent text-slate-200 text-xs font-semibold focus:outline-none cursor-pointer">
+                        <option value="TJS" class="bg-slate-800">TJS (ЅM)</option>
+                        <option value="USD" class="bg-slate-800">USD ($)</option>
+                        <option value="RUB" class="bg-slate-800">RUB (₽)</option>
                     </select>
                 </div>
-                <div>
-                    <span>Валюта:</span>
-                    <select id="currencySelect" onchange="changeCurrency(this.value)" style="background: #1e3a8a; color: #facc15; border: none; padding: 2px 6px; border-radius: 4px; font-weight: bold;">
-                        <option value="TJS" style="background:#0b1329;">TJS (ЅM)</option>
-                        <option value="USD" style="background:#0b1329;">USD ($)</option>
-                        <option value="RUB" style="background:#0b1329;">RUB (₽)</option>
+                <div class="w-px h-4 bg-slate-700"></div>
+                <div class="flex items-center gap-1 text-xs">
+                    <i class="fa-solid fa-globe text-amber-500"></i>
+                    <select onchange="changeLanguage(this.value)" class="bg-transparent text-slate-200 text-xs font-semibold focus:outline-none cursor-pointer">
+                        <option value="ru" class="bg-slate-800">RU</option>
+                        <option value="tj" class="bg-slate-800">TJ</option>
                     </select>
                 </div>
-                <div id="authContainer">
-                    <button onclick="openModal('authModal')" style="background: rgba(234,179,8,0.1); border: 1px solid rgba(234,179,8,0.3); color: #facc15; padding: 4px 12px; border-radius: 6px; cursor: pointer;">
-                        <i class="fa-solid fa-user"></i> Войти
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <header>
-        <div class="header-inner">
-            <div class="logo" onclick="switchTab('home')">
-                <div class="logo-icon"><i class="fa-solid fa-clock"></i></div>
-                <div>
-                    <span id="siteBrandName" style="font-size: 20px; font-weight: 900; letter-spacing: 1px;" class="serif">B-TIME</span>
-                    <span id="siteBrandSub" style="display: block; font-size: 8px; color: #facc15; letter-spacing: 2px; font-weight: 600;">LUXURY WATCHES</span>
-                </div>
             </div>
 
-            <nav>
-                <button onclick="switchTab('home')" class="nav-btn active" data-tab="home">Главная</button>
-                <button onclick="switchTab('catalog')" class="nav-btn" data-tab="catalog">Каталог</button>
-                <button onclick="switchTab('compare')" class="nav-btn" data-tab="compare">Сравнение <span id="compareBadge" style="background:#eab308; color:black; padding:1px 6px; border-radius:10px; font-size:10px;" class="hidden">0</span></button>
-                <button onclick="switchTab('reviews')" class="nav-btn" data-tab="reviews">Отзывы</button>
-                <button onclick="switchTab('articles')" class="nav-btn" data-tab="articles">Статьи</button>
-            </nav>
+            <!-- Header Action Controls -->
+            <div class="flex items-center gap-2 sm:gap-3">
+                <!-- User Account Button -->
+                <button id="userAuthBtn" onclick="openAuthOrAccount()" class="flex items-center gap-2 bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-200 px-3 py-2 rounded-xl text-xs font-medium transition">
+                    <i class="fa-solid fa-user text-amber-500"></i>
+                    <span id="userAuthText" class="hidden md:inline">Войти</span>
+                </button>
 
-            <div class="actions">
-                <button id="siteConfigBtn" onclick="openSiteConfigModal()" class="btn-icon hidden" title="Настройки дизайна и контента" style="background: #2563eb; color: white; border-color: #2563eb; font-weight: bold;">
-                    <i class="fa-solid fa-gear"></i>
+                <!-- Orders Button -->
+                <button onclick="openClientOrdersModal()" class="relative bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-200 p-2.5 rounded-xl text-xs font-medium transition" title="Мои заказы">
+                    <i class="fa-solid fa-box-archive text-amber-500"></i>
                 </button>
-                <button id="addProductBtn" onclick="openProductModal()" class="btn-icon hidden" title="Добавить товар" style="background: #eab308; color: black; border-color: #eab308; font-weight: bold;">
-                    <i class="fa-solid fa-plus"></i>
+
+                <!-- Compare Button -->
+                <button onclick="switchTab('compare')" class="relative bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-200 p-2.5 rounded-xl text-xs font-medium transition" title="Сравнение">
+                    <i class="fa-solid fa-scale-balanced text-amber-500"></i>
+                    <span id="compareBadge" class="hidden absolute -top-1.5 -right-1.5 bg-amber-500 text-slate-950 font-bold text-[10px] w-5 h-5 rounded-full flex items-center justify-center">0</span>
                 </button>
-                <button id="skuSearchBtn" onclick="openModal('skuSearchModal')" class="btn-icon hidden" title="Поиск по артикулу (SKU)" style="background: rgba(234,179,8,0.15); color: #facc15; border-color: rgba(234,179,8,0.4); font-weight: bold; font-size: 16px;">
-                    <i class="fa-solid fa-hashtag"></i>
+
+                <!-- Admin Orders Panel Button -->
+                <button id="adminBtn" onclick="openAdminModal()" class="hidden relative bg-amber-500/10 border border-amber-500/30 text-amber-500 hover:bg-amber-500/20 px-3 py-2 rounded-xl text-xs font-bold transition">
+                    <i class="fa-solid fa-shield-halved mr-1"></i> Админ
+                    <span id="adminBadge" class="hidden absolute -top-1.5 -right-1.5 bg-red-500 text-white font-bold text-[10px] w-5 h-5 rounded-full flex items-center justify-center">0</span>
                 </button>
-                <button id="fontBtn" onclick="openModal('fontModal')" class="btn-icon hidden" title="Настройка шрифта и Favicon" style="background: rgba(168,85,247,0.2); color: #c084fc; border-color: rgba(168,85,247,0.4); font-weight: bold; font-size: 16px;">
-                    <i class="fa-solid fa-font"></i>
-                </button>
-                <button id="clientOrdersBtn" onclick="openClientOrdersModal()" class="btn-icon hidden" title="Мои заказы" style="color: #60a5fa; border-color: rgba(96,165,250,0.4);">
-                    <i class="fa-solid fa-receipt"></i>
-                    <span id="clientBadge" class="badge hidden" style="background:#60a5fa; color:white;">0</span>
-                </button>
-                <button id="adminOrdersBtn" onclick="openAdminModal()" class="btn-icon hidden" title="Панель заказов" style="color: #facc15; border-color: rgba(234,179,8,0.4);">
-                    <i class="fa-solid fa-file-lines"></i>
-                    <span id="adminBadge" class="badge hidden">0</span>
-                </button>
-                <button onclick="openCartModal()" class="btn-icon" title="Корзина">
+
+                <!-- Cart Button -->
+                <button onclick="openCartModal()" class="relative bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold px-3.5 py-2 rounded-xl text-xs transition flex items-center gap-2 shadow-lg shadow-amber-500/20">
                     <i class="fa-solid fa-bag-shopping"></i>
-                    <span id="cartBadge" class="badge hidden">0</span>
+                    <span class="hidden sm:inline">Корзина</span>
+                    <span id="cartBadge" class="hidden bg-slate-950 text-amber-500 font-extrabold text-[10px] px-1.5 py-0.5 rounded-full">0</span>
                 </button>
             </div>
         </div>
     </header>
 
-    <main class="main-content">
-        <div id="tab-home" class="tab-pane active">
-            <div style="padding: 20px 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 30px; align-items: center;">
+    <!-- NAVIGATION BAR TABS -->
+    <nav class="bg-slate-900 border-b border-slate-800/80 sticky top-[61px] z-40">
+        <div class="max-w-7xl mx-auto px-4 flex items-center gap-2 overflow-x-auto py-2.5 no-scrollbar">
+            <button onclick="switchTab('home')" class="nav-btn active flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-semibold whitespace-nowrap bg-slate-800 text-amber-500 border border-slate-700">
+                <i class="fa-solid fa-house"></i> Главная
+            </button>
+            <button onclick="switchTab('catalog')" class="nav-btn flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-semibold whitespace-nowrap text-slate-400 hover:text-slate-200">
+                <i class="fa-solid fa-clock"></i> Каталог часов
+            </button>
+            <button onclick="switchTab('compare')" class="nav-btn flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-semibold whitespace-nowrap text-slate-400 hover:text-slate-200">
+                <i class="fa-solid fa-scale-balanced"></i> Сравнение
+            </button>
+            <button onclick="switchTab('reviews')" class="nav-btn flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-semibold whitespace-nowrap text-slate-400 hover:text-slate-200">
+                <i class="fa-solid fa-star"></i> Отзывы
+            </button>
+            <button onclick="openProductModal()" id="addProductTabBtn" class="hidden flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-semibold whitespace-nowrap bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 ml-auto">
+                <i class="fa-solid fa-plus"></i> Добавить товар
+            </button>
+        </div>
+    </nav>
+
+    <!-- MAIN CONTENT AREA -->
+    <main class="max-w-7xl mx-auto px-4 py-6 flex-grow w-full">
+
+        <!-- TAB: HOME -->
+        <section id="tab-home" class="tab-pane active space-y-8">
+            <!-- Hero Banner -->
+            <div class="relative bg-gradient-to-r from-slate-800 via-slate-800/90 to-amber-950/40 border border-slate-800 rounded-3xl p-6 sm:p-10 overflow-hidden shadow-2xl">
+                <div class="relative z-10 max-w-xl space-y-4">
+                    <span class="inline-block px-3 py-1 bg-amber-500/10 border border-amber-500/30 text-amber-400 font-bold text-xs rounded-full uppercase tracking-wider">Официальная Коллекция</span>
+                    <h2 class="text-3xl sm:text-5xl font-black text-white leading-tight tracking-tight">Элегантность и Точность в Каждой Детали</h2>
+                    <p class="text-slate-300 text-sm sm:text-base">Широкий выбор оригинальных наручных часов от мировых брендов с гарантийным обслуживанием и быстрой доставкой по Таджикистану.</p>
+                    <div class="flex flex-wrap items-center gap-3 pt-2">
+                        <button onclick="switchTab('catalog')" class="bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold px-6 py-3 rounded-xl text-xs sm:text-sm transition shadow-lg shadow-amber-500/20">Перейти в каталог</button>
+                        <button onclick="openModal('reviewModal')" class="bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 font-semibold px-6 py-3 rounded-xl text-xs sm:text-sm transition">Оставить отзыв</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Popular Models Horizontal Swiper -->
+            <div class="space-y-4">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h3 class="text-xl font-extrabold text-white">Популярные модели</h3>
+                        <p class="text-xs text-slate-400">Топовые предложения этого месяца</p>
+                    </div>
+                    <div class="flex gap-2">
+                        <button onclick="scrollSwiper('homeSwiper', -280)" class="w-9 h-9 bg-slate-800 hover:bg-slate-700 border border-slate-700 rounded-xl flex items-center justify-center text-slate-300 transition"><i class="fa-solid fa-chevron-left"></i></button>
+                        <button onclick="scrollSwiper('homeSwiper', 280)" class="w-9 h-9 bg-slate-800 hover:bg-slate-700 border border-slate-700 rounded-xl flex items-center justify-center text-slate-300 transition"><i class="fa-solid fa-chevron-right"></i></button>
+                    </div>
+                </div>
+                
+                <div id="homeSwiper" class="swiper-container">
+                    <!-- Dynamic swiper product cards rendered here -->
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB: CATALOG -->
+        <section id="tab-catalog" class="tab-pane space-y-6">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-800 pb-4">
                 <div>
-                    <span id="homeBadgeText" style="background: rgba(234,179,8,0.1); border: 1px solid rgba(234,179,8,0.3); color: #facc15; padding: 6px 12px; border-radius: 20px; font-size: 11px; font-weight: 600; text-transform: uppercase;">Официальный дилер</span>
-                    <h1 id="homeTitleText" class="serif" style="font-size: clamp(26px, 5vw, 36px); line-height: 1.1; margin: 16px 0;">Элегантность в каждой секунде</h1>
-                    <p id="homeDescText" style="opacity: 0.8; margin-bottom: 20px; font-size: 14px;">Эксклюзивная коллекция швейцарских и мировых брендов с гарантией качества.</p>
-                    <button onclick="switchTab('catalog')" class="btn-gold" style="width: auto; padding: 12px 24px;">Перейти в каталог</button>
-                </div>
-                <div style="text-align: center;">
-                    <img id="homeImgUrl" src="https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=1600&auto=format&fit=crop&q=100" style="max-width: 100%; border-radius: 16px; box-shadow: 0 15px 25px -5px rgba(0,0,0,0.5);" alt="Watch">
+                    <h2 class="text-2xl font-extrabold text-white">Полный Каталог</h2>
+                    <p class="text-xs text-slate-400">Выберите подходящие часы из наличествующего ассортимента</p>
                 </div>
             </div>
 
-            <div style="display: flex; justify-content: space-between; align-items: center; margin: 30px 0 16px;">
-                <h2 class="serif" style="font-size: clamp(18px, 4vw, 24px);">Хиты продаж</h2>
+            <div id="catalogGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                <!-- Dynamic product cards rendered here -->
             </div>
-            
-            <div id="homeGrid" class="grid-products"></div>
-        </div>
+        </section>
 
-        <div id="tab-catalog" class="tab-pane">
-            <h2 class="serif" style="font-size: clamp(18px, 4vw, 24px); margin-bottom: 20px;">Каталог часов</h2>
-            <div id="catalogGrid" class="grid-products"></div>
-        </div>
-
-        <div id="tab-compare" class="tab-pane">
-            <h2 class="serif" style="font-size: clamp(18px, 4vw, 24px); margin-bottom: 20px;">Сравнение товаров</h2>
-            <div id="compareContainer" style="background: white; color: #111827; padding: 20px; border-radius: 16px;"></div>
-        </div>
-
-        <div id="tab-reviews" class="tab-pane">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 10px;">
-                <h2 class="serif" style="font-size: clamp(18px, 4vw, 24px);">Отзывы клиентов</h2>
-                <button onclick="openModal('reviewModal')" class="btn-gold" style="width: auto; padding: 10px 18px;">Оставить отзыв</button>
+        <!-- TAB: COMPARE -->
+        <section id="tab-compare" class="tab-pane space-y-6">
+            <div>
+                <h2 class="text-2xl font-extrabold text-white">Сравнение Моделей</h2>
+                <p class="text-xs text-slate-400">Сравнение характеристик выбранных вами часов</p>
             </div>
-            <div id="reviewsGrid" class="grid-products"></div>
-        </div>
-
-        <div id="tab-articles" class="tab-pane">
-            <h2 class="serif" style="font-size: clamp(18px, 4vw, 24px); margin-bottom: 20px;">Часовой журнал</h2>
-            <div style="background: white; color: #111827; padding: 20px; border-radius: 16px;">
-                <h3 id="articleTitleText" class="serif" style="font-size: 18px; margin-bottom: 8px;">Как выбрать механические часы?</h3>
-                <p id="articleBodyText" style="color: #4b5563; font-size: 13px; line-height: 1.5;">Механические часы — это не просто прибор для измерения времени, а статусный аксессуар и настоящее произведение инженерного искусства...</p>
+            <div id="compareContainer" class="bg-slate-800/50 border border-slate-800 rounded-2xl p-6">
+                <!-- Dynamic comparison view rendered here -->
             </div>
-        </div>
+        </section>
+
+        <!-- TAB: REVIEWS -->
+        <section id="tab-reviews" class="tab-pane space-y-6">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h2 class="text-2xl font-extrabold text-white">Отзывы Покупателей</h2>
+                    <p class="text-xs text-slate-400">Настоящие отзывы клиентов BTime.tj</p>
+                </div>
+                <button onclick="openModal('reviewModal')" class="bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold px-4 py-2.5 rounded-xl text-xs transition">Написать отзыв</button>
+            </div>
+            <div id="reviewsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <!-- Dynamic reviews rendered here -->
+            </div>
+        </section>
     </main>
 
-    <footer>
-        <div class="footer-inner">
-            <div>
-                <div class="logo" style="margin-bottom: 10px;">
-                    <div class="logo-icon"><i class="fa-solid fa-clock"></i></div>
-                    <span style="font-size: 18px; font-weight: 900; color: white;" class="serif">B-TIME</span>
+    <!-- FOOTER -->
+    <footer class="bg-slate-950 border-t border-slate-800/80 mt-12 py-8 text-xs text-slate-400">
+        <div class="max-w-7xl mx-auto px-4 grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div class="space-y-2">
+                <div class="flex items-center gap-2">
+                    <div class="w-7 h-7 bg-amber-500 rounded-lg flex items-center justify-center text-slate-950 font-black text-sm">B</div>
+                    <span class="text-lg font-bold text-white">BTIME.TJ</span>
                 </div>
-                <p id="footerDescText">Официальный дилер элитных часов в Таджикистане. Безупречное качество и премиальный сервис.</p>
+                <p class="text-slate-400">Официальный магазин наручных часов в Таджикистане. Гарантия качества, стиль и точность.</p>
             </div>
-            <div>
-                <h4 style="color: white; font-weight: bold; margin-bottom: 10px;">Контакты</h4>
-                <div id="footerContactsContainer" style="display: flex; flex-direction: column; gap: 6px;">
-                    <span><i class="fa-solid fa-phone text-gold"></i> +992 (90) 000-00-00</span>
-                </div>
+            <div class="space-y-1">
+                <h4 class="font-bold text-slate-200 uppercase tracking-wider">Контакты</h4>
+                <p><i class="fa-solid fa-phone text-amber-500 mr-2"></i>+992 999 99 99 99</p>
+                <p><i class="fa-solid fa-location-dot text-amber-500 mr-2"></i>г. Душанбе, ул. Рудаки 100</p>
+            </div>
+            <div class="space-y-1">
+                <h4 class="font-bold text-slate-200 uppercase tracking-wider">Информация</h4>
+                <p>© 2026 BTime Store. Все права защищены.</p>
             </div>
         </div>
     </footer>
 
-    <!-- МОДАЛЬНЫЕ ОКНА -->
-    <div id="fontModal" class="modal">
-        <div class="modal-box">
-            <button onclick="closeModal('fontModal')" class="modal-close"><i class="fa-solid fa-xmark"></i></button>
-            <h3 class="serif" style="font-size: 22px; margin-bottom: 16px;"><i class="fa-solid fa-font text-amber"></i> Шрифт и Favicon вкладки</h3>
-            <form onsubmit="saveFontAndFavicon(event)">
+    <!-- MODALS SECTION -->
+
+    <!-- Auth Modal -->
+    <div id="authModal" class="modal">
+        <div class="modal-content relative">
+            <button onclick="closeModal('authModal')" class="absolute top-4 right-4 text-slate-400 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
+            <h3 class="text-xl font-bold mb-4 text-white">Вход в Аккаунт</h3>
+            
+            <form onsubmit="handleEmailAuth(event)" class="space-y-4">
                 <div>
-                    <label>Выберите шрифт сайта</label>
-                    <select id="fontSelect" style="max-height: 220px; font-size: 15px;">
-                        <option value="Plus Jakarta Sans">Plus Jakarta Sans (По умолчанию)</option>
-                        <option value="Montserrat">Montserrat</option>
-                        <option value="Roboto">Roboto</option>
-                        <option value="Inter">Inter</option>
-                        <option value="Open Sans">Open Sans</option>
-                        <option value="Lato">Lato</option>
-                        <option value="Poppins">Poppins</option>
-                        <option value="Playfair Display">Playfair Display</option>
-                    </select>
-                </div>
-
-                <div>
-                    <label>URL Favicon</label>
-                    <input type="text" id="faviconInput" placeholder="https://site.com/icon.png">
-                </div>
-
-                <button type="submit" class="btn-gold">Сохранить изменения</button>
-            </form>
-        </div>
-    </div>
-
-    <div id="skuSearchModal" class="modal">
-        <div class="modal-box">
-            <button onclick="closeModal('skuSearchModal')" class="modal-close"><i class="fa-solid fa-xmark"></i></button>
-            <h3 class="serif" style="font-size: 22px; margin-bottom: 16px;"><i class="fa-solid fa-hashtag text-amber"></i> Поиск по артикулу (SKU)</h3>
-            <div>
-                <input type="text" id="skuSearchInputModal" oninput="filterBySku(this.value)" placeholder="Введите SKU артикул товара..." style="width: 100%; padding: 12px; border: 1px solid #d1d5db; border-radius: 10px; font-size: 14px; margin-bottom: 14px;">
-            </div>
-            <button onclick="switchTab('catalog'); closeModal('skuSearchModal');" class="btn-gold">Перейти к результатам</button>
-        </div>
-    </div>
-
+    <!-- ОКНО УПРАВЛЕНИЯ САЙТОМ И РАЗМЕРОМ ТОВАРОВ -->
     <div id="siteConfigModal" class="modal">
         <div class="modal-box">
             <button onclick="closeModal('siteConfigModal')" class="modal-close"><i class="fa-solid fa-xmark"></i></button>
-            <h3 class="serif" style="font-size: 22px; margin-bottom: 16px;"><i class="fa-solid fa-gear text-amber"></i> Управление сайтом</h3>
+            <h3 class="serif" style="font-size: 22px; margin-bottom: 16px;"><i class="fa-solid fa-gear text-amber"></i> Настройки сайта и размера товаров</h3>
             <form onsubmit="saveSiteConfig(event)">
+                <div>
+                    <label>Минимальный размер карточки товара (Ширина в пикселях)</label>
+                    <input type="range" id="cfgCardWidth" min="130" max="320" value="200" oninput="document.getElementById('cardWidthVal').innerText = this.value + 'px'" style="cursor: pointer;">
+                    <span id="cardWidthVal" style="font-size: 13px; color: #d97706; font-weight: bold;">200px</span>
+                </div>
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
                     <div><label>Фон сайта</label><input type="color" id="cfgBgColor" value="#0b1329" style="height: 40px; padding: 2px;"></div>
                     <div><label>Цвет текста</label><input type="color" id="cfgTextColor" value="#f3f4f6" style="height: 40px; padding: 2px;"></div>
-                    <div><label>Фон шапки (Header)</label><input type="color" id="cfgHeaderColor" value="#0b1329" style="height: 40px; padding: 2px;"></div>
-                    <div><label>Фон футера (Footer)</label><input type="color" id="cfgFooterColor" value="#070d1d" style="height: 40px; padding: 2px;"></div>
                 </div>
                 <div><label>Название бренда</label><input type="text" id="cfgBrandName" required></div>
                 <div><label>Подзаголовок бренда</label><input type="text" id="cfgBrandSub" required></div>
                 <div><label>Главный заголовок (Hero H1)</label><input type="text" id="cfgHeroTitle" required></div>
                 <div><label>Описание под заголовком</label><textarea id="cfgHeroDesc" rows="2" required></textarea></div>
-                <div><label>Бейдж на главной</label><input type="text" id="cfgHeroBadge" required></div>
-                <div><label>Описание в футере</label><textarea id="cfgFooterDesc" rows="2" required></textarea></div>
                 
-                <hr style="margin: 16px 0; border: 0; border-top: 1px solid #e5e7eb;">
-                <label style="font-weight: bold; font-size: 14px; margin-bottom: 8px; color: #111827;">Контакты и кнопки</label>
-                <div id="dynamicContactsInputsContainer" style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 14px;"></div>
-                <button type="button" onclick="addContactField('fa-phone', '', '')" style="background: #f3f4f6; border: 1px dashed #d1d5db; padding: 8px; border-radius: 8px; width: 100%; cursor: pointer; font-weight: bold; font-size: 12px; margin-bottom: 14px;">+ Добавить контакт</button>
-
                 <button type="submit" class="btn-gold">Сохранить всё</button>
             </form>
+        </div>
+    </div>
+
+    <!-- МОДАЛЬНОЕ ОКНО ДЛЯ ПОЛНОЭКРАННОГО ПРОСМОТРА ФОТО (LIGHTBOX) -->
+    <div id="lightboxModal" class="modal" style="background: rgba(0,0,0,0.95); z-index: 200;">
+        <div style="position: relative; width: 100vw; height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px;">
+            <button onclick="closeModal('lightboxModal')" style="position: absolute; top: 20px; right: 20px; background: rgba(255,255,255,0.2); color: white; border: none; font-size: 24px; width: 44px; height: 44px; border-radius: 50%; cursor: pointer; z-index: 210;">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+            
+            <button class="card-arrow card-arrow-left" style="width: 44px; height: 44px; font-size: 18px; left: 20px; background: rgba(255,255,255,0.2);" onclick="navigateLightbox(-1)">
+                <i class="fa-solid fa-chevron-left"></i>
+            </button>
+            <button class="card-arrow card-arrow-right" style="width: 44px; height: 44px; font-size: 18px; right: 20px; background: rgba(255,255,255,0.2);" onclick="navigateLightbox(1)">
+                <i class="fa-solid fa-chevron-right"></i>
+            </button>
+
+            <img id="lightboxImage" src="" style="max-width: 95vw; max-height: 85vh; object-fit: contain; border-radius: 8px; box-shadow: 0 10px 30px rgba(0,0,0,0.8);">
+            
+            <div id="lightboxCounter" style="margin-top: 14px; color: #facc15; font-size: 14px; font-weight: bold; background: rgba(0,0,0,0.6); padding: 4px 12px; border-radius: 12px;"></div>
         </div>
     </div>
 
@@ -443,609 +456,77 @@
                 <div><label>Артикул (SKU)</label><input type="text" id="prodSku" required></div>
                 <div><label>Цена (в сомони TJS)</label><input type="number" id="prodPrice" required min="1"></div>
                 <div><label>Бейдж</label><input type="text" id="prodBadge" value="Хит"></div>
-                <div><label>Номер WhatsApp (например: 992900000000)</label><input type="text" id="prodWhatsapp" placeholder="Если пусто, берется общий номер"></div>
-                
+                <div><label>WhatsApp для товара</label><input type="text" id="prodWhatsapp" placeholder="992900000000"></div>
                 <div>
-                    <label>Фотографии товара (без ограничений)</label>
+                    <label>Фотографии товара (Поддерживается 30+ фото в 100% качестве)</label>
                     <input type="file" id="prodImageFiles" accept="image/*" multiple onchange="handleMultipleImagesUpload(event)">
-                    <div id="uploadedImagesPreview" style="display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px;"></div>
+                    <div id="uploadedImagesPreview" style="display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px; max-height: 150px; overflow-y: auto; padding: 4px; border: 1px dashed #cbd5e1; border-radius: 8px;"></div>
                 </div>
-                
-                <button type="submit" id="saveProductSubmitBtn" class="btn-gold" style="margin-top: 10px;">Сохранить товар</button>
+                <button type="submit" id="saveProductSubmitBtn" class="btn-gold" style="margin-top: 10px;">Сохранить</button>
             </form>
         </div>
     </div>
-
-    <div id="authModal" class="modal">
-        <div class="modal-box">
-            <button onclick="closeModal('authModal')" class="modal-close"><i class="fa-solid fa-xmark"></i></button>
-            <h3 class="serif" style="font-size: 22px; margin-bottom: 16px;">Вход в аккаунт</h3>
-            <button onclick="loginWithGoogle()" style="width: 100%; background: white; border: 1px solid #d1d5db; padding: 12px; border-radius: 10px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 14px;">
-                <i class="fa-brands fa-google" style="color: #ea4335;"></i> Войти через Google
-            </button>
-            <form onsubmit="handleEmailAuth(event)">
-                <div><label>Email</label><input type="email" id="authEmail" required></div>
-                <div><label>Пароль</label><input type="password" id="authPassword" required minlength="6"></div>
-                <button type="submit" class="btn-gold">Войти / Регистрация</button>
-            </form>
-        </div>
-    </div>
-
-    <div id="cartModal" class="modal">
-        <div class="modal-box">
-            <button onclick="closeModal('cartModal')" class="modal-close"><i class="fa-solid fa-xmark"></i></button>
-            <h3 class="serif" style="font-size: 22px; margin-bottom: 16px;">Корзина</h3>
-            <div id="cartList" style="margin-bottom: 16px; max-height: 180px; overflow-y: auto;"></div>
-            <div style="display: flex; justify-content: space-between; font-weight: bold; font-size: 16px; margin-bottom: 16px; border-top: 1px solid #e5e7eb; padding-top: 10px;">
-                <span>Итого:</span>
-                <span id="cartTotal" class="text-amber">0 ЅM</span>
-            </div>
-            <button onclick="openCheckout()" class="btn-gold">Оформить заказ</button>
-        </div>
-    </div>
-
-    <div id="checkoutModal" class="modal">
-        <div class="modal-box">
-            <button onclick="closeModal('checkoutModal')" class="modal-close"><i class="fa-solid fa-xmark"></i></button>
-            <h3 class="serif" style="font-size: 22px; margin-bottom: 16px;">Оформление заказа</h3>
-            <form onsubmit="submitOrder(event)">
-                <div><label>Ваше имя</label><input type="text" id="orderName" required></div>
-                <div><label>Телефон</label><input type="tel" id="orderPhone" required></div>
-                <div><label>Адрес доставки</label><textarea id="orderAddress" required rows="2"></textarea></div>
-                <button type="submit" class="btn-gold">Подтвердить заказ</button>
-            </form>
-        </div>
-    </div>
-
-    <div id="clientOrdersModal" class="modal">
-        <div class="modal-box">
-            <button onclick="closeModal('clientOrdersModal')" class="modal-close"><i class="fa-solid fa-xmark"></i></button>
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
-                <h3 class="serif" style="font-size: 22px;"><i class="fa-solid fa-receipt text-amber"></i> Мои заказы</h3>
-                <button onclick="loadClientOrders()" style="background: #f3f4f6; border: none; padding: 6px 12px; border-radius: 8px; cursor: pointer; font-size: 12px; font-weight: bold;"><i class="fa-solid fa-rotate"></i> Обновить</button>
-            </div>
-            <div id="clientOrdersContainer" style="display: flex; flex-direction: column; gap: 10px; max-height: 50dvh; overflow-y: auto;">
-                <p style="color: #6b7280; text-align: center;">Загрузка...</p>
-            </div>
-        </div>
-    </div>
-
-    <div id="adminModal" class="modal">
-        <div class="modal-box">
-            <button onclick="closeModal('adminModal')" class="modal-close"><i class="fa-solid fa-xmark"></i></button>
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
-                <h3 class="serif" style="font-size: 22px;"><i class="fa-solid fa-file-lines text-amber"></i> Панель админа</h3>
-                <button onclick="loadAdminOrders()" style="background: #f3f4f6; border: none; padding: 6px 12px; border-radius: 8px; cursor: pointer; font-size: 12px; font-weight: bold;"><i class="fa-solid fa-rotate"></i> Обновить</button>
-            </div>
-            <div id="adminOrdersContainer" style="display: flex; flex-direction: column; gap: 10px; max-height: 50dvh; overflow-y: auto;">
-                <p style="color: #6b7280; text-align: center;">Загрузка...</p>
-            </div>
-        </div>
-    </div>
-
-    <div id="reviewModal" class="modal">
-        <div class="modal-box">
-            <button onclick="closeModal('reviewModal')" class="modal-close"><i class="fa-solid fa-xmark"></i></button>
-            <h3 class="serif" style="font-size: 22px; margin-bottom: 16px;">Оставить отзыв</h3>
-            <form onsubmit="submitReview(event)">
-                <div>
-                    <label>Оценка</label>
-                    <select id="reviewRating"><option value="5">★★★★★ (5/5)</option><option value="4">★★★★☆ (4/5)</option></select>
-                </div>
-                <div><label>Текст отзыва</label><textarea id="reviewText" required rows="3"></textarea></div>
-                <button type="submit" class="btn-gold">Отправить</button>
-            </form>
-        </div>
-    </div>
-
-    <script>
-        document.addEventListener('contextmenu', e => e.preventDefault());
-        document.addEventListener('keydown', e => {
-            if (e.key === 'F12' || 
-                (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'J' || e.key === 'C')) || 
-                (e.ctrlKey && e.key === 'U') || 
-                (e.ctrlKey && e.key === 'S')) {
-                e.preventDefault();
-                return false;
-            }
-        });
-    </script>
-
-    <!-- СИНХРОНИЗАЦИЯ С FIREBASE -->
+    <!-- СКРИПТЫ СИНХРОНИЗАЦИИ -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js";
         import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
         import { getFirestore, collection, addDoc, doc, deleteDoc, setDoc, onSnapshot, query, orderBy, updateDoc } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
 
-        const firebaseConfig = {
-            apiKey: "AIzaSyDCyzNeJt0Fi67LALJljFjjeQWJ9uqC2io",
-            authDomain: "b-time-225ac.firebaseapp.com",
-            projectId: "b-time-225ac",
-            storageBucket: "b-time-225ac.firebasestorage.app",
-            messagingSenderId: "546402290032",
-            appId: "1:546402290032:web:ce9a58cb44ce01b4e227b5",
-            measurementId: "G-0L4CCNLE45"
-        };
-
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const db = getFirestore(app);
-        const googleProvider = new GoogleAuthProvider();
-
-        window.firebaseAuth = auth;
-        window.firebaseDb = db;
-
-        const ADMINS = ["samirdv888@gmail.com", "abdullochoriev4242@gmail.com"];
-        let currentUser = null;
-        let cachedOrders = [];
-        window.tempProductBase64Images = [];
-
-        const defaultConfig = {
-            bgColor: "#0b1329",
-            textColor: "#f3f4f6",
-            headerColor: "#0b1329",
-            footerColor: "#070d1d",
-            brandName: "B-TIME",
-            brandSub: "LUXURY WATCHES",
-            footerDesc: "Официальный дилер элитных часов в Таджикистане. Безупречное качество и премиальный сервис.",
-            heroTitle: "Элегантность в каждой секунде",
-            heroDesc: "Эксклюзивная коллекция швейцарских и мировых брендов с гарантией качества.",
-            heroBadge: "Официальный дилер",
-            fontFamily: "Plus Jakarta Sans",
-            faviconUrl: "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/svgs/solid/clock.svg",
-            contacts: [
-                { icon: "fa-location-dot", text: "Душанбе", link: "" },
-                { icon: "fa-phone", text: "+992 (90) 000-00-00", link: "tel:+992900000000" },
-                { icon: "fa-envelope", text: "info@b-time.tj", link: "mailto:info@b-time.tj" }
-            ]
-        };
-
-        window.siteConfig = JSON.parse(localStorage.getItem('btime_site_config')) || defaultConfig;
-        applySiteConfig();
-
-        window.products = [];
-
-        function initRealtimeConfig() {
-            try {
-                onSnapshot(doc(db, "settings", "main"), (docSnap) => {
-                    if (docSnap.exists()) {
-                        window.siteConfig = docSnap.data();
-                        localStorage.setItem('btime_site_config', JSON.stringify(window.siteConfig));
-                    }
-                    applySiteConfig();
-                }, (error) => {});
-            } catch (e) {}
-        }
-
-        function initRealtimeProducts() {
-            try {
-                const qProd = query(collection(db, "products"), orderBy("timestamp", "desc"));
-                onSnapshot(qProd, (snapshot) => {
-                    let cloudProducts = [];
-                    snapshot.forEach(docSnap => {
-                        let data = docSnap.data();
-                        cloudProducts.push({ 
-                            id: docSnap.id, 
-                            ...data, 
-                            images: data.images || (data.image ? [data.image] : []),
-                            timestamp: data.timestamp || Date.now() 
-                        });
-                    });
-                    window.products = cloudProducts;
-                    if (typeof renderProducts === 'function') renderProducts();
-                }, (error) => {});
-            } catch(e) {}
-        }
-        initRealtimeProducts();
-        initRealtimeConfig();
-
-        function applySiteConfig() {
-            const cfg = window.siteConfig || defaultConfig;
-            document.documentElement.style.setProperty('--bg-color', cfg.bgColor || '#0b1329');
-            document.documentElement.style.setProperty('--text-color', cfg.textColor || '#f3f4f6');
-            document.documentElement.style.setProperty('--header-color', cfg.headerColor || '#0b1329');
-            document.documentElement.style.setProperty('--footer-color', cfg.footerColor || '#070d1d');
-            
-            if (cfg.fontFamily) {
-                const fontName = cfg.fontFamily;
-                const dynamicFontLink = document.getElementById('dynamicGoogleFont');
-                if (dynamicFontLink) {
-                    dynamicFontLink.href = `https://fonts.googleapis.com/css2?family=${fontName.replace(/ /g, '+')}:wght@400;500;600;700&display=swap`;
-                }
-                document.documentElement.style.setProperty('--site-font', `'${fontName}', sans-serif`);
-                document.body.style.fontFamily = `'${fontName}', sans-serif`;
-            }
-
-            if (cfg.faviconUrl) {
-                const fav = document.getElementById('faviconLink');
-                if (fav) fav.href = cfg.faviconUrl;
-            }
-            
-            document.body.style.backgroundColor = cfg.bgColor || '#0b1329';
-            document.body.style.color = cfg.textColor || '#f3f4f6';
-
-            const brandEl = document.getElementById('siteBrandName');
-            const subEl = document.getElementById('siteBrandSub');
-            const footerDescEl = document.getElementById('footerDescText');
-            const homeTitleEl = document.getElementById('homeTitleText');
-            const homeDescEl = document.getElementById('homeDescText');
-            const homeBadgeEl = document.getElementById('homeBadgeText');
-
-            if (brandEl) brandEl.innerText = cfg.brandName;
-            if (subEl) subEl.innerText = cfg.brandSub;
-            if (footerDescEl) footerDescEl.innerText = cfg.footerDesc;
-            if (homeTitleEl) homeTitleEl.innerText = cfg.heroTitle;
-            if (homeDescEl) homeDescEl.innerText = cfg.heroDesc;
-            if (homeBadgeEl) homeBadgeEl.innerText = cfg.heroBadge;
-
-            const contactsList = cfg.contacts || [];
-            const topBarHtml = contactsList.map(c => `
-                <span><i class="fa-solid ${c.icon} text-gold"></i> ${c.link ? `<a href="${c.link}" style="color:inherit; text-decoration:none;">${c.text}</a>` : c.text}</span>
-            `).join('');
-            
-            const topContacts = document.getElementById('topBarDynamicContacts');
-            const footContacts = document.getElementById('footerContactsContainer');
-            if (topContacts) topContacts.innerHTML = topBarHtml;
-            if (footContacts) footContacts.innerHTML = topBarHtml;
-        }
-
-        window.saveFontAndFavicon = async (e) => {
-            e.preventDefault();
-            if (!ADMINS.includes(currentUser?.email?.toLowerCase())) return;
-
-            const fontVal = document.getElementById('fontSelect').value;
-            const favVal = document.getElementById('faviconInput').value.trim();
-
-            const newCfg = {
-                ...window.siteConfig,
-                fontFamily: fontVal,
-                faviconUrl: favVal || window.siteConfig.faviconUrl
-            };
-
-            closeModal('fontModal');
-            window.siteConfig = newCfg;
-            localStorage.setItem('btime_site_config', JSON.stringify(newCfg));
-            applySiteConfig();
-            setDoc(doc(db, "settings", "main"), newCfg).catch(() => {});
-        };
-
-        window.addContactField = (icon = 'fa-phone', text = '', link = '') => {
-            const container = document.getElementById('dynamicContactsInputsContainer');
-            const div = document.createElement('div');
-            div.style.cssText = "display: flex; gap: 6px; align-items: center;";
-            div.innerHTML = `
-                <input type="text" placeholder="Иконка (fa-phone)" value="${icon}" style="flex: 1;" class="contact-icon-input">
-                <input type="text" placeholder="Текст контакта" value="${text}" style="flex: 2;" class="contact-text-input">
-                <input type="text" placeholder="Ссылка (tel:, mailto:, https://)" value="${link}" style="flex: 2;" class="contact-link-input">
-                <button type="button" onclick="this.parentElement.remove()" style="background: #dc2626; color: white; border: none; padding: 10px; border-radius: 8px; cursor: pointer;"><i class="fa-solid fa-trash"></i></button>
-            `;
-            container.appendChild(div);
-        };
-
-        window.openSiteConfigModal = () => {
-            if (!ADMINS.includes(currentUser?.email?.toLowerCase())) return;
-            const cfg = window.siteConfig || defaultConfig;
-            document.getElementById('cfgBgColor').value = cfg.bgColor || '#0b1329';
-            document.getElementById('cfgTextColor').value = cfg.textColor || '#f3f4f6';
-            document.getElementById('cfgHeaderColor').value = cfg.headerColor || '#0b1329';
-            document.getElementById('cfgFooterColor').value = cfg.footerColor || '#070d1d';
-            document.getElementById('cfgBrandName').value = cfg.brandName;
-            document.getElementById('cfgBrandSub').value = cfg.brandSub;
-            document.getElementById('cfgFooterDesc').value = cfg.footerDesc;
-            document.getElementById('cfgHeroTitle').value = cfg.heroTitle;
-            document.getElementById('cfgHeroDesc').value = cfg.heroDesc;
-            document.getElementById('cfgHeroBadge').value = cfg.heroBadge;
-
-            const container = document.getElementById('dynamicContactsInputsContainer');
-            container.innerHTML = '';
-            (cfg.contacts || []).forEach(c => addContactField(c.icon, c.text, c.link));
-
-            openModal('siteConfigModal');
-        };
-
-        window.saveSiteConfig = async (e) => {
-            e.preventDefault();
-            if (!ADMINS.includes(currentUser?.email?.toLowerCase())) return;
-
-            const iconInputs = document.querySelectorAll('.contact-icon-input');
-            const textInputs = document.querySelectorAll('.contact-text-input');
-            const linkInputs = document.querySelectorAll('.contact-link-input');
-            
-            let newContacts = [];
-            for(let i=0; i<iconInputs.length; i++) {
-                if(textInputs[i].value.trim() !== '') {
-                    newContacts.push({
-                        icon: iconInputs[i].value.trim(),
-                        text: textInputs[i].value.trim(),
-                        link: linkInputs[i].value.trim()
-                    });
-                }
-            }
-
-            const newCfg = {
-                ...window.siteConfig,
-                bgColor: document.getElementById('cfgBgColor').value,
-                textColor: document.getElementById('cfgTextColor').value,
-                headerColor: document.getElementById('cfgHeaderColor').value,
-                footerColor: document.getElementById('cfgFooterColor').value,
-                brandName: document.getElementById('cfgBrandName').value,
-                brandSub: document.getElementById('cfgBrandSub').value,
-                footerDesc: document.getElementById('cfgFooterDesc').value,
-                heroTitle: document.getElementById('cfgHeroTitle').value,
-                heroDesc: document.getElementById('cfgHeroDesc').value,
-                heroBadge: document.getElementById('cfgHeroBadge').value,
-                contacts: newContacts
-            };
-
-            closeModal('siteConfigModal');
-            window.siteConfig = newCfg;
-            localStorage.setItem('btime_site_config', JSON.stringify(newCfg));
-            applySiteConfig();
-            setDoc(doc(db, "settings", "main"), newCfg).catch(() => {});
-        };
-
-        onAuthStateChanged(auth, async (user) => {
-            currentUser = user;
-            const authContainer = document.getElementById('authContainer');
-            const adminBtn = document.getElementById('adminOrdersBtn');
-            const clientBtn = document.getElementById('clientOrdersBtn');
-            const addProductBtn = document.getElementById('addProductBtn');
-            const siteConfigBtn = document.getElementById('siteConfigBtn');
-            const skuSearchBtn = document.getElementById('skuSearchBtn');
-            const fontBtn = document.getElementById('fontBtn');
-
-            if (user) {
-                const isAdmin = ADMINS.includes(user.email.toLowerCase());
-                authContainer.innerHTML = `
-                    <span style="color: #facc15; font-weight: 600; margin-right: 10px;">${user.email.split('@')[0]}</span>
-                    <button onclick="logout()" style="background: rgba(244,63,94,0.1); border: 1px solid rgba(244,63,94,0.3); color: #f43f5e; padding: 4px 10px; border-radius: 6px; cursor: pointer;">Выйти</button>
-                `;
-                clientBtn.classList.remove('hidden');
-                if (isAdmin) {
-                    adminBtn.classList.remove('hidden');
-                    addProductBtn.classList.remove('hidden');
-                    siteConfigBtn.classList.remove('hidden');
-                    skuSearchBtn.classList.remove('hidden');
-                    fontBtn.classList.remove('hidden');
-                } else {
-                    adminBtn.classList.add('hidden');
-                    addProductBtn.classList.add('hidden');
-                    siteConfigBtn.classList.add('hidden');
-                    skuSearchBtn.classList.add('hidden');
-                    fontBtn.classList.add('hidden');
-                }
-                initRealtimeOrders();
-            } else {
-                authContainer.innerHTML = `
-                    <button onclick="openModal('authModal')" style="background: rgba(234,179,8,0.1); border: 1px solid rgba(234,179,8,0.3); color: #facc15; padding: 4px 12px; border-radius: 6px; cursor: pointer;">
-                        <i class="fa-solid fa-user"></i> Войти
-                    </button>
-                `;
-                adminBtn.classList.add('hidden');
-                clientBtn.classList.add('hidden');
-                addProductBtn.classList.add('hidden');
-                siteConfigBtn.classList.add('hidden');
-                skuSearchBtn.classList.add('hidden');
-                fontBtn.classList.add('hidden');
-            }
-            if (typeof renderProducts === 'function') renderProducts();
-        });
-
-        window.logout = () => signOut(auth);
-        window.loginWithGoogle = async () => {
-            try { await signInWithPopup(auth, googleProvider); closeModal('authModal'); } catch(e) { alert("Ошибка: " + e.message); }
-        };
-
-        window.handleEmailAuth = async (e) => {
-            e.preventDefault();
-            const email = document.getElementById('authEmail').value;
-            const pass = document.getElementById('authPassword').value;
-            try {
-                await signInWithEmailAndPassword(auth, email, pass);
-            } catch(err) {
-                try { await createUserWithEmailAndPassword(auth, email, pass); } catch(e2) { alert(e2.message); return; }
-            }
-            closeModal('authModal');
-        };
-
-        function initRealtimeOrders() {
-            try {
-                const q = query(collection(db, "orders"), orderBy("timestamp", "desc"));
-                onSnapshot(q, (snapshot) => {
-                    cachedOrders = [];
-                    snapshot.forEach(docSnap => cachedOrders.push({ id: docSnap.id, ...docSnap.data() }));
-                    
-                    const adminBadge = document.getElementById('adminBadge');
-                    if (currentUser && ADMINS.includes(currentUser.email.toLowerCase())) {
-                        if (cachedOrders.length > 0) {
-                            adminBadge.innerText = cachedOrders.length;
-                            adminBadge.classList.remove('hidden');
-                        } else {
-                            adminBadge.classList.add('hidden');
-                        }
-                    }
-                });
-            } catch (e) {}
-        }
-
-        window.saveOrderToCloud = async (orderData) => {
-            addDoc(collection(db, "orders"), orderData).catch(() => {});
-        };
-
-        window.openAdminModal = () => { document.getElementById('adminModal').classList.add('open'); renderAdminOrders(); };
-        window.loadAdminOrders = () => { renderAdminOrders(); };
-
-        function renderAdminOrders() {
-            const container = document.getElementById('adminOrdersContainer');
-            if (cachedOrders.length === 0) {
-                container.innerHTML = `<p style="text-align: center; color: #6b7280; padding: 20px;">Нет активных заявок.</p>`;
-                return;
-            }
-            container.innerHTML = cachedOrders.map((o, idx) => `
-                <div style="background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 12px; padding: 14px; color: #111827;">
-                    <div style="display: flex; justify-content: space-between; font-size: 13px; font-weight: bold; margin-bottom: 6px; color: #d97706;">
-                        <span>Заказ #${cachedOrders.length - idx} (${o.status || 'Новый'})</span>
-                        <span style="color: #6b7280; font-weight: normal;">${o.date}</span>
-                    </div>
-                    <p style="font-size: 13px; margin-bottom: 4px;"><strong>Клиент:</strong> ${o.name} (${o.phone})</p>
-                    <p style="font-size: 13px; margin-bottom: 6px;"><strong>Адрес:</strong> ${o.address}</p>
-                    <div style="background: white; padding: 8px; border-radius: 8px; font-size: 12px; margin-bottom: 8px; border: 1px solid #e5e7eb;">
-                        ${o.items.map(i => `<div>• ${i.name} (x${i.qty})</div>`).join('')}
-                    </div>
-                    <div style="display: flex; justify-content: space-between; align-items: center; font-size: 13px; font-weight: bold;">
-                        <span>Сумма: <span class="text-amber">${o.total}</span></span>
-                        <div style="display: flex; gap: 6px;">
-                            <button onclick="deleteOrder('${o.id}')" style="background: #dc2626; color: white; border: none; padding: 5px 8px; border-radius: 6px; cursor: pointer; font-size: 11px;">Удалить</button>
-                        </div>
-                    </div>
-                </div>
-            `).join('');
-        }
-
-        window.openClientOrdersModal = () => {
-            const activeUser = window.firebaseAuth ? window.firebaseAuth.currentUser : null;
-            if (!activeUser) { alert("Войдите в аккаунт."); openModal('authModal'); return; }
-            document.getElementById('clientOrdersModal').classList.add('open');
-            renderClientOrders();
-        };
-
-        window.loadClientOrders = () => { renderClientOrders(); };
-
-        function renderClientOrders() {
-            const container = document.getElementById('clientOrdersContainer');
-            const activeUser = window.firebaseAuth ? window.firebaseAuth.currentUser : null;
-            if (!activeUser) return;
-            const myOrders = cachedOrders.filter(o => o.userId === activeUser.uid);
-            if (myOrders.length === 0) {
-                container.innerHTML = `<p style="text-align: center; color: #6b7280; padding: 20px;">У вас пока нет заказов.</p>`;
-                return;
-            }
-            container.innerHTML = myOrders.map((o, idx) => `
-                <div style="background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 12px; padding: 14px; color: #111827;">
-                    <div style="display: flex; justify-content: space-between; font-size: 13px; font-weight: bold; margin-bottom: 6px; color: #2563eb;">
-                        <span>Заказ #${myOrders.length - idx}</span>
-                        <span style="color: #6b7280; font-weight: normal;">${o.date}</span>
-                    </div>
-                    <div style="background: white; padding: 8px; border-radius: 8px; font-size: 12px; margin-bottom: 8px; border: 1px solid #e5e7eb;">
-                        ${o.items.map(i => `<div>• ${i.name} (x${i.qty})</div>`).join('')}
-                    </div>
-                    <div style="display: flex; justify-content: space-between; align-items: center; font-size: 13px; font-weight: bold;">
-                        <span>Сумма: <span class="text-amber">${o.total}</span></span>
-                    </div>
-                </div>
-            `).join('');
-        }
-
-        window.deleteOrder = async (id) => { if(confirm("Удалить?")) deleteDoc(doc(db, "orders", id)).catch(() => {}); };
-
-        // ЗАГРУЗКА И СЖАТИЕ ЛЮБЫХ ФОТО БЕЗ ОГРАНИЧЕНИЙ
-        window.handleMultipleImagesUpload = (event) => {
+    <!-- Cart Modal -->
+        window.handleMultipleImagesUpload = async (event) => {
             const files = Array.from(event.target.files);
-            window.tempProductBase64Images = [];
+            if (!files.length) return;
+
             const previewContainer = document.getElementById('uploadedImagesPreview');
-            previewContainer.innerHTML = '';
+            previewContainer.innerHTML = '<span style="font-size:12px; color:#f59e0b;">Загрузка и обработка в 100% качестве...</span>';
+            
+            window.tempProductBase64Images = [];
 
-            files.forEach(file => {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    const img = new Image();
-                    img.src = e.target.result;
-                    img.onload = function() {
-                        const canvas = document.createElement('canvas');
-                        const ctx = canvas.getContext('2d');
-                        
-                        let maxDim = 600;
-                        let width = img.width;
-                        let height = img.height;
-
-                        if (width > height) {
-                            if (width > maxDim) {
-                                height *= maxDim / width;
-                                width = maxDim;
-                            }
-                        } else {
-                            if (height > maxDim) {
-                                width *= maxDim / height;
-                                height = maxDim;
-                            }
-                        }
-
-                        canvas.width = width;
-                        canvas.height = height;
-                        ctx.drawImage(img, 0, 0, width, height);
-                        
-                        const compressedBase64 = canvas.toDataURL('image/jpeg', 0.8);
-                        window.tempProductBase64Images.push(compressedBase64);
-                        
-                        const thumb = document.createElement('img');
-                        thumb.src = compressedBase64;
-                        thumb.style.cssText = "width: 50px; height: 50px; object-fit: cover; border-radius: 8px; border: 1px solid #d1d5db;";
-                        previewContainer.appendChild(thumb);
+            const processFile = (file) => {
+                return new Promise((resolve) => {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        const img = new Image();
+                        img.onload = function() {
+                            const canvas = document.createElement('canvas');
+                            const ctx = canvas.getContext('2d');
+                            // Сохраняем 100% оригинальное разрешение без уменьшения
+                            canvas.width = img.width;
+                            canvas.height = img.height;
+                            ctx.drawImage(img, 0, 0);
+                            // Экспорт с максимальным качеством 1.0 (100%)
+                            const fullQualityBase64 = canvas.toDataURL('image/jpeg', 1.0);
+                            resolve(fullQualityBase64);
+                        };
+                        img.src = e.target.result;
                     };
-                };
-                reader.readAsDataURL(file);
+                    reader.readAsDataURL(file);
+                });
+            };
+
+            const processedImages = await Promise.all(files.map(file => processFile(file)));
+            window.tempProductBase64Images = processedImages;
+
+            previewContainer.innerHTML = '';
+            processedImages.forEach((base64, index) => {
+                const thumb = document.createElement('div');
+                thumb.style.cssText = "position: relative; display: inline-block;";
+                thumb.innerHTML = `
+                    <img src="${base64}" style="width: 50px; height: 50px; object-fit: cover; border-radius: 8px; border: 1px solid #d1d5db;">
+                    <span style="position: absolute; bottom: 2px; right: 2px; background: rgba(0,0,0,0.6); color: white; font-size: 8px; padding: 1px 3px; border-radius: 4px;">${index + 1}</span>
+                `;
+                previewContainer.appendChild(thumb);
             });
         };
 
-        window.saveProduct = async (e) => {
-            e.preventDefault();
-            if (!currentUser || !ADMINS.includes(currentUser.email.toLowerCase())) {
-                alert("Ошибка! Вы должны быть вошедшим администратором.");
-                return;
-            }
-
-            const editId = document.getElementById('editProductDocId').value;
-            const name = document.getElementById('prodName').value;
-            const brand = document.getElementById('prodBrand').value;
-            const sku = document.getElementById('prodSku').value;
-            const priceTJS = parseFloat(document.getElementById('prodPrice').value);
-            const badge = document.getElementById('prodBadge').value;
-            const whatsapp = document.getElementById('prodWhatsapp').value.trim();
-            const images = window.tempProductBase64Images;
-
-            if (!images || images.length === 0) {
-                alert("Пожалуйста, выберите хотя бы одно фото!");
-                return;
-            }
-
-            const submitBtn = document.getElementById('saveProductSubmitBtn');
-            if (submitBtn) submitBtn.innerText = "Сохранение...";
-
-            const productData = { 
-                name, 
-                brand, 
-                sku: sku || 'N/A', 
-                priceTJS, 
-                badge: badge || 'Хит', 
-                whatsapp, 
-                images, 
-                image: images[0], 
-                timestamp: Date.now() 
-            };
-
-            try {
-                if (editId) {
-                    await updateDoc(doc(db, "products", editId), productData);
-                } else {
-                    await addDoc(collection(db, "products"), productData);
-                }
-                closeModal('productModal');
-            } catch (err) {
-                alert("Ошибка сохранения! Проверьте правила базы данных Firebase: " + err.message);
-            } finally {
-                if (submitBtn) submitBtn.innerText = "Сохранить товар";
-            }
-        };
-
         window.openProductModal = () => {
-            if (!currentUser || !ADMINS.includes(currentUser.email.toLowerCase())) return;
+            if (!ADMINS.includes(currentUser?.email?.toLowerCase())) return;
             document.getElementById('editProductDocId').value = '';
             document.getElementById('prodName').value = '';
             document.getElementById('prodBrand').value = '';
             document.getElementById('prodSku').value = '';
             document.getElementById('prodPrice').value = '';
             document.getElementById('prodBadge').value = 'Хит';
-            document.getElementById('prodWhatsapp').value = '';
             document.getElementById('prodImageFiles').value = '';
             document.getElementById('uploadedImagesPreview').innerHTML = '';
             window.tempProductBase64Images = [];
@@ -1054,7 +535,7 @@
         };
 
         window.editProduct = (id) => {
-            if (!currentUser || !ADMINS.includes(currentUser.email.toLowerCase())) return;
+            if (!ADMINS.includes(currentUser?.email?.toLowerCase())) return;
             const p = window.products.find(prod => prod.id == id);
             if (!p) return;
             document.getElementById('editProductDocId').value = p.id;
@@ -1063,30 +544,69 @@
             document.getElementById('prodSku').value = p.sku || '';
             document.getElementById('prodPrice').value = p.priceTJS;
             document.getElementById('prodBadge').value = p.badge || 'Хит';
-            document.getElementById('prodWhatsapp').value = p.whatsapp || '';
             
             window.tempProductBase64Images = p.images || (p.image ? [p.image] : []);
             const previewContainer = document.getElementById('uploadedImagesPreview');
             previewContainer.innerHTML = window.tempProductBase64Images.map(img => `
-                <img src="${img}" style="width: 50px; height: 50px; object-fit: cover; border-radius: 8px; border: 1px solid #d1d5db;">
+                <img src="${img}" style="width: 50px; height: 50px; object-fit: cover; border-radius: 8px; border: 1px solid #334155;">
             `).join('');
 
             document.getElementById('productModalTitle').innerText = "Редактировать товар";
             openModal('productModal');
         };
 
-        window.deleteProduct = async (id) => {
-            if (!currentUser || !ADMINS.includes(currentUser.email.toLowerCase())) return;
-            if (confirm("Удалить этот товар у всех клиентов?")) {
-                deleteDoc(doc(db, "products", id)).catch(() => {});
+        window.saveProduct = async (e) => {
+            e.preventDefault();
+            if (!ADMINS.includes(currentUser?.email?.toLowerCase())) return;
+
+            const editId = document.getElementById('editProductDocId').value;
+            const name = document.getElementById('prodName').value;
+            const brand = document.getElementById('prodBrand').value;
+            const sku = document.getElementById('prodSku').value;
+            const priceTJS = parseFloat(document.getElementById('prodPrice').value);
+            const badge = document.getElementById('prodBadge').value;
+            const images = window.tempProductBase64Images || [];
+
+            if (images.length === 0) {
+                showNotification("Загрузите хотя бы одно изображение!");
+                return;
+            }
+
+            closeModal('productModal');
+
+            const productData = { 
+                name, brand, sku, priceTJS, badge, images, image: images[0], timestamp: Date.now() 
+            };
+
+            try {
+                if (editId && !editId.startsWith('def_')) {
+                    await updateDoc(doc(db, "products", editId), productData);
+                } else {
+                    await addDoc(collection(db, "products"), productData);
+                }
+                showNotification("Товар успешно сохранен!");
+            } catch (err) {
+                showNotification("Ошибка сохранения в базу данных.");
             }
         };
 
-        window.openModal = (id) => document.getElementById(id).classList.add('open');
-        window.closeModal = (id) => document.getElementById(id).classList.remove('open');
+        window.deleteProduct = async (id) => {
+            if (!ADMINS.includes(currentUser?.email?.toLowerCase())) return;
+            try { 
+                if (!id.startsWith('def_')) {
+                    await deleteDoc(doc(db, "products", id));
+                } else {
+                    window.products = window.products.filter(p => p.id != id);
+                    if (typeof renderProducts === 'function') renderProducts();
+                }
+                showNotification("Товар удален!");
+            } catch(e) { 
+                showNotification("Ошибка удаления: " + e.message); 
+            }
+        };
     </script>
 
-    <!-- ИНТЕРФЕЙС УПРАВЛЕНИЯ -->
+    <!-- ИНТЕРФЕЙС И ОТОБРАЖЕНИЕ -->
     <script>
         let reviews = [{ author: "Алишер Р.", rating: 5, text: "Отличный магазин, всё оригинальное!" }];
         let cart = JSON.parse(localStorage.getItem('btime_cart')) || [];
@@ -1096,26 +616,120 @@
         let skuQuery = '';
         const rates = { TJS: 1, USD: 0.091, RUB: 8.5 };
 
-        function changeLanguage(lang) { currentLang = lang; }
+        // Переменные полноэкранного Lightbox
+        let currentLightboxProduct = null;
+        let currentLightboxIndex = 0;
 
-        function formatPrice(tjs) {
-            let val = tjs * rates[currentCurrency];
-            if (currentCurrency === 'USD') return `$${Math.round(val).toLocaleString()}`;
-            if (currentCurrency === 'RUB') return `${Math.round(val).toLocaleString()} ₽`;
-            return `${Math.round(val).toLocaleString()} ЅM`;
+        window.openLightbox = function(productId) {
+            const p = window.products.find(prod => prod.id == productId);
+            if (!p) return;
+            currentLightboxProduct = p;
+            currentLightboxIndex = p.currentIndex || 0;
+            updateLightboxView();
+            openModal('lightboxModal');
+        };
+
+        window.navigateLightbox = function(dir) {
+            if (!currentLightboxProduct) return;
+            const images = currentLightboxProduct.images || (currentLightboxProduct.image ? [currentLightboxProduct.image] : []);
+            if (images.length <= 1) return;
+            currentLightboxIndex += dir;
+            if (currentLightboxIndex < 0) currentLightboxIndex = images.length - 1;
+            if (currentLightboxIndex >= images.length) currentLightboxIndex = 0;
+            
+            // Синхронизируем индекс с основным товаром
+            currentLightboxProduct.currentIndex = currentLightboxIndex;
+            const track = document.getElementById(`track_${currentLightboxProduct.id}`);
+            if (track) track.style.transform = `translateX(-${currentLightboxIndex * 100}%)`;
+
+            updateLightboxView();
+        };
+
+        function updateLightboxView() {
+            if (!currentLightboxProduct) return;
+            const images = currentLightboxProduct.images || (currentLightboxProduct.image ? [currentLightboxProduct.image] : []);
+            const imgEl = document.getElementById('lightboxImage');
+            const counterEl = document.getElementById('lightboxCounter');
+            
+            if (imgEl) imgEl.src = images[currentLightboxIndex] || '';
+            if (counterEl) counterEl.innerText = `${currentLightboxIndex + 1} / ${images.length}`;
         }
 
-        function changeCurrency(val) { currentCurrency = val; renderProducts(); }
+        window.renderProducts = function() {
+            const admin = isAdminUser();
+            let list = window.products || [];
+            if (admin && skuQuery !== '') list = list.filter(p => p.sku && p.sku.toLowerCase().includes(skuQuery));
+            
+            if (list.length === 0) {
+                const emptyHtml = `<div style="grid-column: 1/-1; text-align: center; padding: 40px; color: #9ca3af;">Товаров пока нет в каталоге.</div>`;
+                if (document.getElementById('homeGrid')) document.getElementById('homeGrid').innerHTML = emptyHtml;
+                if (document.getElementById('catalogGrid')) document.getElementById('catalogGrid').innerHTML = emptyHtml;
+                return;
+            }
 
-        function isAdminUser() {
-            const ADMINS = ["samirdv888@gmail.com", "abdullochoriev4242@gmail.com"];
-            const activeUser = window.firebaseAuth ? window.firebaseAuth.currentUser : null;
-            return activeUser && ADMINS.includes(activeUser.email.toLowerCase());
-        }
+            const html = list.map(p => {
+                const images = p.images && p.images.length > 0 ? p.images : [p.image];
+                const activeIndex = p.currentIndex || 0;
+                const skuText = p.sku || 'N/A';
+                const wpNumber = (p.whatsapp && p.whatsapp.trim() !== '') ? p.whatsapp.trim() : '992900000000';
+                const whatsappUrl = `https://wa.me/${wpNumber}?text=${encodeURIComponent(`Здравствуйте! Хочу купить часы:\nНазвание: ${p.name}\nАртикул: ${skuText}\nЦена: ${formatPrice(p.priceTJS)}`)}`;
 
-        window.filterBySku = function(val) {
-            skuQuery = val.trim().toLowerCase();
-            renderProducts();
+                return `
+                <div class="card">
+                    <div class="card-img-slider" onclick="openLightbox('${p.id}')" style="cursor: pointer;">
+                        <span style="position: absolute; top: 10px; left: 10px; background: #eab308; color: black; font-size: 10px; font-weight: bold; padding: 4px 8px; border-radius: 20px; text-transform: uppercase; z-index: 3;">${p.badge || 'Хит'}</span>
+                        
+                        <!-- Оверлейная кнопка для разворачивания фото -->
+                        <div style="position: absolute; top: 10px; right: 10px; background: rgba(0,0,0,0.6); color: white; padding: 5px 8px; border-radius: 8px; font-size: 11px; z-index: 3; display: flex; align-items: center; gap: 4px; pointer-events: none;">
+                            <i class="fa-solid fa-expand"></i> Полный экран
+                        </div>
+
+                        ${images.length > 1 ? `
+                            <button class="card-arrow card-arrow-left" onclick="event.stopPropagation(); moveCardImage('${p.id}', -1)"><i class="fa-solid fa-chevron-left"></i></button>
+                            <button class="card-arrow card-arrow-right" onclick="event.stopPropagation(); moveCardImage('${p.id}', 1)"><i class="fa-solid fa-chevron-right"></i></button>
+                        ` : ''}
+                        <div class="card-img-track" id="track_${p.id}" style="transform: translateX(-${activeIndex * 100}%);">
+                            ${images.map(img => `<img src="${img}" alt="${p.name}">`).join('')}
+                        </div>
+                        ${images.length > 1 ? `
+                            <div class="card-dots" id="dots_${p.id}">
+                                ${images.map((_, idx) => `<div class="card-dot ${idx === activeIndex ? 'active' : ''}"></div>`).join('')}
+                            </div>
+                        ` : ''}
+                    </div>
+                    <div class="card-body">
+                        <div>
+                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                <span style="font-size: 11px; color: #6b7280; text-transform: uppercase;">${p.brand}</span>
+                                ${admin ? `<span style="font-size: 10px; background: #1f2937; color: #facc15; padding: 2px 6px; border-radius: 4px;">SKU: ${skuText}</span>` : ''}
+                            </div>
+                            <h3 style="font-size: 15px; font-weight: bold; margin: 4px 0 10px;">${p.name}</h3>
+                        </div>
+                        <div>
+                            <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #f3f4f6; padding-top: 10px; margin-bottom: 8px;">
+                                <span style="font-size: 15px; font-weight: 900;" class="text-amber">${formatPrice(p.priceTJS)}</span>
+                                <div style="display: flex; gap: 6px;">
+                                    <button onclick="toggleCompare('${p.id}')" title="Сравнить" style="background: ${compareList.includes(p.id) ? '#eab308' : '#f3f4f6'}; color: ${compareList.includes(p.id) ? 'black' : 'inherit'}; border: none; width: 34px; height: 34px; border-radius: 10px; cursor: pointer;"><i class="fa-solid fa-scale-balanced"></i></button>
+                                    <button onclick="addToCart('${p.id}')" title="В корзину" style="background: #eab308; border: none; width: 34px; height: 34px; border-radius: 10px; cursor: pointer; font-weight: bold;"><i class="fa-solid fa-bag-shopping"></i></button>
+                                </div>
+                            </div>
+                            <a href="${whatsappUrl}" target="_blank" class="btn-whatsapp">
+                                <i class="fa-brands fa-whatsapp" style="font-size: 16px;"></i> Купить через WhatsApp
+                            </a>
+                            ${admin ? `
+                                <div style="display: flex; gap: 6px; border-top: 1px dashed #e5e7eb; padding-top: 6px; margin-top: 6px;">
+                                    <button onclick="editProduct('${p.id}')" style="flex: 1; background: #2563eb; color: white; border: none; padding: 6px; border-radius: 6px; font-size: 11px; cursor: pointer;"><i class="fa-solid fa-pen"></i> Ред.</button>
+                                    <button onclick="deleteProduct('${p.id}')" style="flex: 1; background: #dc2626; color: white; border: none; padding: 6px; border-radius: 6px; font-size: 11px; cursor: pointer;"><i class="fa-solid fa-trash"></i> Уд.</button>
+                                </div>
+                            ` : ''}
+                        </div>
+                    </div>
+                </div>`;
+            }).join('');
+
+            if (document.getElementById('homeGrid')) document.getElementById('homeGrid').innerHTML = html;
+            if (document.getElementById('catalogGrid')) document.getElementById('catalogGrid').innerHTML = html;
+            renderReviews(); updateBadges();
         };
 
         window.moveCardImage = function(id, dir) {
@@ -1130,7 +744,9 @@
 
             const track = document.getElementById(`track_${id}`);
             const dotsContainer = document.getElementById(`dots_${id}`);
-            if (track) track.style.transform = `translateX(-${p.currentIndex * 100}%)`;
+            if (track) {
+                track.style.transform = `translateX(-${p.currentIndex * 100}%)`;
+            }
             if (dotsContainer) {
                 const dots = dotsContainer.querySelectorAll('.card-dot');
                 dots.forEach((dot, idx) => {
@@ -1142,29 +758,14 @@
 
         window.renderProducts = function() {
             const admin = isAdminUser();
-            let list = window.products || [];
-
-            if (admin && skuQuery !== '') {
-                list = list.filter(p => p.sku && p.sku.toLowerCase().includes(skuQuery));
-            }
+            const list = window.products || [];
             
-            if (list.length === 0) {
-                const emptyHtml = `<div style="grid-column: 1/-1; text-align: center; padding: 40px; color: #9ca3af;">Товаров пока нет в каталоге.</div>`;
-                if (document.getElementById('homeGrid')) document.getElementById('homeGrid').innerHTML = emptyHtml;
-                if (document.getElementById('catalogGrid')) document.getElementById('catalogGrid').innerHTML = emptyHtml;
-                return;
-            }
-
             const html = list.map(p => {
                 const images = p.images && p.images.length > 0 ? p.images : [p.image];
                 const activeIndex = p.currentIndex || 0;
-                const skuText = p.sku || 'N/A';
-                const wpNumber = (p.whatsapp && p.whatsapp.trim() !== '') ? p.whatsapp.trim() : '992900000000';
-                const whatsappText = encodeURIComponent(`Здравствуйте! Хочу купить часы:\nНазвание: ${p.name}\nАртикул (SKU): ${skuText}\nЦена: ${formatPrice(p.priceTJS)}`);
-                const whatsappUrl = `https://wa.me/${wpNumber}?text=${whatsappText}`;
 
                 return `
-                <div class="card">
+                <div class="card swiper-slide">
                     <div class="card-img-slider">
                         <span style="position: absolute; top: 10px; left: 10px; background: #eab308; color: black; font-size: 10px; font-weight: bold; padding: 4px 8px; border-radius: 20px; text-transform: uppercase; z-index: 3;">${p.badge || 'Хит'}</span>
                         
@@ -1187,26 +788,21 @@
                     <div class="card-body">
                         <div>
                             <div style="display: flex; justify-content: space-between; align-items: center;">
-                                <span style="font-size: 11px; color: #6b7280; text-transform: uppercase;">${p.brand}</span>
-                                ${admin ? `<span style="font-size: 10px; background: #1f2937; color: #facc15; padding: 2px 6px; border-radius: 4px;">SKU: ${skuText}</span>` : ''}
+                                <span style="font-size: 11px; color: #9ca3af; text-transform: uppercase; font-weight: 600;">${p.brand}</span>
+                                ${admin ? `<span style="font-size: 10px; background: #0f172a; color: #facc15; padding: 2px 6px; border-radius: 4px; border: 1px solid #334155;">SKU: ${p.sku || 'N/A'}</span>` : ''}
                             </div>
-                            <h3 style="font-size: 15px; font-weight: bold; margin: 4px 0 10px;">${p.name}</h3>
+                            <h3 style="font-size: 15px; font-weight: bold; margin: 4px 0 10px; color: #f8fafc;">${p.name}</h3>
                         </div>
                         <div>
-                            <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #f3f4f6; padding-top: 10px; margin-bottom: 8px;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #334155; padding-top: 10px; margin-bottom: 8px;">
                                 <span style="font-size: 15px; font-weight: 900;" class="text-amber">${formatPrice(p.priceTJS)}</span>
                                 <div style="display: flex; gap: 6px;">
-                                    <button onclick="toggleCompare('${p.id}')" title="Сравнить" style="background: ${compareList.includes(p.id) ? '#eab308' : '#f3f4f6'}; color: ${compareList.includes(p.id) ? 'black' : 'inherit'}; border: none; width: 34px; height: 34px; border-radius: 10px; cursor: pointer;"><i class="fa-solid fa-scale-balanced"></i></button>
-                                    <button onclick="addToCart('${p.id}')" title="В корзину" style="background: #eab308; border: none; width: 34px; height: 34px; border-radius: 10px; cursor: pointer; font-weight: bold;"><i class="fa-solid fa-bag-shopping"></i></button>
+                                    <button onclick="toggleCompare('${p.id}')" title="Сравнить" style="background: ${compareList.includes(p.id) ? '#eab308' : '#334155'}; color: ${compareList.includes(p.id) ? 'black' : '#ffffff'}; border: none; width: 34px; height: 34px; border-radius: 10px; cursor: pointer;"><i class="fa-solid fa-scale-balanced"></i></button>
+                                    <button onclick="addToCart('${p.id}')" title="В корзину" style="background: #eab308; color: #000; border: none; width: 34px; height: 34px; border-radius: 10px; cursor: pointer; font-weight: bold;"><i class="fa-solid fa-bag-shopping"></i></button>
                                 </div>
                             </div>
-                            
-                            <a href="${whatsappUrl}" target="_blank" class="btn-whatsapp">
-                                <i class="fa-brands fa-whatsapp" style="font-size: 16px;"></i> Купить через WhatsApp
-                            </a>
-
                             ${admin ? `
-                                <div style="display: flex; gap: 6px; border-top: 1px dashed #e5e7eb; padding-top: 6px; margin-top: 6px;">
+                                <div style="display: flex; gap: 6px; border-top: 1px dashed #334155; padding-top: 6px;">
                                     <button onclick="editProduct('${p.id}')" style="flex: 1; background: #2563eb; color: white; border: none; padding: 6px; border-radius: 6px; font-size: 11px; cursor: pointer;"><i class="fa-solid fa-pen"></i> Ред.</button>
                                     <button onclick="deleteProduct('${p.id}')" style="flex: 1; background: #dc2626; color: white; border: none; padding: 6px; border-radius: 6px; font-size: 11px; cursor: pointer;"><i class="fa-solid fa-trash"></i> Уд.</button>
                                 </div>
@@ -1217,9 +813,9 @@
             `;
             }).join('');
 
-            const homeGrid = document.getElementById('homeGrid');
+            const homeSwiper = document.getElementById('homeSwiper');
             const catalogGrid = document.getElementById('catalogGrid');
-            if (homeGrid) homeGrid.innerHTML = html;
+            if (homeSwiper) homeSwiper.innerHTML = html;
             if (catalogGrid) catalogGrid.innerHTML = html;
             renderReviews();
             updateBadges();
@@ -1227,8 +823,19 @@
 
         function switchTab(tabId) {
             document.querySelectorAll('.tab-pane').forEach(el => el.classList.remove('active'));
-            document.querySelectorAll('.nav-btn').forEach(el => el.classList.remove('active'));
-            document.getElementById(`tab-${tabId}`).classList.add('active');
+            document.querySelectorAll('.nav-btn').forEach(el => {
+                el.classList.remove('bg-slate-800', 'text-amber-500', 'border', 'border-slate-700');
+                el.classList.add('text-slate-400');
+            });
+            
+            const currentTab = document.getElementById(`tab-${tabId}`);
+            if (currentTab) currentTab.classList.add('active');
+            
+            if (event && event.currentTarget && event.currentTarget.classList.contains('nav-btn')) {
+                event.currentTarget.classList.add('bg-slate-800', 'text-amber-500', 'border', 'border-slate-700');
+                event.currentTarget.classList.remove('text-slate-400');
+            }
+
             if (tabId === 'compare') renderCompare();
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
@@ -1245,7 +852,7 @@
             const container = document.getElementById('compareContainer');
             if (!container) return;
             if (compareList.length === 0) {
-                container.innerHTML = `<p style="text-align: center; color: #6b7280;">Список сравнения пуст</p>`;
+                container.innerHTML = `<p style="text-align: center; color: #9ca3af;">Список сравнения пуст</p>`;
                 return;
             }
             container.innerHTML = `
@@ -1254,10 +861,10 @@
                         const p = window.products.find(prod => prod.id == id);
                         if (!p) return '';
                         const img = p.images && p.images.length > 0 ? p.images[0] : p.image;
-                        return `<div style="border: 1px solid #e5e7eb; padding: 14px; border-radius: 12px; text-align: center; position: relative;">
+                        return `<div style="border: 1px solid #334155; padding: 14px; border-radius: 12px; text-align: center; position: relative; background: #0f172a;">
                             <button onclick="toggleCompare('${p.id}'); renderCompare();" style="position: absolute; top: 6px; right: 6px; background: none; border: none; color: #dc2626; cursor: pointer;"><i class="fa-solid fa-xmark"></i></button>
-                            <img src="${img}" style="height: 100px; object-fit: cover; margin-bottom: 8px;">
-                            <h4 style="font-weight: bold; font-size: 14px; margin-bottom: 4px;">${p.name}</h4>
+                            <img src="${img}" style="height: 100px; object-fit: cover; margin: 0 auto 8px; border-radius: 8px;">
+                            <h4 style="font-weight: bold; font-size: 14px; margin-bottom: 4px; color: #f8fafc;">${p.name}</h4>
                             <p class="text-amber" style="font-weight: bold; font-size: 14px;">${formatPrice(p.priceTJS)}</p>
                         </div>`;
                     }).join('')}
@@ -1271,13 +878,14 @@
             localStorage.setItem('btime_cart', JSON.stringify(cart));
             updateBadges();
             openCartModal();
+            showNotification("Товар добавлен в корзину!");
         }
 
         function openCartModal() {
             const list = document.getElementById('cartList');
             if (!list) return;
             if (cart.length === 0) {
-                list.innerHTML = `<p style="text-align: center; color: #6b7280;">Корзина пуста</p>`;
+                list.innerHTML = `<p style="text-align: center; color: #9ca3af;">Корзина пуста</p>`;
                 document.getElementById('cartTotal').innerText = formatPrice(0);
                 openModal('cartModal');
                 return;
@@ -1287,7 +895,7 @@
                 const p = window.products.find(prod => prod.id == i.id);
                 if (!p) return '';
                 total += p.priceTJS * i.qty;
-                return `<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; font-size: 13px; border-bottom: 1px solid #f3f4f6; padding-bottom: 6px;">
+                return `<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; font-size: 13px; border-bottom: 1px solid #334155; padding-bottom: 6px; color: #f8fafc;">
                     <span>${p.name} (x${i.qty})</span>
                     <div style="display: flex; align-items: center; gap: 8px;">
                         <strong class="text-amber">${formatPrice(p.priceTJS * i.qty)}</strong>
@@ -1309,7 +917,12 @@
         function openCheckout() {
             if (cart.length === 0) return;
             const activeUser = window.firebaseAuth ? window.firebaseAuth.currentUser : null;
-            if (!activeUser) { alert("Войдите в аккаунт!"); closeModal('cartModal'); openModal('authModal'); return; }
+            if (!activeUser) { 
+                showNotification("Пожалуйста, войдите в аккаунт."); 
+                closeModal('cartModal'); 
+                openModal('authModal'); 
+                return; 
+            }
             closeModal('cartModal');
             openModal('checkoutModal');
         }
@@ -1317,7 +930,12 @@
         function submitOrder(e) {
             e.preventDefault();
             const activeUser = window.firebaseAuth ? window.firebaseAuth.currentUser : null;
-            if (!activeUser) { alert("Войдите в аккаунт!"); closeModal('checkoutModal'); openModal('authModal'); return; }
+            if (!activeUser) { 
+                showNotification("Войдите в аккаунт!"); 
+                closeModal('checkoutModal'); 
+                openModal('authModal'); 
+                return; 
+            }
 
             const name = document.getElementById('orderName').value;
             const phone = document.getElementById('orderPhone').value;
@@ -1330,7 +948,7 @@
 
             const order = {
                 userId: activeUser.uid,
-                userEmail: activeUser.email,
+                userEmail: activeUser.email || 'Не указан',
                 name, phone, address,
                 items: cart.map(cartItem => {
                     const p = window.products.find(prod => prod.id == cartItem.id);
@@ -1347,7 +965,6 @@
             localStorage.removeItem('btime_cart');
             updateBadges();
             closeModal('checkoutModal');
-            alert("Заказ успешно оформлен!");
         }
 
         function submitReview(e) {
@@ -1357,17 +974,17 @@
             reviews.unshift({ author: "Покупатель", rating, text });
             renderReviews();
             closeModal('reviewModal');
-            alert("Спасибо за отзыв!");
+            showNotification("Спасибо за отзыв!");
         }
 
         function renderReviews() {
             const grid = document.getElementById('reviewsGrid');
             if (grid) {
                 grid.innerHTML = reviews.map(r => `
-                    <div style="background: white; border-radius: 16px; padding: 16px; color: #111827; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+                    <div style="background: #1e293b; border: 1px solid #334155; border-radius: 16px; padding: 16px; color: #f8fafc;">
                         <div style="font-weight: bold; margin-bottom: 4px; font-size: 14px;">${r.author}</div>
                         <div style="color: #eab308; font-size: 12px; margin-bottom: 6px;">${'★'.repeat(r.rating)}</div>
-                        <p style="color: #4b5563; font-size: 13px;">"${r.text}"</p>
+                        <p style="color: #cbd5e1; font-size: 13px;">"${r.text}"</p>
                     </div>
                 `).join('');
             }
