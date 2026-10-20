@@ -7,7 +7,6 @@
     <link id="faviconLink" rel="icon" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/svgs/solid/clock.svg">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
-    <!-- Подключение шрифтов -->
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Montserrat:wght@400;700&family=Roboto:wght@400;700&family=Inter:wght@400;700&family=Open+Sans:wght@400;700&family=Lato:wght@400;700&family=Poppins:wght@400;700&family=Oswald:wght@400;700&family=Raleway:wght@400;700&family=Nunito:wght@400;700&family=Rubik:wght@400;700&family=Ubuntu:wght@400;700&family=Playfair+Display:wght@400;700&display=swap">
     <link id="dynamicGoogleFont" rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap">
 
@@ -182,7 +181,13 @@
             overflow: hidden; 
             cursor: pointer;
         }
-        .card-img-track { display: flex; width: 100%; height: 100%; transition: transform 0.3s ease-in-out; }
+        .card-img-track { 
+            display: flex; 
+            width: 100%; 
+            height: 100%; 
+            transition: transform 0.2s cubic-bezier(0.1, 0.7, 0.1, 1); 
+            will-change: transform; 
+        }
         
         .card-img-track img { 
             width: 100%; 
@@ -253,6 +258,7 @@
             object-fit: contain;
             border-radius: 8px;
             box-shadow: 0 0 20px rgba(0,0,0,0.8);
+            will-change: transform;
         }
         .fs-close {
             position: absolute;
@@ -551,7 +557,7 @@
                 <div><label>Номер WhatsApp (например: 992900000000)</label><input type="text" id="prodWhatsapp" placeholder="Если пусто, берется общий номер"></div>
                 
                 <div>
-                    <label>Фотографии товара (30+ шт., 100% качество)</label>
+                    <label id="uploadLabelText">Фотографии товара (30+ шт., мгновенно)</label>
                     <input type="file" id="prodImageFiles" accept="image/*" multiple onchange="handleMultipleImagesUpload(event)">
                     <div id="uploadedImagesPreview" style="display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px; max-height: 150px; overflow-y: auto;"></div>
                 </div>
@@ -1048,38 +1054,30 @@
 
         window.deleteOrder = async (id) => { if(confirm("Удалить?")) deleteDoc(doc(db, "orders", id)).catch(() => {}); };
 
-        // БЕЗ ОГРАНИЧЕНИЙ: 30+ ФОТО В 100% ОРИГИНАЛЬНОМ КАЧЕСТВЕ
+        // МОМЕНТАЛЬНАЯ ФОНОВАЯ ЗАГРУЗКА 30+ ФОТО БЕЗ ЛАЗОВ
         window.handleMultipleImagesUpload = async (event) => {
             const files = Array.from(event.target.files);
             window.tempProductBase64Images = [];
             const previewContainer = document.getElementById('uploadedImagesPreview');
-            previewContainer.innerHTML = '<p style="color: #d97706; font-size: 12px;">Обработка изображений...</p>';
+            const uploadLabel = document.getElementById('uploadLabelText');
+            
+            if (files.length === 0) return;
+            
+            uploadLabel.innerText = `Файлов выбрано: ${files.length} (загружено мгновенно)`;
+            previewContainer.innerHTML = '<span style="font-size: 11px; color: #25d366;">Готово!</span>';
 
-            const processFile = (file) => {
+            const readFileFast = (file) => {
                 return new Promise((resolve) => {
                     const reader = new FileReader();
-                    reader.onload = (e) => {
-                        const img = new Image();
-                        img.src = e.target.result;
-                        img.onload = () => {
-                            const canvas = document.createElement('canvas');
-                            const ctx = canvas.getContext('2d');
-                            canvas.width = img.width;
-                            canvas.height = img.height;
-                            ctx.drawImage(img, 0, 0, img.width, img.height);
-                            const fullQualityBase64 = canvas.toDataURL('image/jpeg', 1.0);
-                            resolve(fullQualityBase64);
-                        };
-                    };
+                    reader.onload = (e) => resolve(e.target.result);
                     reader.readAsDataURL(file);
                 });
             };
 
-            const base64List = await Promise.all(files.map(file => processFile(file)));
-            window.tempProductBase64Images = base64List;
+            window.tempProductBase64Images = await Promise.all(files.map(file => readFileFast(file)));
 
-            previewContainer.innerHTML = base64List.map(img => `
-                <img src="${img}" style="width: 45px; height: 45px; object-fit: cover; border-radius: 6px; border: 1px solid #d1d5db;">
+            previewContainer.innerHTML = window.tempProductBase64Images.map(img => `
+                <img src="${img}" style="width: 45px; height: 45px; object-fit: cover; border-radius: 6px; border: 1px solid #d1d5db;" loading="lazy">
             `).join('');
         };
 
@@ -1143,6 +1141,7 @@
             document.getElementById('prodBadge').value = 'Хит';
             document.getElementById('prodWhatsapp').value = '';
             document.getElementById('prodImageFiles').value = '';
+            document.getElementById('uploadLabelText').innerText = "Фотографии товара (30+ шт., 100% качество)";
             document.getElementById('uploadedImagesPreview').innerHTML = '';
             window.tempProductBase64Images = [];
             document.getElementById('productModalTitle').innerText = "Добавить товар";
@@ -1162,9 +1161,11 @@
             document.getElementById('prodWhatsapp').value = p.whatsapp || '';
             
             window.tempProductBase64Images = p.images || (p.image ? [p.image] : []);
+            document.getElementById('uploadLabelText').innerText = `Фотографии товара (30+ шт.) — Загружено: ${window.tempProductBase64Images.length}`;
+            
             const previewContainer = document.getElementById('uploadedImagesPreview');
             previewContainer.innerHTML = window.tempProductBase64Images.map(img => `
-                <img src="${img}" style="width: 45px; height: 45px; object-fit: cover; border-radius: 6px; border: 1px solid #d1d5db;">
+                <img src="${img}" style="width: 45px; height: 45px; object-fit: cover; border-radius: 6px; border: 1px solid #d1d5db;" loading="lazy">
             `).join('');
 
             document.getElementById('productModalTitle').innerText = "Редактировать товар";
@@ -1302,7 +1303,7 @@
                         ` : ''}
 
                         <div class="card-img-track" id="track_${p.id}" style="transform: translateX(-${activeIndex * 100}%);">
-                            ${images.map(img => `<img src="${img}" alt="${p.name}">`).join('')}
+                            ${images.map((img, idx) => `<img src="${img}" alt="${p.name}" ${idx === 0 ? '' : 'loading="lazy"'}>`).join('')}
                         </div>
 
                         ${images.length > 1 ? `
@@ -1384,7 +1385,7 @@
                         const img = p.images && p.images.length > 0 ? p.images[0] : p.image;
                         return `<div style="border: 1px solid #e5e7eb; padding: 14px; border-radius: 12px; text-align: center; position: relative;">
                             <button onclick="toggleCompare('${p.id}'); renderCompare();" style="position: absolute; top: 6px; right: 6px; background: none; border: none; color: #dc2626; cursor: pointer;"><i class="fa-solid fa-xmark"></i></button>
-                            <img src="${img}" style="height: 100px; object-fit: cover; margin-bottom: 8px;">
+                            <img src="${img}" style="height: 100px; object-fit: cover; margin-bottom: 8px;" loading="lazy">
                             <h4 style="font-weight: bold; font-size: 14px; margin-bottom: 4px;">${p.name}</h4>
                             <p class="text-amber" style="font-weight: bold; font-size: 14px;">${formatPrice(p.priceTJS)}</p>
                         </div>`;
@@ -1488,7 +1489,7 @@
             alert("Спасибо за отзыв!");
         }
 
-        function renderReviews() {
+        window.renderReviews = function() {
             const grid = document.getElementById('reviewsGrid');
             if (grid) {
                 grid.innerHTML = reviews.map(r => `
@@ -1499,7 +1500,7 @@
                     </div>
                 `).join('');
             }
-        }
+        };
 
         function updateBadges() {
             const count = cart.reduce((s, i) => s + i.qty, 0);
