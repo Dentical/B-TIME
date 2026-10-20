@@ -557,7 +557,7 @@
                 <div><label>Номер WhatsApp (например: 992900000000)</label><input type="text" id="prodWhatsapp" placeholder="Если пусто, берется общий номер"></div>
                 
                 <div>
-                    <label id="uploadLabelText">Фотографии товара (30+ шт., мгновенно)</label>
+                    <label id="uploadLabelText">Фотографии товара (30+ шт., 100% качество)</label>
                     <input type="file" id="prodImageFiles" accept="image/*" multiple onchange="handleMultipleImagesUpload(event)">
                     <div id="uploadedImagesPreview" style="display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px; max-height: 150px; overflow-y: auto;"></div>
                 </div>
@@ -1054,7 +1054,7 @@
 
         window.deleteOrder = async (id) => { if(confirm("Удалить?")) deleteDoc(doc(db, "orders", id)).catch(() => {}); };
 
-        // МОМЕНТАЛЬНАЯ ФОНОВАЯ ЗАГРУЗКА 30+ ФОТО БЕЗ ЛАЗОВ
+        // СУПЕРБЫСТРАЯ ФОНОВАЯ ЗАГРУЗКА БЕЗ БЛОКИРОВКИ ИНТЕРФЕЙСА
         window.handleMultipleImagesUpload = async (event) => {
             const files = Array.from(event.target.files);
             window.tempProductBase64Images = [];
@@ -1063,19 +1063,20 @@
             
             if (files.length === 0) return;
             
-            uploadLabel.innerText = `Файлов выбрано: ${files.length} (загружено мгновенно)`;
-            previewContainer.innerHTML = '<span style="font-size: 11px; color: #25d366;">Готово!</span>';
+            uploadLabel.innerText = `Файлов выбрано: ${files.length} (загрузка...)`;
+            previewContainer.innerHTML = '<span style="font-size: 11px; color: #d97706;">Обработка в фоне...</span>';
 
-            const readFileFast = (file) => {
-                return new Promise((resolve) => {
+            window.tempProductBase64Images = [];
+            for (let i = 0; i < files.length; i++) {
+                const base64 = await new Promise((resolve) => {
                     const reader = new FileReader();
                     reader.onload = (e) => resolve(e.target.result);
-                    reader.readAsDataURL(file);
+                    reader.readAsDataURL(files[i]);
                 });
-            };
+                window.tempProductBase64Images.push(base64);
+            }
 
-            window.tempProductBase64Images = await Promise.all(files.map(file => readFileFast(file)));
-
+            uploadLabel.innerText = `Фотографии товара (30+ шт., 100% качество) — Готово: ${files.length}`;
             previewContainer.innerHTML = window.tempProductBase64Images.map(img => `
                 <img src="${img}" style="width: 45px; height: 45px; object-fit: cover; border-radius: 6px; border: 1px solid #d1d5db;" loading="lazy">
             `).join('');
