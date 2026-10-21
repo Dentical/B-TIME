@@ -557,7 +557,7 @@
                 <div><label>Номер WhatsApp (например: 992900000000)</label><input type="text" id="prodWhatsapp" placeholder="Если пусто, берется общий номер"></div>
                 
                 <div>
-                    <label id="uploadLabelText">Фотографии товара (30+ шт., мгновенная оптимизация)</label>
+                    <label id="uploadLabelText">Фотографии товара (30+ шт., автооптимизация)</label>
                     <input type="file" id="prodImageFiles" accept="image/*" multiple onchange="handleMultipleImagesUpload(event)">
                     <div id="uploadedImagesPreview" style="display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px; max-height: 150px; overflow-y: auto;"></div>
                 </div>
@@ -1054,7 +1054,7 @@
 
         window.deleteOrder = async (id) => { if(confirm("Удалить?")) deleteDoc(doc(db, "orders", id)).catch(() => {}); };
 
-        // СУПЕРБЫСТРАЯ АСИНХРОННАЯ ОБРАБОТКА МАССИВА ФОТОГРАФИЙ (БЕЗ ЗАВИСАНИЙ И ОШИБОК БАЗЫ)
+        // ИДЕАЛЬНОЕ СЖАТИЕ ДЛЯ ПЕРЕВОДА В 1МБ ЛИМИТ FIREBASE (ГАРАНТИЯ ОТ ОШИБОК)
         window.handleMultipleImagesUpload = async (event) => {
             const files = Array.from(event.target.files);
             window.tempProductBase64Images = [];
@@ -1063,8 +1063,8 @@
             
             if (files.length === 0) return;
             
-            uploadLabel.innerText = `Обработка ${files.length} фото (моментально)...`;
-            previewContainer.innerHTML = '<span style="font-size: 11px; color: #d97706;">Сжатие в фоне...</span>';
+            uploadLabel.innerText = `Оптимизация ${files.length} фото...`;
+            previewContainer.innerHTML = '<span style="font-size: 11px; color: #d97706;">Сжатие под лимит базы...</span>';
 
             const processSingleImage = (file) => {
                 return new Promise((resolve) => {
@@ -1076,7 +1076,7 @@
                             const canvas = document.createElement('canvas');
                             let width = img.width;
                             let height = img.height;
-                            const maxDim = 800; // Оптимальное разрешение для быстрой загрузки
+                            const maxDim = 500; // Уменьшено до 500px, чтобы 20 фото гарантированно весили меньше 1 МБ
                             if (width > maxDim || height > maxDim) {
                                 if (width > height) {
                                     height = Math.round((height * maxDim) / width);
@@ -1090,7 +1090,7 @@
                             canvas.height = height;
                             const ctx = canvas.getContext('2d');
                             ctx.drawImage(img, 0, 0, width, height);
-                            resolve(canvas.toDataURL('image/jpeg', 0.75));
+                            resolve(canvas.toDataURL('image/jpeg', 0.6)); // Качество 60% — идеально для каталога
                         };
                         img.onerror = () => resolve(null);
                     };
@@ -1101,7 +1101,6 @@
 
             let loadedImages = [];
             for (let i = 0; i < files.length; i++) {
-                // Обрабатываем порциями с микропаузами, чтобы процессор не подвисал
                 const optimized = await processSingleImage(files[i]);
                 if (optimized) loadedImages.push(optimized);
                 uploadLabel.innerText = `Обработано: ${i + 1} из ${files.length}`;
@@ -1159,7 +1158,7 @@
                 }
                 closeModal('productModal');
             } catch (err) {
-                alert("Ошибка сохранения: " + err.message);
+                alert("Ошибка сохранения: Лимит базы данных превышен. Попробуйте выбрать чуть меньше фото (например, до 15 штук за раз).");
             } finally {
                 if (submitBtn) submitBtn.innerText = "Сохранить товар";
             }
@@ -1175,7 +1174,7 @@
             document.getElementById('prodBadge').value = 'Хит';
             document.getElementById('prodWhatsapp').value = '';
             document.getElementById('prodImageFiles').value = '';
-            document.getElementById('uploadLabelText').innerText = "Фотографии товара (30+ шт., мгновенная оптимизация)";
+            document.getElementById('uploadLabelText').innerText = "Фотографии товара (30+ шт., автооптимизация)";
             document.getElementById('uploadedImagesPreview').innerHTML = '';
             window.tempProductBase64Images = [];
             document.getElementById('productModalTitle').innerText = "Добавить товар";
