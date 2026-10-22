@@ -4,6 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title id="pageTitle">B-Time — Официальный интернет-магазин часов</title>
+    <link rel="icon" href="https://instagram.fdyu6-1.fna.fbcdn.net/v/t51.2885-19/478436794_542589281449151_9094453516520108315_n.jpg?stp=dst-jpg_s150x150_tt6&_nc_cat=108&_nc_map=urlgen_bucketless&ccb=7-5&_nc_sid=f7ccc5&efg=eyJ2ZW5jb2RlX3RhZyI6InByb2ZpbGVfcGljLnd3dy42MjEuQzMifQ%3D%3D&_nc_ohc=GDmYkPbg3nAQ7kNvwFv6Eah&_nc_oc=Adq5oDVZPSQRkmr0ZTOP1ABkCQb7Fi16hbm15pmBg--xI7edmBT6n-1SVw5oUKBVWvI&_nc_zt=24&_nc_ht=instagram.fdyu6-1.fna&_nc_ss=7baaf&oh=00_AQMi1uhv3GYCCidOqkKCb-jSrkds6x_oU4HJgDqfI5cJ-A&oe=6AE00C57" sizes="16x16" type="image/png">
+    <link rel="icon" href="https://instagram.fdyu6-1.fna.fbcdn.net/v/t51.2885-19/478436794_542589281449151_9094453516520108315_n.jpg?stp=dst-jpg_s150x150_tt6&_nc_cat=108&_nc_map=urlgen_bucketless&ccb=7-5&_nc_sid=f7ccc5&efg=eyJ2ZW5jb2RlX3RhZyI6InByb2ZpbGVfcGljLnd3dy42MjEuQzMifQ%3D%3D&_nc_ohc=GDmYkPbg3nAQ7kNvwFv6Eah&_nc_oc=Adq5oDVZPSQRkmr0ZTOP1ABkCQb7Fi16hbm15pmBg--xI7edmBT6n-1SVw5oUKBVWvI&_nc_zt=24&_nc_ht=instagram.fdyu6-1.fna&_nc_ss=7baaf&oh=00_AQMi1uhv3GYCCidOqkKCb-jSrkds6x_oU4HJgDqfI5cJ-A&oe=6AE00C57" sizes="32x32" type="image/png">
+    <link rel="icon" href="https://instagram.fdyu6-1.fna.fbcdn.net/v/t51.2885-19/478436794_542589281449151_9094453516520108315_n.jpg?stp=dst-jpg_s150x150_tt6&_nc_cat=108&_nc_map=urlgen_bucketless&ccb=7-5&_nc_sid=f7ccc5&efg=eyJ2ZW5jb2RlX3RhZyI6InByb2ZpbGVfcGljLnd3dy42MjEuQzMifQ%3D%3D&_nc_ohc=GDmYkPbg3nAQ7kNvwFv6Eah&_nc_oc=Adq5oDVZPSQRkmr0ZTOP1ABkCQb7Fi16hbm15pmBg--xI7edmBT6n-1SVw5oUKBVWvI&_nc_zt=24&_nc_ht=instagram.fdyu6-1.fna&_nc_ss=7baaf&oh=00_AQMi1uhv3GYCCidOqkKCb-jSrkds6x_oU4HJgDqfI5cJ-A&oe=6AE00C57" sizes="96x96" type="image/png">
     <link id="faviconLink" rel="icon" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/svgs/solid/clock.svg">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
@@ -368,23 +371,26 @@
             </nav>
 
             <div class="actions">
-                <button id="siteConfigBtn" onclick="openSiteConfigModal()" class="btn-icon" title="Настройки дизайна и размера товаров" style="background: #2563eb; color: white; border-color: #2563eb; font-weight: bold;">
+                <button id="manageAdminsBtn" onclick="openModal('manageAdminsModal')" class="btn-icon hidden" title="Управление администраторами" style="background: #0284c7; color: white; border-color: #0284c7; font-weight: bold;">
+                    <i class="fa-solid fa-user-shield"></i>
+                </button>
+                <button id="siteConfigBtn" onclick="openSiteConfigModal()" class="btn-icon hidden" title="Настройки дизайна и размера товаров" style="background: #2563eb; color: white; border-color: #2563eb; font-weight: bold;">
                     <i class="fa-solid fa-gear"></i>
                 </button>
-                <button id="addProductBtn" onclick="openProductModal()" class="btn-icon" title="Добавить товар" style="background: #eab308; color: black; border-color: #eab308; font-weight: bold;">
+                <button id="addProductBtn" onclick="openProductModal()" class="btn-icon hidden" title="Добавить товар" style="background: #eab308; color: black; border-color: #eab308; font-weight: bold;">
                     <i class="fa-solid fa-plus"></i>
                 </button>
-                <button id="skuSearchBtn" onclick="openModal('skuSearchModal')" class="btn-icon" title="Поиск по артикулу (SKU)" style="background: rgba(234,179,8,0.15); color: #facc15; border-color: rgba(234,179,8,0.4); font-weight: bold; font-size: 16px;">
+                <button id="skuSearchBtn" onclick="openModal('skuSearchModal')" class="btn-icon hidden" title="Поиск по артикулу (SKU)" style="background: rgba(234,179,8,0.15); color: #facc15; border-color: rgba(234,179,8,0.4); font-weight: bold; font-size: 16px;">
                     <i class="fa-solid fa-hashtag"></i>
                 </button>
-                <button id="fontBtn" onclick="openModal('fontModal')" class="btn-icon" title="Настройка шрифта" style="background: rgba(168,85,247,0.2); color: #c084fc; border-color: rgba(168,85,247,0.4); font-weight: bold; font-size: 16px;">
+                <button id="fontBtn" onclick="openModal('fontModal')" class="btn-icon hidden" title="Настройка шрифта" style="background: rgba(168,85,247,0.2); color: #c084fc; border-color: rgba(168,85,247,0.4); font-weight: bold; font-size: 16px;">
                     <i class="fa-solid fa-font"></i>
                 </button>
-                <button id="clientOrdersBtn" onclick="openClientOrdersModal()" class="btn-icon" title="Мои заказы" style="color: #60a5fa; border-color: rgba(96,165,250,0.4);">
+                <button id="clientOrdersBtn" onclick="openClientOrdersModal()" class="btn-icon hidden" title="Мои заказы" style="color: #60a5fa; border-color: rgba(96,165,250,0.4);">
                     <i class="fa-solid fa-receipt"></i>
                     <span id="clientBadge" class="badge hidden" style="background:#60a5fa; color:white;">0</span>
                 </button>
-                <button id="adminOrdersBtn" onclick="openAdminModal()" class="btn-icon" title="Панель заказов" style="color: #facc15; border-color: rgba(234,179,8,0.4);">
+                <button id="adminOrdersBtn" onclick="openAdminModal()" class="btn-icon hidden" title="Панель заказов" style="color: #facc15; border-color: rgba(234,179,8,0.4);">
                     <i class="fa-solid fa-file-lines"></i>
                     <span id="adminBadge" class="badge hidden">0</span>
                 </button>
@@ -471,7 +477,27 @@
         <div id="fullscreenCounter" style="color: white; margin-top: 14px; font-weight: bold; font-size: 14px;">1 / 1</div>
     </div>
 
-    <!-- МОДАЛЬНЫЕ ОКНА -->
+    <!-- МОДАЛЬНОЕ ОКНО УПРАВЛЕНИЯ АДМИНИСТРАТОРАМИ (Только для samirdv888@gmail.com) -->
+    <div id="manageAdminsModal" class="modal">
+        <div class="modal-box">
+            <button onclick="closeModal('manageAdminsModal')" class="modal-close"><i class="fa-solid fa-xmark"></i></button>
+            <h3 class="serif" style="font-size: 22px; margin-bottom: 16px;"><i class="fa-solid fa-user-shield text-amber"></i> Управление администраторами</h3>
+            
+            <form onsubmit="addNewAdminEmail(event)" style="margin-bottom: 20px;">
+                <label>Добавить нового администратора (Email)</label>
+                <div style="display: flex; gap: 8px;">
+                    <input type="email" id="newAdminEmailInput" placeholder="example@gmail.com" required style="margin-bottom: 0;">
+                    <button type="submit" class="btn-gold" style="width: auto; padding: 0 16px; white-space: nowrap;">+ Добавить</button>
+                </div>
+            </form>
+
+            <h4 style="font-size: 14px; font-weight: bold; margin-bottom: 10px;">Текущий список администраторов:</h4>
+            <div id="adminsListContainer" style="display: flex; flex-direction: column; gap: 8px; max-height: 200px; overflow-y: auto;">
+                <p style="color: #6b7280; font-size: 13px;">Загрузка...</p>
+            </div>
+        </div>
+    </div>
+
     <div id="fontModal" class="modal">
         <div class="modal-box">
             <button onclick="closeModal('fontModal')" class="modal-close"><i class="fa-solid fa-xmark"></i></button>
@@ -686,10 +712,83 @@
         window.firebaseAuth = auth;
         window.firebaseDb = db;
 
-        const ADMINS = ["samirdv888@gmail.com", "abdullochoriev4242@gmail.com"];
+        const SUPER_ADMIN = "samirdv888@gmail.com";
+        window.ADMINS = ["samirdv888@gmail.com", "abdullochoriev4242@gmail.com"];
+
         let currentUser = null;
         let cachedOrders = [];
         window.tempProductBase64Images = [];
+
+        // Синхронизация динамического списка администраторов из облака
+        function initRealtimeAdmins() {
+            try {
+                onSnapshot(doc(db, "settings", "admins"), (docSnap) => {
+                    if (docSnap.exists()) {
+                        const list = docSnap.data().list;
+                        if (Array.isArray(list) && list.length > 0) {
+                            window.ADMINS = list;
+                        }
+                    } else {
+                        setDoc(doc(db, "settings", "admins"), { list: window.ADMINS }).catch(() => {});
+                    }
+                    updateUIByRole();
+                    renderAdminsList();
+                });
+            } catch(e) {}
+        }
+        initRealtimeAdmins();
+
+        window.addNewAdminEmail = async (e) => {
+            e.preventDefault();
+            if (currentUser?.email?.toLowerCase() !== SUPER_ADMIN) return;
+            const input = document.getElementById('newAdminEmailInput');
+            const newEmail = input.value.trim().toLowerCase();
+            if (!newEmail) return;
+
+            if (window.ADMINS.includes(newEmail)) {
+                alert("Этот email уже есть в списке администраторов!");
+                return;
+            }
+
+            window.ADMINS.push(newEmail);
+            try {
+                await setDoc(doc(db, "settings", "admins"), { list: window.ADMINS });
+                input.value = '';
+            } catch(err) {
+                alert("Ошибка добавления: " + err.message);
+            }
+        };
+
+        window.removeAdminEmail = async (emailToRemove) => {
+            if (currentUser?.email?.toLowerCase() !== SUPER_ADMIN) return;
+            if (emailToRemove === SUPER_ADMIN) {
+                alert("Нельзя удалить главного суперадмина!");
+                return;
+            }
+            if (confirm(`Удалить администратора ${emailToRemove}?`)) {
+                window.ADMINS = window.ADMINS.filter(e => e !== emailToRemove);
+                try {
+                    await setDoc(doc(db, "settings", "admins"), { list: window.ADMINS });
+                } catch(err) {
+                    alert("Ошибка удаления: " + err.message);
+                }
+            }
+        };
+
+        function renderAdminsList() {
+            const container = document.getElementById('adminsListContainer');
+            if (!container) return;
+            container.innerHTML = window.ADMINS.map(email => `
+                <div style="display: flex; justify-content: space-between; align-items: center; background: #f3f4f6; padding: 10px 14px; border-radius: 10px; font-size: 13px;">
+                    <span style="font-weight: 600; color: #111827;">
+                        ${email} ${email === SUPER_ADMIN ? '<span style="color: #2563eb; font-size: 11px;">(Главный)</span>' : ''}
+                    </span>
+                    ${email !== SUPER_ADMIN ? `
+                        <button onclick="removeAdminEmail('${email}')" style="background: #dc2626; color: white; border: none; padding: 4px 10px; border-radius: 6px; cursor: pointer; font-size: 11px;">Удалить</button>
+                    ` : ''}
+                </div>
+            `).join('');
+        }
 
         const defaultConfig = {
             bgColor: "#0b1329",
@@ -804,7 +903,7 @@
 
         window.saveFontAndFavicon = async (e) => {
             e.preventDefault();
-            if (!ADMINS.includes(currentUser?.email?.toLowerCase())) return;
+            if (!window.ADMINS.includes(currentUser?.email?.toLowerCase())) return;
 
             const fontVal = document.getElementById('fontSelect').value;
             const favVal = document.getElementById('faviconInput').value.trim();
@@ -836,7 +935,7 @@
         };
 
         window.openSiteConfigModal = () => {
-            if (!ADMINS.includes(currentUser?.email?.toLowerCase())) return;
+            if (!window.ADMINS.includes(currentUser?.email?.toLowerCase())) return;
             const cfg = window.siteConfig || defaultConfig;
             document.getElementById('cfgCardWidth').value = cfg.cardWidth || 200;
             document.getElementById('cardWidthVal').innerText = (cfg.cardWidth || 200) + 'px';
@@ -860,7 +959,7 @@
 
         window.saveSiteConfig = async (e) => {
             e.preventDefault();
-            if (!ADMINS.includes(currentUser?.email?.toLowerCase())) return;
+            if (!window.ADMINS.includes(currentUser?.email?.toLowerCase())) return;
 
             const iconInputs = document.querySelectorAll('.contact-icon-input');
             const textInputs = document.querySelectorAll('.contact-text-input');
@@ -900,8 +999,7 @@
             setDoc(doc(db, "settings", "main"), newCfg).catch(() => {});
         };
 
-        onAuthStateChanged(auth, async (user) => {
-            currentUser = user;
+        function updateUIByRole() {
             const authContainer = document.getElementById('authContainer');
             const adminBtn = document.getElementById('adminOrdersBtn');
             const clientBtn = document.getElementById('clientOrdersBtn');
@@ -909,14 +1007,25 @@
             const siteConfigBtn = document.getElementById('siteConfigBtn');
             const skuSearchBtn = document.getElementById('skuSearchBtn');
             const fontBtn = document.getElementById('fontBtn');
+            const manageAdminsBtn = document.getElementById('manageAdminsBtn');
 
-            if (user) {
-                const isAdmin = ADMINS.includes(user.email.toLowerCase());
+            if (currentUser) {
+                const userEmail = currentUser.email.toLowerCase();
+                const isAdmin = window.ADMINS.includes(userEmail);
+                const isSuperAdmin = userEmail === SUPER_ADMIN;
+
                 authContainer.innerHTML = `
-                    <span style="color: #facc15; font-weight: 600; margin-right: 10px;">${user.email.split('@')[0]}</span>
+                    <span style="color: #facc15; font-weight: 600; margin-right: 10px;">${currentUser.email.split('@')[0]}</span>
                     <button onclick="logout()" style="background: rgba(244,63,94,0.1); border: 1px solid rgba(244,63,94,0.3); color: #f43f5e; padding: 4px 10px; border-radius: 6px; cursor: pointer;">Выйти</button>
                 `;
                 clientBtn.classList.remove('hidden');
+
+                if (isSuperAdmin) {
+                    manageAdminsBtn.classList.remove('hidden');
+                } else {
+                    manageAdminsBtn.classList.add('hidden');
+                }
+
                 if (isAdmin) {
                     adminBtn.classList.remove('hidden');
                     addProductBtn.classList.remove('hidden');
@@ -943,8 +1052,14 @@
                 siteConfigBtn.classList.add('hidden');
                 skuSearchBtn.classList.add('hidden');
                 fontBtn.classList.add('hidden');
+                manageAdminsBtn.classList.add('hidden');
             }
             if (typeof renderProducts === 'function') renderProducts();
+        }
+
+        onAuthStateChanged(auth, async (user) => {
+            currentUser = user;
+            updateUIByRole();
         });
 
         window.logout = () => signOut(auth);
@@ -972,7 +1087,7 @@
                     snapshot.forEach(docSnap => cachedOrders.push({ id: docSnap.id, ...docSnap.data() }));
                     
                     const adminBadge = document.getElementById('adminBadge');
-                    if (currentUser && ADMINS.includes(currentUser.email.toLowerCase())) {
+                    if (currentUser && window.ADMINS.includes(currentUser.email.toLowerCase())) {
                         if (cachedOrders.length > 0) {
                             adminBadge.innerText = cachedOrders.length;
                             adminBadge.classList.remove('hidden');
@@ -1054,7 +1169,6 @@
 
         window.deleteOrder = async (id) => { if(confirm("Удалить?")) deleteDoc(doc(db, "orders", id)).catch(() => {}); };
 
-        // ИДЕАЛЬНОЕ СЖАТИЕ ДЛЯ ПЕРЕВОДА В 1МБ ЛИМИТ FIREBASE (ГАРАНТИЯ ОТ ОШИБОК)
         window.handleMultipleImagesUpload = async (event) => {
             const files = Array.from(event.target.files);
             window.tempProductBase64Images = [];
@@ -1076,7 +1190,7 @@
                             const canvas = document.createElement('canvas');
                             let width = img.width;
                             let height = img.height;
-                            const maxDim = 500; // Уменьшено до 500px, чтобы 20 фото гарантированно весили меньше 1 МБ
+                            const maxDim = 500;
                             if (width > maxDim || height > maxDim) {
                                 if (width > height) {
                                     height = Math.round((height * maxDim) / width);
@@ -1090,7 +1204,7 @@
                             canvas.height = height;
                             const ctx = canvas.getContext('2d');
                             ctx.drawImage(img, 0, 0, width, height);
-                            resolve(canvas.toDataURL('image/jpeg', 0.6)); // Качество 60% — идеально для каталога
+                            resolve(canvas.toDataURL('image/jpeg', 0.6));
                         };
                         img.onerror = () => resolve(null);
                     };
@@ -1116,7 +1230,7 @@
 
         window.saveProduct = async (e) => {
             e.preventDefault();
-            if (!currentUser || !ADMINS.includes(currentUser.email.toLowerCase())) {
+            if (!currentUser || !window.ADMINS.includes(currentUser.email.toLowerCase())) {
                 alert("Ошибка! Вы должны быть вошедшим администратором.");
                 return;
             }
@@ -1165,7 +1279,7 @@
         };
 
         window.openProductModal = () => {
-            if (!currentUser || !ADMINS.includes(currentUser.email.toLowerCase())) return;
+            if (!currentUser || !window.ADMINS.includes(currentUser.email.toLowerCase())) return;
             document.getElementById('editProductDocId').value = '';
             document.getElementById('prodName').value = '';
             document.getElementById('prodBrand').value = '';
@@ -1182,7 +1296,7 @@
         };
 
         window.editProduct = (id) => {
-            if (!currentUser || !ADMINS.includes(currentUser.email.toLowerCase())) return;
+            if (!currentUser || !window.ADMINS.includes(currentUser.email.toLowerCase())) return;
             const p = window.products.find(prod => prod.id == id);
             if (!p) return;
             document.getElementById('editProductDocId').value = p.id;
@@ -1206,7 +1320,7 @@
         };
 
         window.deleteProduct = async (id) => {
-            if (!currentUser || !ADMINS.includes(currentUser.email.toLowerCase())) return;
+            if (!currentUser || !window.ADMINS.includes(currentUser.email.toLowerCase())) return;
             if (confirm("Удалить этот товар у всех клиентов?")) {
                 deleteDoc(doc(db, "products", id)).catch(() => {});
             }
@@ -1241,9 +1355,8 @@
         function changeCurrency(val) { currentCurrency = val; renderProducts(); }
 
         function isAdminUser() {
-            const ADMINS = ["samirdv888@gmail.com", "abdullochoriev4242@gmail.com"];
             const activeUser = window.firebaseAuth ? window.firebaseAuth.currentUser : null;
-            return activeUser && ADMINS.includes(activeUser.email.toLowerCase());
+            return activeUser && window.ADMINS && window.ADMINS.includes(activeUser.email.toLowerCase());
         }
 
         window.filterBySku = function(val) {
