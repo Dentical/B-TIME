@@ -340,11 +340,7 @@
                         <option value="RUB" style="background:#0b1329;">RUB (₽)</option>
                     </select>
                 </div>
-                <div id="authContainer">
-                    <button onclick="openModal('authModal')" style="background: rgba(234,179,8,0.1); border: 1px solid rgba(234,179,8,0.3); color: #facc15; padding: 4px 12px; border-radius: 6px; cursor: pointer;">
-                        <i class="fa-solid fa-user"></i> Войти
-                    </button>
-                </div>
+                <div id="authStatusIndicator"></div>
             </div>
         </div>
     </div>
@@ -590,15 +586,15 @@
         </div>
     </div>
 
+    <!-- ВХОД ТОЛЬКО ЧЕРЕЗ GOOGLE ПРИ ВВОДЕ СЕКРЕТНОЙ КОМАНДЫ -->
     <div id="authModal" class="modal">
-        <div class="modal-box">
+        <div class="modal-box" style="text-align: center;">
             <button onclick="closeModal('authModal')" class="modal-close"><i class="fa-solid fa-xmark"></i></button>
-            <h3 class="serif" style="font-size: 22px; margin-bottom: 16px;">Вход в аккаунт</h3>
-            <form onsubmit="handleEmailAuth(event)">
-                <div><label>Email</label><input type="email" id="authEmail" required></div>
-                <div><label>Пароль</label><input type="password" id="authPassword" required minlength="6"></div>
-                <button type="submit" class="btn-gold">Войти / Регистрация</button>
-            </form>
+            <h3 class="serif" style="font-size: 22px; margin-bottom: 16px;"><i class="fa-solid fa-lock text-amber"></i> Авторизация Администратора</h3>
+            <p style="font-size: 13px; color: #6b7280; margin-bottom: 20px;">Для доступа к панели управления необходимо войти через Google аккаунт.</p>
+            <button onclick="loginWithGoogle()" style="width: 100%; background: white; border: 1px solid #d1d5db; padding: 12px; border-radius: 10px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 10px; color: #111827;">
+                <i class="fa-brands fa-google" style="color: #ea4335; font-size: 18px;"></i> Войти через Google
+            </button>
         </div>
     </div>
 
@@ -685,7 +681,7 @@
     <!-- СИНХРОНИЗАЦИЯ FIREBASE И БАЗЫ ДАННЫХ -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js";
-        import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
+        import { getAuth, signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
         import { getFirestore, collection, addDoc, doc, deleteDoc, setDoc, onSnapshot, query, orderBy, updateDoc } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
 
         const firebaseConfig = {
@@ -701,6 +697,7 @@
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
+        const googleProvider = new GoogleAuthProvider();
 
         window.firebaseAuth = auth;
         window.firebaseDb = db;
@@ -992,12 +989,11 @@
         };
 
         function updateUIByRole() {
-            const authContainer = document.getElementById('authContainer');
+            const authIndicator = document.getElementById('authStatusIndicator');
             const adminBtn = document.getElementById('adminOrdersBtn');
             const clientBtn = document.getElementById('clientOrdersBtn');
             const addProductBtn = document.getElementById('addProductBtn');
             const siteConfigBtn = document.getElementById('siteConfigBtn');
-            const skuSearchBtn = document.getElementById('skuSearchBtn');
             const fontBtn = document.getElementById('fontBtn');
             const manageAdminsBtn = document.getElementById('manageAdminsBtn');
 
@@ -1006,7 +1002,7 @@
                 const isAdmin = window.ADMINS.includes(userEmail);
                 const isSuperAdmin = userEmail === SUPER_ADMIN;
 
-                authContainer.innerHTML = `
+                authIndicator.innerHTML = `
                     <span style="color: #facc15; font-weight: 600; margin-right: 10px;">${currentUser.email.split('@')[0]}</span>
                     <button onclick="logout()" style="background: rgba(244,63,94,0.1); border: 1px solid rgba(244,63,94,0.3); color: #f43f5e; padding: 4px 10px; border-radius: 6px; cursor: pointer;">Выйти</button>
                 `;
@@ -1022,27 +1018,20 @@
                     adminBtn.classList.remove('hidden');
                     addProductBtn.classList.remove('hidden');
                     siteConfigBtn.classList.remove('hidden');
-                    skuSearchBtn.classList.remove('hidden');
                     fontBtn.classList.remove('hidden');
                 } else {
                     adminBtn.classList.add('hidden');
                     addProductBtn.classList.add('hidden');
                     siteConfigBtn.classList.add('hidden');
-                    skuSearchBtn.classList.add('hidden');
                     fontBtn.classList.add('hidden');
                 }
                 initRealtimeOrders();
             } else {
-                authContainer.innerHTML = `
-                    <button onclick="openModal('authModal')" style="background: rgba(234,179,8,0.1); border: 1px solid rgba(234,179,8,0.3); color: #facc15; padding: 4px 12px; border-radius: 6px; cursor: pointer;">
-                        <i class="fa-solid fa-user"></i> Войти
-                    </button>
-                `;
+                authIndicator.innerHTML = '';
                 adminBtn.classList.add('hidden');
                 clientBtn.classList.add('hidden');
                 addProductBtn.classList.add('hidden');
                 siteConfigBtn.classList.add('hidden');
-                skuSearchBtn.classList.add('hidden');
                 fontBtn.classList.add('hidden');
                 manageAdminsBtn.classList.add('hidden');
             }
@@ -1056,16 +1045,13 @@
 
         window.logout = () => signOut(auth);
 
-        window.handleEmailAuth = async (e) => {
-            e.preventDefault();
-            const email = document.getElementById('authEmail').value;
-            const pass = document.getElementById('authPassword').value;
-            try {
-                await signInWithEmailAndPassword(auth, email, pass);
-            } catch(err) {
-                try { await createUserWithEmailAndPassword(auth, email, pass); } catch(e2) { alert(e2.message); return; }
+        window.loginWithGoogle = async () => {
+            try { 
+                await signInWithPopup(auth, googleProvider); 
+                closeModal('authModal'); 
+            } catch(e) { 
+                alert("Ошибка авторизации: " + e.message); 
             }
-            closeModal('authModal');
         };
 
         function initRealtimeOrders() {
@@ -1124,7 +1110,7 @@
 
         window.openClientOrdersModal = () => {
             const activeUser = window.firebaseAuth ? window.firebaseAuth.currentUser : null;
-            if (!activeUser) { alert("Войдите в аккаунт."); openModal('authModal'); return; }
+            if (!activeUser) { alert("Вы не авторизованы."); return; }
             document.getElementById('clientOrdersModal').classList.add('open');
             renderClientOrders();
         };
@@ -1350,7 +1336,7 @@
 
         window.filterBySku = function(val) {
             const trimmed = val.trim();
-            // СЕКРЕТНЫЙ ТРИГГЕР ДЛЯ ВХОДА В АДМИНКУ
+            // СЕКРЕТНЫЙ ТРИГГЕР ДЛЯ ПЕРЕХОДА К ВХОДУ ЧЕРЕЗ GOOGLE
             if (trimmed === '/admin') {
                 closeModal('skuSearchModal');
                 openModal('authModal');
@@ -1414,7 +1400,7 @@
             const admin = isAdminUser();
             let list = window.products || [];
 
-            if (admin && skuQuery !== '') {
+            if (skuQuery !== '') {
                 list = list.filter(p => p.sku && p.sku.toLowerCase().includes(skuQuery));
             }
             
@@ -1580,8 +1566,6 @@
 
         function openCheckout() {
             if (cart.length === 0) return;
-            const activeUser = window.firebaseAuth ? window.firebaseAuth.currentUser : null;
-            if (!activeUser) { alert("Войдите в аккаунт!"); closeModal('cartModal'); openModal('authModal'); return; }
             closeModal('cartModal');
             openModal('checkoutModal');
         }
@@ -1589,7 +1573,6 @@
         function submitOrder(e) {
             e.preventDefault();
             const activeUser = window.firebaseAuth ? window.firebaseAuth.currentUser : null;
-            if (!activeUser) { alert("Войдите в аккаунт!"); closeModal('checkoutModal'); openModal('authModal'); return; }
 
             const name = document.getElementById('orderName').value;
             const phone = document.getElementById('orderPhone').value;
@@ -1601,8 +1584,8 @@
             }, 0);
 
             const order = {
-                userId: activeUser.uid,
-                userEmail: activeUser.email,
+                userId: activeUser ? activeUser.uid : 'guest',
+                userEmail: activeUser ? activeUser.email : 'guest',
                 name, phone, address,
                 items: cart.map(cartItem => {
                     const p = window.products.find(prod => prod.id == cartItem.id);
