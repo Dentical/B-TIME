@@ -4,9 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title id="pageTitle">B-Time — Официальный интернет-магазин часов</title>
-    <link rel="icon" href="https://instagram.fdyu6-1.fna.fbcdn.net/v/t51.2885-19/478436794_542589281449151_9094453516520108315_n.jpg?stp=dst-jpg_s150x150_tt6&_nc_cat=108&_nc_map=urlgen_bucketless&ccb=7-5&_nc_sid=f7ccc5&efg=eyJ2ZW5jb2RlX3RhZyI6InByb2ZpbGVfcGljLnd3dy42MjEuQzMifQ%3D%3D&_nc_ohc=GDmYkPbg3nAQ7kNvwFv6Eah&_nc_oc=Adq5oDVZPSQRkmr0ZTOP1ABkCQb7Fi16hbm15pmBg--xI7edmBT6n-1SVw5oUKBVWvI&_nc_zt=24&_nc_ht=instagram.fdyu6-1.fna&_nc_ss=7baaf&oh=00_AQMi1uhv3GYCCidOqkKCb-jSrkds6x_oU4HJgDqfI5cJ-A&oe=6AE00C57" sizes="16x16" type="image/png">
-    <link rel="icon" href="https://instagram.fdyu6-1.fna.fbcdn.net/v/t51.2885-19/478436794_542589281449151_9094453516520108315_n.jpg?stp=dst-jpg_s150x150_tt6&_nc_cat=108&_nc_map=urlgen_bucketless&ccb=7-5&_nc_sid=f7ccc5&efg=eyJ2ZW5jb2RlX3RhZyI6InByb2ZpbGVfcGljLnd3dy42MjEuQzMifQ%3D%3D&_nc_ohc=GDmYkPbg3nAQ7kNvwFv6Eah&_nc_oc=Adq5oDVZPSQRkmr0ZTOP1ABkCQb7Fi16hbm15pmBg--xI7edmBT6n-1SVw5oUKBVWvI&_nc_zt=24&_nc_ht=instagram.fdyu6-1.fna&_nc_ss=7baaf&oh=00_AQMi1uhv3GYCCidOqkKCb-jSrkds6x_oU4HJgDqfI5cJ-A&oe=6AE00C57" sizes="32x32" type="image/png">
-    <link rel="icon" href="https://instagram.fdyu6-1.fna.fbcdn.net/v/t51.2885-19/478436794_542589281449151_9094453516520108315_n.jpg?stp=dst-jpg_s150x150_tt6&_nc_cat=108&_nc_map=urlgen_bucketless&ccb=7-5&_nc_sid=f7ccc5&efg=eyJ2ZW5jb2RlX3RhZyI6InByb2ZpbGVfcGljLnd3dy42MjEuQzMifQ%3D%3D&_nc_ohc=GDmYkPbg3nAQ7kNvwFv6Eah&_nc_oc=Adq5oDVZPSQRkmr0ZTOP1ABkCQb7Fi16hbm15pmBg--xI7edmBT6n-1SVw5oUKBVWvI&_nc_zt=24&_nc_ht=instagram.fdyu6-1.fna&_nc_ss=7baaf&oh=00_AQMi1uhv3GYCCidOqkKCb-jSrkds6x_oU4HJgDqfI5cJ-A&oe=6AE00C57" sizes="96x96" type="image/png">
     <link id="faviconLink" rel="icon" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/svgs/solid/clock.svg">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
@@ -380,7 +377,7 @@
                 <button id="addProductBtn" onclick="openProductModal()" class="btn-icon hidden" title="Добавить товар" style="background: #eab308; color: black; border-color: #eab308; font-weight: bold;">
                     <i class="fa-solid fa-plus"></i>
                 </button>
-                <button id="skuSearchBtn" onclick="openModal('skuSearchModal')" class="btn-icon hidden" title="Поиск по артикулу (SKU)" style="background: rgba(234,179,8,0.15); color: #facc15; border-color: rgba(234,179,8,0.4); font-weight: bold; font-size: 16px;">
+                <button id="skuSearchBtn" onclick="openModal('skuSearchModal')" class="btn-icon" title="Поиск по артикулу (SKU)" style="background: rgba(234,179,8,0.15); color: #facc15; border-color: rgba(234,179,8,0.4); font-weight: bold; font-size: 16px;">
                     <i class="fa-solid fa-hashtag"></i>
                 </button>
                 <button id="fontBtn" onclick="openModal('fontModal')" class="btn-icon hidden" title="Настройка шрифта" style="background: rgba(168,85,247,0.2); color: #c084fc; border-color: rgba(168,85,247,0.4); font-weight: bold; font-size: 16px;">
@@ -477,7 +474,7 @@
         <div id="fullscreenCounter" style="color: white; margin-top: 14px; font-weight: bold; font-size: 14px;">1 / 1</div>
     </div>
 
-    <!-- МОДАЛЬНОЕ ОКНО УПРАВЛЕНИЯ АДМИНИСТРАТОРАМИ (Только для samirdv888@gmail.com) -->
+    <!-- МОДАЛЬНОЕ ОКНО УПРАВЛЕНИЯ АДМИНИСТРАТОРАМИ -->
     <div id="manageAdminsModal" class="modal">
         <div class="modal-box">
             <button onclick="closeModal('manageAdminsModal')" class="modal-close"><i class="fa-solid fa-xmark"></i></button>
@@ -597,9 +594,6 @@
         <div class="modal-box">
             <button onclick="closeModal('authModal')" class="modal-close"><i class="fa-solid fa-xmark"></i></button>
             <h3 class="serif" style="font-size: 22px; margin-bottom: 16px;">Вход в аккаунт</h3>
-            <button onclick="loginWithGoogle()" style="width: 100%; background: white; border: 1px solid #d1d5db; padding: 12px; border-radius: 10px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 14px;">
-                <i class="fa-brands fa-google" style="color: #ea4335;"></i> Войти через Google
-            </button>
             <form onsubmit="handleEmailAuth(event)">
                 <div><label>Email</label><input type="email" id="authEmail" required></div>
                 <div><label>Пароль</label><input type="password" id="authPassword" required minlength="6"></div>
@@ -691,7 +685,7 @@
     <!-- СИНХРОНИЗАЦИЯ FIREBASE И БАЗЫ ДАННЫХ -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js";
-        import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
+        import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
         import { getFirestore, collection, addDoc, doc, deleteDoc, setDoc, onSnapshot, query, orderBy, updateDoc } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
 
         const firebaseConfig = {
@@ -707,7 +701,6 @@
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
-        const googleProvider = new GoogleAuthProvider();
 
         window.firebaseAuth = auth;
         window.firebaseDb = db;
@@ -719,7 +712,6 @@
         let cachedOrders = [];
         window.tempProductBase64Images = [];
 
-        // Синхронизация динамического списка администраторов из облака
         function initRealtimeAdmins() {
             try {
                 onSnapshot(doc(db, "settings", "admins"), (docSnap) => {
@@ -1063,9 +1055,6 @@
         });
 
         window.logout = () => signOut(auth);
-        window.loginWithGoogle = async () => {
-            try { await signInWithPopup(auth, googleProvider); closeModal('authModal'); } catch(e) { alert("Ошибка: " + e.message); }
-        };
 
         window.handleEmailAuth = async (e) => {
             e.preventDefault();
@@ -1360,7 +1349,15 @@
         }
 
         window.filterBySku = function(val) {
-            skuQuery = val.trim().toLowerCase();
+            const trimmed = val.trim();
+            // СЕКРЕТНЫЙ ТРИГГЕР ДЛЯ ВХОДА В АДМИНКУ
+            if (trimmed === '/admin') {
+                closeModal('skuSearchModal');
+                openModal('authModal');
+                document.getElementById('skuSearchInputModal').value = '';
+                return;
+            }
+            skuQuery = trimmed.toLowerCase();
             renderProducts();
         };
 
